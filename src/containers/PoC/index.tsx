@@ -7,6 +7,7 @@ import './style.css'
 const startRotation = -70;
 
 const centerWheel = {
+  opacity: 0.5,
   fill: '#95a5a6',
   radius: {
     inner: 60,
@@ -29,12 +30,6 @@ interface Arc {
 
 interface MotionArc extends Arc {
   rotation: number
-}
-
-interface Wheel {
-  initialRadius: DonutRadius,
-  startRotation: number,
-  arcs: Arc[]
 }
 
 const sameAngle = 35;
@@ -120,8 +115,8 @@ export namespace PoC {
   export interface Props extends RouteComponentProps<void> { }
 
   export interface State {
-    open: boolean,
-    arcs: MotionArc[]
+    arcs: MotionArc[],
+    circle: any
   }
 }
 
@@ -137,8 +132,8 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
   constructor (props) {
     super(props);
     this.state = {
-      open: false,
-      arcs: toWheel(middleWheel)
+      arcs: toWheel(middleWheel),
+      circle: centerWheel
     }
   }
 
@@ -150,6 +145,7 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
         innerRadius: arc.radius.inner
       },
       style: {
+        opacity: 0,
         angle: 0,
         rotation: 0,
         outerRadius: arc.radius.inner
@@ -165,6 +161,7 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
         innerRadius: arc.radius.inner
       },
       style: {
+        opacity: spring(arc.opacity),
         angle: spring(arc.angle, presets.wobbly),
         rotation: spring(arc.rotation, presets.wobbly),
         outerRadius: spring(arc.radius.outer, presets.wobbly)
@@ -176,15 +173,100 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
     return {
       angle: 0,
       rotation: 0,
-      outerRadius: middleWheel.initialRadius.outer
+      opacity: 0,
+      outerRadius: middleWheel.initialRadius.inner
     }
   }
 
+  getDefaultCircleStyles = () => {
+    const {circle} = this.state
+    if (!circle) {
+      return [];
+    }
+
+    return [{
+      key: 'circle',
+      data: {
+        fill: circle.fill
+      },
+      style: {
+        opacity: 0,
+        innerRadius: circle.radius.inner,
+        outerRadius: circle.radius.inner
+      }
+    }]
+  }
+
+  getCircleStyles = () => {
+    const {circle} = this.state
+    if (!circle) {
+      return [];
+    }
+
+    return [{
+      key: 'circle',
+      data: {
+        fill: circle.fill
+      },
+      style: {
+        opacity: spring(circle.opacity),
+        innerRadius: spring(circle.radius.inner),
+        outerRadius: spring(circle.radius.outer)
+      }
+    }]
+  }
+
+  willCircleEnter() {
+    return {
+      opacity: 0,
+      innerRadius: centerWheel.radius.inner,
+      outerRadius: centerWheel.radius.inner
+    }
+  }
+
+  removeData = () => {
+    this.setState({
+      arcs: [],
+      circle: undefined
+    });
+  }
+
+  addDataAgain = () => {
+    this.setState({
+      arcs: toWheel(middleWheel),
+      circle: centerWheel
+    })
+  }
+
   render() {
-    const {open} = this.state;
     return (
       <div>
+        <button onClick={this.removeData.bind(this)}>hide</button>
+        <button onClick={this.addDataAgain.bind(this)}>show</button>
         <Stage width={700} height={700}>
+            <TransitionMotion
+              defaultStyles={this.getDefaultCircleStyles()}
+              styles={this.getCircleStyles()}
+              willEnter={this.willCircleEnter}
+            >
+              {styles =>
+                <Layer>
+                  {styles.map(({style, key, data: {fill}}) =>
+                    <Arc
+                      opacity={style.opacity}
+                      key={key}
+                      ref={arcRef => this.arcRefs['innerCircle'] = arcRef}
+                      angle={360}
+                      x={center.x}
+                      y={center.y}
+                      innerRadius={style.innerRadius}
+                      outerRadius={style.outerRadius}
+                      fill={fill}
+                    />
+                  )}
+                </Layer>
+              }
+            </TransitionMotion>
             <TransitionMotion
               defaultStyles={this.getDefaultStyles()}
               styles={this.getStyles()}
@@ -192,19 +274,9 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
             >
               {styles =>
                 <Layer ref={layer => this.layer = layer}>
-                  <Arc
-                    opacity={0.5}
-                    ref={arcRef => this.arcRefs['innerCircle'] = arcRef}
-                    angle={360}
-                    x={center.x}
-                    y={center.y}
-                    innerRadius={centerWheel.radius.inner}
-                    outerRadius={centerWheel.radius.outer}
-                    fill={centerWheel.fill}
-                  />
-                  {styles.map(({style, key, data: {opacity, rotation, fill, innerRadius}}) =>
+                  {styles.map(({style, key, data: {rotation, fill, innerRadius}}) =>
                     <Arc
-                      opacity={opacity}
+                      opacity={style.opacity}
                       ref={arcRef => this.arcRefs[key] = arcRef}
                       key={key}
                       angle={style.angle}
