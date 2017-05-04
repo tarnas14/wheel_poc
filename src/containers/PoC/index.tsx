@@ -116,7 +116,8 @@ export namespace PoC {
 
   export interface State {
     arcs: MotionArc[],
-    circle: any
+    circle: any,
+    animationPreset: string
   }
 }
 
@@ -133,7 +134,8 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
     super(props);
     this.state = {
       arcs: toWheel(middleWheel),
-      circle: centerWheel
+      circle: centerWheel,
+      animationPreset: 'wobbly'
     }
   }
 
@@ -144,27 +146,23 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
         ...arc,
         innerRadius: arc.radius.inner
       },
-      style: {
-        opacity: 0,
-        angle: 0,
-        rotation: 0,
-        outerRadius: arc.radius.inner
-      }
+      style: this.willEnter()
     }))
   }
 
   getStyles = () => {
+    const preset = presets[this.state.animationPreset];
     return this.state.arcs.map(arc => ({
       key: arc.id,
       data: {
-        ...arc,
-        innerRadius: arc.radius.inner
+        ...arc
       },
       style: {
         opacity: spring(arc.opacity),
-        angle: spring(arc.angle, presets.wobbly),
-        rotation: spring(arc.rotation, presets.wobbly),
-        outerRadius: spring(arc.radius.outer, presets.wobbly)
+        angle: spring(arc.angle, preset),
+        rotation: spring(arc.rotation, preset),
+        innerRadius: spring(arc.radius.inner, preset),
+        outerRadius: spring(arc.radius.outer, preset)
       }
     }))
   }
@@ -174,7 +172,8 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
       angle: 0,
       rotation: 0,
       opacity: 0,
-      outerRadius: middleWheel.initialRadius.inner
+      innerRadius: 0,
+      outerRadius: 0
     }
   }
 
@@ -189,11 +188,7 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
       data: {
         fill: circle.fill
       },
-      style: {
-        opacity: 0,
-        innerRadius: circle.radius.inner,
-        outerRadius: circle.radius.inner
-      }
+      style: this.willCircleEnter()
     }]
   }
 
@@ -219,8 +214,8 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
   willCircleEnter() {
     return {
       opacity: 0,
-      innerRadius: centerWheel.radius.inner,
-      outerRadius: centerWheel.radius.inner
+      innerRadius: 0,
+      outerRadius: 0
     }
   }
 
@@ -238,11 +233,24 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
     })
   }
 
+  setPreset = (e) => {
+    const preset = e.currentTarget.value;
+    this.setState({
+      animationPreset: preset
+    })
+  }
+
   render() {
     return (
       <div>
         <button onClick={this.removeData.bind(this)}>hide</button>
         <button onClick={this.addDataAgain.bind(this)}>show</button>
+        <select onChange={this.setPreset.bind(this)} value={this.state.animationPreset}>
+          <option value="noWobble">noWobble</option>
+          <option value="wobbly">wobbly</option>
+          <option value="gentle">gentle</option>
+          <option value="stiff">stiff</option>
+        </select>
         <Stage width={700} height={700}>
             <TransitionMotion
               defaultStyles={this.getDefaultCircleStyles()}
@@ -282,7 +290,7 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
                       angle={style.angle}
                       x={center.x}
                       y={center.y}
-                      innerRadius={innerRadius}
+                      innerRadius={style.innerRadius}
                       outerRadius={style.outerRadius}
                       fill={fill}
                       rotation={style.rotation}
