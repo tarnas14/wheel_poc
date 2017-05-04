@@ -22,7 +22,9 @@ export namespace Wheel {
   export interface Props {
     wheel: {arcs: Arc[], startRotation: number},
     circle: any,
-    animationPreset: string
+    animationPreset: string,
+    onFocus: (id: string) => void,
+    onFocusLost: (id: string) => void,
   }
 
   export interface State {
@@ -156,7 +158,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
           >
             {styles =>
               <Layer>
-                {styles.map(({style, key, data: {image, fill, innerRadius}}) =>
+                {styles.map(({style, key, data: {active, image, fill, id, innerRadius}}) =>
                   <Group
                     key={key}
                   >
@@ -170,6 +172,8 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                       outerRadius={style.outerRadius}
                       fill={fill}
                       rotation={style.rotation}
+                      onMouseOver={active ? this.props.onFocus.bind(undefined, id) : undefined}
+                      onMouseOut={active ? this.props.onFocusLost.bind(undefined, id) : undefined}
                     />
                   </Group>
                 )}

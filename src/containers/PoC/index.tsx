@@ -57,6 +57,13 @@ const smallRadius = {
     outer: middleRadius.outer - 30
 }
 
+interface BusinessArc {
+  id: string,
+  icon: string,
+  active?: boolean,
+  focused?: boolean
+}
+
 const businessWheel = [
   {
     id: '1',
@@ -67,7 +74,6 @@ const businessWheel = [
     id: '2',
     icon: icons.glass,
     active: true,
-    focused: true,
   },
   {
     id: '3',
@@ -127,6 +133,7 @@ const fromBusinessToMetal = businessWheel => {
 
   const arcs = businessWheel.map(businessArc => ({
     id: businessArc.id,
+    active: businessArc.active,
     ...getTemplate(businessArc)
   }));
 
@@ -136,7 +143,7 @@ const fromBusinessToMetal = businessWheel => {
       ...arcs,
       {
         id: 'plus',
-        angle: 360 - sumAngles(arcs) - arcs.length,
+        angle: 360 - sumAngles(arcs) - arcs.length - 1,
         fill: '',
         radius: {
           inner: centerWheel.radius.inner,
@@ -152,7 +159,7 @@ export namespace PoC {
   export interface Props extends RouteComponentProps<void> { }
 
   export interface State {
-    wheel: {arcs: Arc[], startRotation: number},
+    wheel: BusinessArc[],
     circle: any,
     animationPreset: string
   }
@@ -163,7 +170,7 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
   constructor() {
     super();
     this.state = {
-      wheel: fromBusinessToMetal(businessWheel),
+      wheel: businessWheel,
       circle: centerWheel,
       animationPreset: 'wobbly'
     }
@@ -178,7 +185,7 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
 
   addDataAgain = () => {
     this.setState({
-      wheel: fromBusinessToMetal(businessWheel),
+      wheel: businessWheel,
       circle: centerWheel
     })
   }
@@ -187,6 +194,28 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
     const preset = e.currentTarget.value;
     this.setState({
       animationPreset: preset
+    })
+  }
+
+  focus = (id) => {
+    this.setState({
+      wheel: businessWheel.map(w => w.id === id
+        ? {
+          ...w,
+          focused: true
+        }
+        : w)
+    })
+  }
+
+  focusLost = (id) => {
+    this.setState({
+      wheel: businessWheel.map(w => w.id === id
+        ? {
+          ...w,
+          focused: false
+        }
+        : w)
     })
   }
 
@@ -201,9 +230,11 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
         <option value="stiff">stiff</option>
       </select>
       <Wheel
-        wheel={this.state.wheel}
+        wheel={fromBusinessToMetal(this.state.wheel)}
         circle={this.state.circle}
         animationPreset={this.state.animationPreset}
+        onFocus={this.focus.bind(this)}
+        onFocusLost={this.focusLost.bind(this)}
       />
     </div>;
   }
