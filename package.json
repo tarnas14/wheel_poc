@@ -11,7 +11,7 @@
     "build": "webpack -p --progress --colors"
   },
   "license": "MIT",
-  "devDependencies": {
+  "dependencies": {
     "@types/classnames": "^0.0.32",
     "@types/history": "^4.5.0",
     "@types/node": "^7.0.14",
@@ -41,9 +41,7 @@
     "url-loader": "^0.5.8",
     "webpack": "^2.4.1",
     "webpack-dev-server": "^2.4.5",
-    "webpack-hot-middleware": "^2.18.0"
-  },
-  "dependencies": {
+    "webpack-hot-middleware": "^2.18.0",
     "classnames": "^2.2.5",
     "express": "^4.15.2",
     "konva": "^1.6.1",
