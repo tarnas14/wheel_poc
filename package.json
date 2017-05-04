@@ -5,8 +5,9 @@
   "description": "A frontend boilerplate with React, Redux and Typescript",
   "main": "index.js",
   "scripts": {
+    "start": "npm run build && node server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack-dev-server --debug --devtool cheap-module-source-map --output-pathinfo --history-api-fallback --hot --inline --progress --colors --port 3000 --open",
+    "dev": "webpack-dev-server --debug --devtool cheap-module-source-map --output-pathinfo --history-api-fallback --hot --inline --progress --colors --port 3000 --open",
     "build": "webpack -p --progress --colors"
   },
   "license": "MIT",
@@ -44,6 +45,7 @@
   },
   "dependencies": {
     "classnames": "^2.2.5",
+    "express": "^4.15.2",
     "konva": "^1.6.1",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
