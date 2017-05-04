@@ -113,7 +113,7 @@ const bigRadius = {
 
 const smallRadius = {
     ...middleRadius,
-    outer: middleRadius.outer - 40
+    outer: middleRadius.outer - 30
 }
 
 const middleWheel = {
@@ -156,7 +156,7 @@ const middleWheel = {
       id: '5',
       angle: sameAngle,
       fill: '#34495e',
-      opacity: 0.6,
+      opacity: 0.4,
       radius: smallRadius,
       image: getImage(icons.phone, {width: 40, height: 40}, {opacity: 0.6})
     },
@@ -164,7 +164,7 @@ const middleWheel = {
       id: '6',
       angle: sameAngle,
       fill: '#34495e',
-      opacity: 0.5,
+      opacity: 0.6,
       radius: smallRadius,
       image: getImage(icons.injury, {width: 40, height: 40}, {opacity: 0.5})
     },
@@ -172,7 +172,7 @@ const middleWheel = {
       id: '7',
       angle: sameAngle,
       fill: '#34495e',
-      opacity: 0.4,
+      opacity: 0.5,
       radius: smallRadius,
       image: getImage(icons.wheel, {width: 40, height: 40}, {opacity: 0.4})
     },
@@ -182,7 +182,7 @@ const middleWheel = {
       fill: '',
       radius: {
         inner: centerWheel.radius.inner,
-        outer: centerWheel.radius.outer + 100
+        outer: centerWheel.radius.outer + 105
       },
       image: getImage('http://www.clker.com/cliparts/L/q/T/i/P/S/add-button-white-hi.png', {width: 50, height: 50})
     }
