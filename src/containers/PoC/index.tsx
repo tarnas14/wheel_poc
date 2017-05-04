@@ -1,10 +1,76 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import {Layer, Stage, Arc} from 'react-konva';
+import {Image as KonvaImage, Group, Layer, Stage, Arc} from 'react-konva';
 import {TransitionMotion, Motion, spring, presets} from 'react-motion';
 import './style.css'
 
-const startRotation = -70;
+interface ImageWithPromise {
+  image: any,
+  size: {height: number, width: number},
+  loaded: Promise<void>
+}
+
+namespace MyImage {
+  export interface Props {
+    image: ImageWithPromise
+  }
+
+  export interface State {
+    image: any
+  }
+}
+
+class MyImage extends React.Component<MyImage.Props, MyImage.State> {
+  constructor () {
+    super();
+    this.state = {image: undefined}
+  }
+
+  componentDidMount () {
+    const {image} = this.props;
+    image.loaded.then(() => this.setState({
+      image: image.image
+    }))
+  }
+
+  render() {
+    const {image} = this.state;
+    const {height, width} = this.props.image.size;
+    return image
+      ? <KonvaImage
+        image={image}
+        height={height}
+        width={width}
+      />
+      : null
+  }
+}
+
+const getImage = (src, size, additional = {}): ImageWithPromise => {
+  const img = new Image();
+  img.src = src;
+
+  const loaded = new Promise<void>(resolve => {
+    img.onload = () => resolve()
+  });
+
+  return {
+    image: img,
+    size: size,
+    loaded: loaded,
+    ...additional
+  };
+}
+
+const icons = {
+  home: 'https://api.icons8.com/download/4662d6548b0042ab2fa5afe9429d21d7309b1559/windows10/PNG/256/Very_Basic/home-256.png',
+  glass: 'https://d30y9cdsu7xlg0.cloudfront.net/png/86210-200.png',
+  paw: 'http://cdn.mysitemyway.com/etc-mysitemyway/icons/legacy-previews/icons-256/magic-marker-icons-animals/114688-magic-marker-icon-animals-animal-cat-print.png',
+  phone: 'https://img.clipartfest.com/7a81181007424edbd234a5cefaf90e90_cell-phone-clipart-with-transparent-background-clipartfest-cell-phone-clipart-transparent_512-512.png',
+  scales: 'https://d30y9cdsu7xlg0.cloudfront.net/png/331-200.png',
+  wheel: 'http://www.tireworksmb.com/wp-content/uploads/2015/10/tire-icon.png',
+  injury: 'https://d30y9cdsu7xlg0.cloudfront.net/png/191712-200.png'
+};
 
 const centerWheel = {
   opacity: 0.5,
@@ -25,7 +91,8 @@ interface Arc {
   fill: string,
   radius: DonutRadius,
   id: string,
-  opacity: number
+  opacity: number,
+  image?: any
 }
 
 interface MotionArc extends Arc {
@@ -39,9 +106,19 @@ const middleRadius = {
     outer: centerWheel.radius.outer + 120
 }
 
+const bigRadius = {
+    ...middleRadius,
+    outer: middleRadius.outer + 30
+}
+
+const smallRadius = {
+    ...middleRadius,
+    outer: middleRadius.outer - 40
+}
+
 const middleWheel = {
   initialRadius: middleRadius,
-  startRotation: -120,
+  startRotation: -126,
   arcs: [
     {
       id: '1',
@@ -49,54 +126,66 @@ const middleWheel = {
       fill: '#00fff0',
       opacity: 0.7,
       radius: middleRadius,
+      image: getImage(icons.home, {width: 40, height: 40})
     },
     {
       id: '2',
-      angle: 50,
+      angle: sameAngle + 10,
       fill: '#00fff0',
       opacity: 1,
-      radius: {
-        ...middleRadius,
-        outer: middleRadius.outer + 30
-      },
+      radius: bigRadius,
+      image: getImage(icons.glass, {width: 60, height: 60}),
     },
     {
       id: '3',
       angle: sameAngle,
       fill: '#00fff0',
-      opacity: 0.7,
+      opacity: 0.8,
       radius: middleRadius,
+      image: getImage(icons.paw, {width: 50, height: 50}),
     },
     {
       id: '4',
       angle: sameAngle,
       fill: '#34495e',
-      opacity: 0.4,
-      radius: {
-        inner: centerWheel.radius.inner,
-        outer: centerWheel.radius.outer + 80
-      }
+      opacity: 0.5,
+      radius: smallRadius,
+      image: getImage(icons.scales, {width: 40, height: 40}, {opacity: 0.5})
     },
     {
       id: '5',
       angle: sameAngle,
       fill: '#34495e',
       opacity: 0.6,
-      radius: {
-        inner: centerWheel.radius.inner,
-        outer: centerWheel.radius.outer + 80
-      }
+      radius: smallRadius,
+      image: getImage(icons.phone, {width: 40, height: 40}, {opacity: 0.6})
     },
     {
       id: '6',
       angle: sameAngle,
       fill: '#34495e',
       opacity: 0.5,
+      radius: smallRadius,
+      image: getImage(icons.injury, {width: 40, height: 40}, {opacity: 0.5})
+    },
+    {
+      id: '7',
+      angle: sameAngle,
+      fill: '#34495e',
+      opacity: 0.4,
+      radius: smallRadius,
+      image: getImage(icons.wheel, {width: 40, height: 40}, {opacity: 0.4})
+    },
+    {
+      id: 'plus',
+      angle: 97,
+      fill: '',
       radius: {
         inner: centerWheel.radius.inner,
-        outer: centerWheel.radius.outer + 80
-      }
-    },
+        outer: centerWheel.radius.outer + 100
+      },
+      image: getImage('http://www.clker.com/cliparts/L/q/T/i/P/S/add-button-white-hi.png', {width: 50, height: 50})
+    }
   ]
 }
 
@@ -162,7 +251,13 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
         angle: spring(arc.angle, preset),
         rotation: spring(arc.rotation, preset),
         innerRadius: spring(arc.radius.inner, preset),
-        outerRadius: spring(arc.radius.outer, preset)
+        outerRadius: spring(arc.radius.outer, preset),
+        imageHeight: arc.image
+          ? spring(arc.image.size.height)
+          : 0,
+        imageWidth: arc.image
+          ? spring(arc.image.size.width)
+          : 0
       }
     }))
   }
@@ -172,8 +267,10 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
       angle: 0,
       rotation: 0,
       opacity: 0,
-      innerRadius: 0,
-      outerRadius: 0
+      innerRadius: centerWheel.radius.inner,
+      outerRadius: centerWheel.radius.inner,
+      imageHeight: 0,
+      imageWidth: 0,
     }
   }
 
@@ -214,8 +311,8 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
   willCircleEnter() {
     return {
       opacity: 0,
-      innerRadius: 0,
-      outerRadius: 0
+      innerRadius: centerWheel.radius.inner,
+      outerRadius: centerWheel.radius.inner
     }
   }
 
@@ -281,20 +378,52 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
               willEnter={this.willEnter}
             >
               {styles =>
-                <Layer ref={layer => this.layer = layer}>
-                  {styles.map(({style, key, data: {rotation, fill, innerRadius}}) =>
-                    <Arc
-                      opacity={style.opacity}
-                      ref={arcRef => this.arcRefs[key] = arcRef}
+                <Layer>
+                  {styles.map(({style, key, data: {image, fill, innerRadius}}) =>
+                    <Group
                       key={key}
-                      angle={style.angle}
+                    >
+                      <Arc
+                        opacity={style.opacity}
+                        ref={arcRef => this.arcRefs[key] = arcRef}
+                        angle={style.angle}
+                        x={center.x}
+                        y={center.y}
+                        innerRadius={style.innerRadius}
+                        outerRadius={style.outerRadius}
+                        fill={fill}
+                        rotation={style.rotation}
+                      />
+                    </Group>
+                  )}
+                </Layer>
+              }
+            </TransitionMotion>
+            <TransitionMotion
+              defaultStyles={this.getDefaultStyles()}
+              styles={this.getStyles()}
+              willEnter={this.willEnter}
+            >
+              {styles =>
+                <Layer>
+                  {styles.filter(({data: {image}}) => image).map(({style, key, data: {image, fill, innerRadius}}) =>
+                    <Group
+                      key={key}
                       x={center.x}
                       y={center.y}
-                      innerRadius={style.innerRadius}
-                      outerRadius={style.outerRadius}
-                      fill={fill}
-                      rotation={style.rotation}
-                    />
+                      offsetY={0.9 * (style.outerRadius - style.imageHeight / 2)}
+                      rotation={90 + style.rotation + style.angle / 2}
+                    >
+                      <KonvaImage
+                        image={image.image}
+                        height={style.imageHeight}
+                        width={style.imageWidth}
+                        opacity={image.opacity || 1}
+                        rotation={-(90 + style.rotation + style.angle / 2)}
+                        offsetX={style.imageWidth / 2}
+                        offsetY={style.imageHeight / 2}
+                      />
+                    </Group>
                   )}
                 </Layer>
               }
