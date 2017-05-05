@@ -76,6 +76,7 @@ const testChildren = [
       inner: bigRadius.outer + 1,
       outer: bigRadius.outer + 46
     },
+    leavingRadiusTarget: middleRadius.outer,
     id: 'test_blue',
     opacity: 1,
     rotation: -90.25
@@ -87,6 +88,7 @@ const testChildren = [
       inner: bigRadius.outer + 1,
       outer: bigRadius.outer + 46
     },
+    leavingRadiusTarget: middleRadius.outer,
     id: 'test_yellow',
     opacity: 1,
     rotation: -63.5
@@ -98,6 +100,7 @@ const testChildren = [
       inner: bigRadius.outer + 1,
       outer: bigRadius.outer + 46
     },
+    leavingRadiusTarget: middleRadius.outer,
     id: 'test_red',
     opacity: 1,
     rotation: -36
@@ -115,6 +118,7 @@ const businessWheel: BusinessArc[] = [
     id: 'glass',
     icon: icons.glass,
     active: true,
+    children: testChildren,
     text: 'Privat Haftpflicht'
   },
   {

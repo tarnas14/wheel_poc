@@ -30,7 +30,8 @@ declare interface Arc {
   id: string,
   opacity: number,
   image?: any,
-  children?: MotionArc[]
+  children?: MotionArc[],
+  selected?: boolean,
 }
 
 declare interface MotionArc extends Arc {

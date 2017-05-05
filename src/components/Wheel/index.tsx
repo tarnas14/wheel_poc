@@ -2,64 +2,6 @@ import * as React from 'react';
 import {Image as KonvaImage, Group, Layer, Stage, Arc} from 'react-konva';
 import {TransitionMotion, Motion, spring, presets} from 'react-motion';
 
-export namespace ArcChildren {
-  export interface Props {
-    outerRadius: number,
-    arcs: MotionArc[]
-  }
-
-  export interface State { }
-}
-
-class ArcChildren extends React.Component<ArcChildren.Props, ArcChildren.State> {
-
-  getDefaultStyles = () => {
-    return this.props.arcs.map(arc => ({
-      key: arc.id,
-      data: arc,
-      style: this.willEnter.bind(this)()
-    }))
-  }
-
-  getStyles = () => {
-    return this.props.arcs.map(arc => ({
-      key: arc.id,
-      data: arc,
-      style: {
-        outerRadius: spring(arc.radius.outer)
-      }
-    }))
-  }
-
-  willEnter() {
-    return {
-      outerRadius: this.props.outerRadius,
-      angle: 0
-    }
-  }
-
-  willLeave() {
-    return {
-      outerRadius: spring(this.props.outerRadius)
-    }
-  }
-
-  render() {
-    return <TransitionMotion
-      defaultStyles={this.getDefaultStyles()}
-      getStyles={this.getStyles()}
-      willEnter={this.willEnter.bind(this)}
-      willLeave={this.willLeave.bind(this)}
-    >
-      { styles => <Layer>
-        {styles.map(style => {
-          <Arc />
-        })}
-      </Layer>}
-    </TransitionMotion>
-  }
-}
-
 const center = {
   x: 350,
   y: 350
@@ -177,9 +119,70 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
     }
   }
 
+  getChildrenDefaultStyles = () => {
+    const selectedArc = this.props.wheel.find(a => Boolean(a.selected && a.children && a.children.length));
+
+    if (!selectedArc) {
+      return []
+    }
+
+    return selectedArc.children.map(child => ({
+      key: child.id,
+      data: child,
+      style: {
+        angle: child.angle,
+        rotation: child.rotation,
+        innerRadius: child.radius.inner,
+        outerRadius: child.radius.inner,
+      }
+    }))
+  }
+
+  getChildrenStyles = () => {
+    const selectedArc = this.props.wheel.find(a => Boolean(a.selected && a.children && a.children.length));
+
+    if (!selectedArc) {
+      return []
+    }
+
+    return selectedArc.children.map(child => ({
+      key: child.id,
+      data: child,
+      style: {
+        outerRadius: spring(child.radius.outer),
+        angle: child.angle,
+        rotation: child.rotation,
+        innerRadius: child.radius.inner
+      }
+    }))
+  }
+
+  childrenWillEnter(entering) {
+    return {
+      angle: entering.data.angle,
+      rotation: entering.data.rotation,
+      innerRadius: entering.data.radius.inner,
+      outerRadius: entering.data.radius.inner,
+    }
+  }
+
+  childrenWillLeave(leaving) {
+    const outerTarget = (leaving.data.radius.outer - leaving.data.radius.inner + leaving.data.leavingRadiusTarget);
+    // hardcoded QQ
+    const parentRotation = -90.25
+
+    return {
+      outerRadius: spring(leaving.data.leavingRadiusTarget),
+      angle: spring(0),
+      rotation: spring(parentRotation),
+      innerRadius: spring(leaving.data.leavingRadiusTarget, presets.wobbly)
+    };
+  }
+
   render() {
     return (
       <Stage width={700} height={700}>
+          {/* circle */}
           <TransitionMotion
             defaultStyles={this.getDefaultCircleStyles()}
             styles={this.getCircleStyles()}
@@ -203,6 +206,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
               </Layer>
             }
           </TransitionMotion>
+          {/* actual arcs */}
           <TransitionMotion
             defaultStyles={this.getDefaultStyles()}
             styles={this.getStyles()}
@@ -228,15 +232,40 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                       onMouseOut={active ? this.props.onFocusLost.bind(undefined, id) : undefined}
                       onClick={active ? this.props.onSelect.bind(undefined, id, selected) : undefined}
                     />
-                    {selected && children && <ArcChildren
-                      arcs={children}
-                      outerRadius={style.outerRadius}
-                    />}
                   </Group>
                 )}
               </Layer>
             }
           </TransitionMotion>
+          {/* children */}
+          {/*
+          <TransitionMotion
+            defaultStyles={this.getChildrenDefaultStyles()}
+            styles={this.getChildrenStyles()}
+            willEnter={this.childrenWillEnter.bind(this)}
+            willLeave={this.childrenWillLeave.bind(this)}
+          >
+            {styles =>
+              <Layer>
+                {styles.map(({style, key, data}) =>
+                  <Group
+                    key={key}
+                  >
+                    <Arc
+                      angle={style.angle}
+                      x={center.x}
+                      y={center.y}
+                      innerRadius={style.innerRadius}
+                      outerRadius={style.outerRadius}
+                      fill={data.fill}
+                      rotation={style.rotation}
+                    />
+                  </Group>
+                )}
+              </Layer>
+            }
+          </TransitionMotion>
+          {/* images */}
           <TransitionMotion
             defaultStyles={this.getDefaultStyles()}
             styles={this.getStyles()}
