@@ -19,6 +19,7 @@ const getImage = (src, size, additional = {}): ImageWithPromise => {
     image: img,
     size: size,
     loaded: loaded,
+    offsetScale: 0.9,
     ...additional
   };
 }
@@ -118,7 +119,7 @@ const fromBusinessToMetal = businessWheel => {
         fill: '#00fff0',
         opacity: 1,
         radius: bigRadius,
-        image: getImage(icon, {width: 80, height: 80})
+        image: getImage(icon, {width: 80, height: 80}, {offsetScale: 0.75})
       }
     }
 

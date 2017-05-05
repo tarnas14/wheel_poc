@@ -61,6 +61,9 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
         rotation: spring(arc.rotation, preset),
         innerRadius: spring(arc.radius.inner, preset),
         outerRadius: spring(arc.radius.outer, preset),
+        imageOffsetScale: arc.image
+          ? spring (arc.image.offsetScale)
+          : 0,
         imageHeight: arc.image
           ? spring(arc.image.size.height)
           : 0,
@@ -79,6 +82,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
       opacity: 0,
       innerRadius: circle.radius.inner,
       outerRadius: circle.radius.inner,
+      imageOffsetScale: 0,
       imageHeight: 0,
       imageWidth: 0,
     }
@@ -194,7 +198,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                     key={key}
                     x={center.x}
                     y={center.y}
-                    offsetY={0.9 * (style.outerRadius - style.imageHeight / 2)}
+                    offsetY={style.imageOffsetScale * (style.outerRadius - style.imageHeight / 2)}
                     rotation={90 + style.rotation + style.angle / 2}
                   >
                     <KonvaImage
