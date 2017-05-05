@@ -239,6 +239,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
 
   sexyChildrenWillLeave(leaving) {
     const preset = presets[this.props.animationPreset];
+
     // hardcoded QQ
     const parentRotation = -54.25
 
