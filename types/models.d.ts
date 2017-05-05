@@ -31,6 +31,7 @@ declare interface Arc {
   opacity: number,
   image?: any,
   children?: MotionArc[],
+  sexyChildren?: any,
   selected?: boolean,
 }
 

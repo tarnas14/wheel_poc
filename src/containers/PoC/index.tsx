@@ -5,6 +5,10 @@ import {TransitionMotion, Motion, spring, presets} from 'react-motion';
 import {Wheel} from '../../components';
 import * as style from './style.css'
 
+const sameAngle = 35;
+const focusedAngle = sameAngle + 10;
+const selectedAngle = sameAngle * 2 + 10;
+
 const sumAngles = arcs => arcs.reduce((angle, arc) => angle += arc.angle, 0);
 
 const getImage = (src, size, additional = {}): ImageWithPromise => {
@@ -65,7 +69,20 @@ interface BusinessArc {
   selected?: boolean,
   active?: boolean,
   focused?: boolean,
-  children?: MotionArc[]
+  children?: MotionArc[],
+  sexyChildren?: any,
+}
+
+const testChildren2 = {
+  startRotation: -54.25,
+  startAngle: focusedAngle,
+  endAngle: selectedAngle,
+  leavingRadiusTarget: middleRadius.outer,
+  radius: {
+    inner: bigRadius.outer + 1,
+    outer: bigRadius.outer + 46
+  },
+  arcs: ['blue', 'yellow', 'red']
 }
 
 const testChildren = [
@@ -125,7 +142,8 @@ const businessWheel: BusinessArc[] = [
     id: '3',
     icon: icons.paw,
     active: true,
-    text: 'Tierhalterhaftpflicht'
+    text: 'Tierhalterhaftpflicht',
+    sexyChildren: testChildren2
   },
   {
     id: '4',
@@ -156,10 +174,6 @@ const fromBusinessToMetal = businessWheel => {
       arcs: []
     }
   }
-
-  const sameAngle = 35;
-  const focusedAngle = sameAngle + 10;
-  const selectedAngle = sameAngle * 2 + 10;
 
   const getTemplate = ({active, focused, selected, icon}) => {
     if (selected) {
