@@ -29,7 +29,8 @@ declare interface Arc {
   radius: DonutRadius,
   id: string,
   opacity: number,
-  image?: any
+  image?: any,
+  children?: MotionArc[]
 }
 
 declare interface MotionArc extends Arc {

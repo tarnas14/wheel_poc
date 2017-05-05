@@ -64,16 +64,53 @@ interface BusinessArc {
   selected?: boolean,
   active?: boolean,
   focused?: boolean,
+  children?: MotionArc[]
 }
 
-const businessWheel = [
+const testChildren = [
+  {
+    angle: 26,
+    fill: 'blue',
+    radius: {
+      inner: bigRadius.outer + 1,
+      outer: bigRadius.outer + 46
+    },
+    id: 'test_blue',
+    opacity: 1,
+    rotation: -90.25
+  },
+  {
+    angle: 27,
+    fill: 'yellow',
+    radius: {
+      inner: bigRadius.outer + 1,
+      outer: bigRadius.outer + 46
+    },
+    id: 'test_yellow',
+    opacity: 1,
+    rotation: -63.5
+  },
+  {
+    angle: 26.25,
+    fill: 'red',
+    radius: {
+      inner: bigRadius.outer + 1,
+      outer: bigRadius.outer + 46
+    },
+    id: 'test_red',
+    opacity: 1,
+    rotation: -36
+  }
+];
+
+const businessWheel: BusinessArc[] = [
   {
     id: '1',
     icon: icons.home,
     active: true,
   },
   {
-    id: '2',
+    id: 'glass',
     icon: icons.glass,
     active: true,
   },
@@ -156,6 +193,7 @@ const fromBusinessToMetal = businessWheel => {
     id: businessArc.id,
     active: businessArc.active,
     selected: businessArc.selected,
+    children: businessArc.children,
     ...getTemplate(businessArc)
   }));
 
@@ -177,11 +215,21 @@ const fromBusinessToMetal = businessWheel => {
   };
 }
 
+const toWheel = (wheel): MotionArc[] => wheel ? wheel.arcs.reduce((allArcs, currentArc) => {
+  return [...allArcs, {
+    ...currentArc,
+    angle: currentArc.angle,
+    fill: currentArc.fill,
+    rotation: wheel.startRotation + sumAngles(allArcs) + allArcs.length
+  }]
+}, []) : [];
+
 export namespace PoC {
   export interface Props extends RouteComponentProps<void> { }
 
   export interface State {
     wheel: BusinessArc[],
+    testChildren: MotionArc[],
     circle: any,
     animationPreset: string
   }
@@ -193,6 +241,7 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
     super();
     this.state = {
       wheel: businessWheel,
+      testChildren: [],
       circle: centerWheel,
       animationPreset: 'wobbly'
     }
@@ -241,7 +290,17 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
     }))
   }
 
-  selected = (id) => {
+  selected = (id, selected) => {
+    this.setState({
+      testChildren: []
+    });
+
+    if (id === 'glass' && !selected) {
+      this.setState({
+        testChildren: testChildren
+      });
+    }
+
     this.setState(s => ({
       wheel: s.wheel.map(w => w.id === id
         ? {
@@ -267,7 +326,9 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
         <option value="stiff">stiff</option>
       </select>
       <Wheel
-        wheel={fromBusinessToMetal(this.state.wheel)}
+        wheel={[
+          ...toWheel(fromBusinessToMetal(this.state.wheel))
+        ]}
         circle={this.state.circle}
         animationPreset={this.state.animationPreset}
         onFocus={this.focus.bind(this)}

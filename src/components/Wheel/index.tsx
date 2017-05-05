@@ -2,16 +2,63 @@ import * as React from 'react';
 import {Image as KonvaImage, Group, Layer, Stage, Arc} from 'react-konva';
 import {TransitionMotion, Motion, spring, presets} from 'react-motion';
 
-const sumAngles = arcs => arcs.reduce((angle, arc) => angle += arc.angle, 0);
+export namespace ArcChildren {
+  export interface Props {
+    outerRadius: number,
+    arcs: MotionArc[]
+  }
 
-const toWheel = (wheel): MotionArc[] => wheel ? wheel.arcs.reduce((allArcs, currentArc) => {
-  return [...allArcs, {
-    ...currentArc,
-    angle: currentArc.angle,
-    fill: currentArc.fill,
-    rotation: wheel.startRotation + sumAngles(allArcs) + allArcs.length
-  }]
-}, []) : [];
+  export interface State { }
+}
+
+class ArcChildren extends React.Component<ArcChildren.Props, ArcChildren.State> {
+
+  getDefaultStyles = () => {
+    return this.props.arcs.map(arc => ({
+      key: arc.id,
+      data: arc,
+      style: this.willEnter.bind(this)()
+    }))
+  }
+
+  getStyles = () => {
+    return this.props.arcs.map(arc => ({
+      key: arc.id,
+      data: arc,
+      style: {
+        outerRadius: spring(arc.radius.outer)
+      }
+    }))
+  }
+
+  willEnter() {
+    return {
+      outerRadius: this.props.outerRadius,
+      angle: 0
+    }
+  }
+
+  willLeave() {
+    return {
+      outerRadius: spring(this.props.outerRadius)
+    }
+  }
+
+  render() {
+    return <TransitionMotion
+      defaultStyles={this.getDefaultStyles()}
+      getStyles={this.getStyles()}
+      willEnter={this.willEnter.bind(this)}
+      willLeave={this.willLeave.bind(this)}
+    >
+      { styles => <Layer>
+        {styles.map(style => {
+          <Arc />
+        })}
+      </Layer>}
+    </TransitionMotion>
+  }
+}
 
 const center = {
   x: 350,
@@ -20,7 +67,7 @@ const center = {
 
 export namespace Wheel {
   export interface Props {
-    wheel: {arcs: Arc[], startRotation: number},
+    wheel: MotionArc[],
     circle: any,
     animationPreset: string,
     onFocus: (id: string) => void,
@@ -38,7 +85,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
 
   getDefaultStyles = () => {
     const self = this;
-    return toWheel(this.props.wheel).map(arc => ({
+    return this.props.wheel.map(arc => ({
       key: arc.fill,
       data: {
         ...arc,
@@ -50,7 +97,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
 
   getStyles = () => {
     const preset = presets[this.props.animationPreset];
-    return toWheel(this.props.wheel).map(arc => ({
+    return this.props.wheel.map(arc => ({
       key: arc.id,
       data: {
         ...arc
@@ -163,7 +210,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
           >
             {styles =>
               <Layer>
-                {styles.map(({style, key, data: {active, selected, image, fill, id, innerRadius}}) =>
+                {styles.map(({style, key, data: {children, active, selected, image, fill, id, innerRadius}}) =>
                   <Group
                     key={key}
                   >
@@ -179,8 +226,12 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                       rotation={style.rotation}
                       onMouseOver={active ? this.props.onFocus.bind(undefined, id) : undefined}
                       onMouseOut={active ? this.props.onFocusLost.bind(undefined, id) : undefined}
-                      onClick={active ? this.props.onSelect.bind(undefined, id) : undefined}
+                      onClick={active ? this.props.onSelect.bind(undefined, id, selected) : undefined}
                     />
+                    {selected && children && <ArcChildren
+                      arcs={children}
+                      outerRadius={style.outerRadius}
+                    />}
                   </Group>
                 )}
               </Layer>
