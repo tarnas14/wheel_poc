@@ -203,6 +203,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                       rotation={-(90 + style.rotation + style.angle / 2)}
                       offsetX={style.imageWidth / 2}
                       offsetY={style.imageHeight / 2}
+                      listening={false}
                     />
                   </Group>
                 )}

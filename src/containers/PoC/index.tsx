@@ -99,6 +99,13 @@ const businessWheel = [
 ];
 
 const fromBusinessToMetal = businessWheel => {
+  if (!businessWheel) {
+    return {
+      startRotation: 0,
+      arcs: []
+    }
+  }
+
   const sameAngle = 35;
 
   const getTemplate = ({active, focused, icon}) => {
