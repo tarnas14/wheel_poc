@@ -60,8 +60,9 @@ const smallRadius = {
 interface BusinessArc {
   id: string,
   icon: string,
+  selected?: boolean,
   active?: boolean,
-  focused?: boolean
+  focused?: boolean,
 }
 
 const businessWheel = [
@@ -107,11 +108,23 @@ const fromBusinessToMetal = businessWheel => {
   }
 
   const sameAngle = 35;
+  const focusedAngle = sameAngle + 10;
+  const selectedAngle = sameAngle * 2 + 10;
 
-  const getTemplate = ({active, focused, icon}) => {
+  const getTemplate = ({active, focused, selected, icon}) => {
+    if (selected) {
+      return {
+        angle: selectedAngle,
+        fill: '#00fff0',
+        opacity: 1,
+        radius: bigRadius,
+        image: getImage(icon, {width: 80, height: 80})
+      }
+    }
+
     if (focused) {
       return {
-        angle: sameAngle + 10,
+        angle: focusedAngle,
         fill: '#00fff0',
         opacity: 1,
         radius: bigRadius,
@@ -141,6 +154,7 @@ const fromBusinessToMetal = businessWheel => {
   const arcs = businessWheel.map(businessArc => ({
     id: businessArc.id,
     active: businessArc.active,
+    selected: businessArc.selected,
     ...getTemplate(businessArc)
   }));
 
@@ -205,25 +219,40 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
   }
 
   focus = (id) => {
-    this.setState({
-      wheel: businessWheel.map(w => w.id === id
+    this.setState(s => ({
+      wheel: s.wheel.map(w => w.id === id
         ? {
           ...w,
           focused: true
         }
         : w)
-    })
+    }))
   }
 
   focusLost = (id) => {
-    this.setState({
-      wheel: businessWheel.map(w => w.id === id
+    this.setState(s => ({
+      wheel: s.wheel.map(w => w.id === id
         ? {
           ...w,
           focused: false
         }
         : w)
-    })
+    }))
+  }
+
+  selected = (id) => {
+    this.setState(s => ({
+      wheel: s.wheel.map(w => w.id === id
+        ? {
+          ...w,
+          selected: !w.selected,
+          focused: false
+        }
+        : {
+          ...w,
+          selected: false
+        })
+    }))
   }
 
   render () {
@@ -242,6 +271,7 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
         animationPreset={this.state.animationPreset}
         onFocus={this.focus.bind(this)}
         onFocusLost={this.focusLost.bind(this)}
+        onSelect={this.selected.bind(this)}
       />
     </div>;
   }
