@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router';
 import {Image as KonvaImage, Group, Layer, Stage, Arc} from 'react-konva';
 import {TransitionMotion, Motion, spring, presets} from 'react-motion';
 import {Wheel} from '../../components';
-import './style.css'
+import * as style from './style.css'
 
 const sumAngles = arcs => arcs.reduce((angle, arc) => angle += arc.angle, 0);
 
@@ -61,6 +61,7 @@ const smallRadius = {
 interface BusinessArc {
   id: string,
   icon: string,
+  text: string,
   selected?: boolean,
   active?: boolean,
   focused?: boolean,
@@ -108,32 +109,39 @@ const businessWheel: BusinessArc[] = [
     id: '1',
     icon: icons.home,
     active: true,
+    text: 'Hausrat'
   },
   {
     id: 'glass',
     icon: icons.glass,
     active: true,
+    text: 'Privat Haftpflicht'
   },
   {
     id: '3',
     icon: icons.paw,
     active: true,
+    text: 'Tierhalterhaftpflicht'
   },
   {
     id: '4',
-    icon: icons.scales
+    icon: icons.scales,
+    text: ''
   },
   {
     id: '5',
     icon: icons.phone,
+    text: ''
   },
   {
     id: '6',
-    icon: icons.injury
+    icon: icons.injury,
+    text: ''
   },
   {
     id: '7',
-    icon: icons.wheel
+    icon: icons.wheel,
+    text: ''
   },
 ];
 
@@ -190,10 +198,7 @@ const fromBusinessToMetal = businessWheel => {
   }
 
   const arcs = businessWheel.map(businessArc => ({
-    id: businessArc.id,
-    active: businessArc.active,
-    selected: businessArc.selected,
-    children: businessArc.children,
+    ...businessArc,
     ...getTemplate(businessArc)
   }));
 
@@ -231,7 +236,8 @@ export namespace PoC {
     wheel: BusinessArc[],
     testChildren: MotionArc[],
     circle: any,
-    animationPreset: string
+    animationPreset: string,
+    centerText: string
   }
 }
 
@@ -243,7 +249,8 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
       wheel: businessWheel,
       testChildren: [],
       circle: centerWheel,
-      animationPreset: 'wobbly'
+      animationPreset: 'wobbly',
+      centerText: ''
     }
   }
 
@@ -270,6 +277,7 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
 
   focus = (id) => {
     this.setState(s => ({
+      centerText: s.wheel.find(w => w.id === id).text,
       wheel: s.wheel.map(w => w.id === id
         ? {
           ...w,
@@ -281,6 +289,7 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
 
   focusLost = (id) => {
     this.setState(s => ({
+      centerText: '',
       wheel: s.wheel.map(w => w.id === id
         ? {
           ...w,
@@ -325,6 +334,9 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
         <option value="gentle">gentle</option>
         <option value="stiff">stiff</option>
       </select>
+      <div className={style.circleTextContainer}>
+        <p>{this.state.centerText}</p>
+      </div>
       <Wheel
         wheel={[
           ...toWheel(fromBusinessToMetal(this.state.wheel))
