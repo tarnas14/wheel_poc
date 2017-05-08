@@ -38,33 +38,30 @@ const icons = {
   injury: 'https://d30y9cdsu7xlg0.cloudfront.net/png/191712-200.png'
 };
 
+const maxRadius = 490;
+
 const centerWheel = {
   opacity: 0.5,
   fill: '#95a5a6',
   radius: {
-    inner: 60,
-    outer: 70
+    inner: 80,
+    outer: 90
   }
 };
 
 const middleRadius = {
   inner: centerWheel.radius.inner,
-  outer: centerWheel.radius.outer + 120
+  outer: centerWheel.radius.outer + (centerWheel.radius.inner * 2 * 1.15)
 }
 
 const bigRadius = {
   ...middleRadius,
-  outer: middleRadius.outer + 30
+  outer: middleRadius.outer * 1.15
 }
 
 const smallRadius = {
   ...middleRadius,
-  outer: middleRadius.outer - 30
-}
-
-const childRadius = {
-  inner: bigRadius.outer + 1,
-  outer: bigRadius.outer + 46
+  outer: middleRadius.outer * 0.85
 }
 
 interface BusinessArc {
@@ -77,7 +74,6 @@ interface BusinessArc {
   children?: MotionArc[],
 }
 
-const testChildAngle = 26;
 const testChildren = [
   {
     angle: 0,
@@ -297,8 +293,6 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
           focused: true,
           children: w.children ? w.children.map(child => ({
             ...child,
-            radius: childRadius,
-            angle: testChildAngle
           })) : undefined
         }
         : w)
@@ -370,6 +364,21 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
   render () {
     const {animationSetting: {stiffness, damping}} = this.state;
     return <div>
+      <div className={style.fakeHeader}></div>
+      {/*<div className={style.circleTextContainer}>
+        <p>{this.state.centerText}</p>
+      </div>*/}
+      <Wheel
+        wheel={[
+          ...toWheel(this.state.wheel && fromBusinessToMetal(this.state.wheel.map(w => ({...w, children: this.state.showChildren ? w.children : []}))))
+        ]}
+        circle={this.state.circle}
+        animationPreset={this.state.animationSetting}
+        onFocus={this.focus.bind(this)}
+        onFocusLost={this.focusLost.bind(this)}
+        onSelect={this.selected.bind(this)}
+        setText={text => this.setState({centerText: text})}
+      />
       <p><label><input type="checkbox" checked={this.state.showChildren} onChange={this.showChildren.bind(this)}/> children</label></p>
       <button onClick={this.removeData.bind(this)}>hide</button>
       <button onClick={this.addDataAgain.bind(this)}>show</button>
@@ -385,20 +394,6 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
       <p>
         damping: ({damping}) <br /> <input type="range" min="0" max="40" value={damping} onChange={this.changeDamping.bind(this)}/>
       </p>
-      <div className={style.circleTextContainer}>
-        <p>{this.state.centerText}</p>
-      </div>
-      <Wheel
-        wheel={[
-          ...toWheel(this.state.wheel && fromBusinessToMetal(this.state.wheel.map(w => ({...w, children: this.state.showChildren ? w.children : []}))))
-        ]}
-        circle={this.state.circle}
-        animationPreset={this.state.animationSetting}
-        onFocus={this.focus.bind(this)}
-        onFocusLost={this.focusLost.bind(this)}
-        onSelect={this.selected.bind(this)}
-        setText={text => this.setState({centerText: text})}
-      />
     </div>;
   }
 }
