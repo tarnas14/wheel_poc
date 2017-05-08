@@ -15,6 +15,7 @@ export namespace Wheel {
     onFocus: (id: string) => void,
     onFocusLost: (id: string) => void,
     onSelect: (id: string) => void,
+    setText: (text: string) => void,
   }
 
   export interface State {
@@ -155,7 +156,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
           >
             {styles =>
               <Layer>
-                {styles.map(({style, key, data: {children, active, selected, image, fill, id, innerRadius}}) =>
+                {styles.map(({style, key, data: {children, active, focused, selected, image, fill, id, innerRadius}}) =>
                   <Group
                     key={key}
                   >
@@ -171,6 +172,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                       rotation={style.rotation}
                       onMouseOver={active ? this.props.onFocus.bind(undefined, id) : undefined}
                       onMouseOut={active ? this.props.onFocusLost.bind(undefined, id) : undefined}
+                      onTouchEnd={active ? this.props.onSelect.bind(undefined, id, selected) : undefined}
                       onClick={active ? this.props.onSelect.bind(undefined, id, selected) : undefined}
                     />
                     {children && children.map(child => ({...child, width: 30})).map((child, childIndex) => {

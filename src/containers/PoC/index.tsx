@@ -244,7 +244,6 @@ export namespace PoC {
 
   export interface State {
     wheel: BusinessArc[],
-    testChildren: MotionArc[],
     circle: any,
     animationPreset: string,
     animationSetting: AnimationPreset,
@@ -259,7 +258,6 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
     super();
     this.state = {
       wheel: businessWheel,
-      testChildren: [],
       circle: centerWheel,
       animationPreset: 'wobbly',
       centerText: '',
@@ -328,16 +326,6 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
   }
 
   selected = (id, selected) => {
-    this.setState({
-      testChildren: []
-    });
-
-    if (id === 'glass' && !selected) {
-      this.setState({
-        testChildren: testChildren
-      });
-    }
-
     this.setState(s => ({
       centerText: selected ? '' : s.wheel.find(w => w.id === id).text,
       wheel: s.wheel.map(w => w.id === id
@@ -402,13 +390,14 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
       </div>
       <Wheel
         wheel={[
-          ...toWheel(fromBusinessToMetal(this.state.wheel.map(w => ({...w, children: this.state.showChildren ? w.children : []}))))
+          ...toWheel(this.state.wheel && fromBusinessToMetal(this.state.wheel.map(w => ({...w, children: this.state.showChildren ? w.children : []}))))
         ]}
         circle={this.state.circle}
         animationPreset={this.state.animationSetting}
         onFocus={this.focus.bind(this)}
         onFocusLost={this.focusLost.bind(this)}
         onSelect={this.selected.bind(this)}
+        setText={text => this.setState({centerText: text})}
       />
     </div>;
   }
