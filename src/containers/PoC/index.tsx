@@ -48,18 +48,23 @@ const centerWheel = {
 };
 
 const middleRadius = {
-    inner: centerWheel.radius.inner,
-    outer: centerWheel.radius.outer + 120
+  inner: centerWheel.radius.inner,
+  outer: centerWheel.radius.outer + 120
 }
 
 const bigRadius = {
-    ...middleRadius,
-    outer: middleRadius.outer + 30
+  ...middleRadius,
+  outer: middleRadius.outer + 30
 }
 
 const smallRadius = {
-    ...middleRadius,
-    outer: middleRadius.outer - 30
+  ...middleRadius,
+  outer: middleRadius.outer - 30
+}
+
+const childRadius = {
+  inner: bigRadius.outer + 1,
+  outer: bigRadius.outer + 46
 }
 
 interface BusinessArc {
@@ -70,28 +75,16 @@ interface BusinessArc {
   active?: boolean,
   focused?: boolean,
   children?: MotionArc[],
-  sexyChildren?: any,
 }
 
-const testChildren2 = {
-  startRotation: -54.25,
-  startAngle: focusedAngle,
-  endAngle: selectedAngle,
-  leavingRadiusTarget: middleRadius.outer,
-  radius: {
-    inner: bigRadius.outer + 1,
-    outer: bigRadius.outer + 46
-  },
-  arcs: ['blue', 'yellow', 'red']
-}
-
+const testChildAngle = 26;
 const testChildren = [
   {
-    angle: 26,
+    angle: 0,
     fill: 'blue',
     radius: {
-      inner: bigRadius.outer + 1,
-      outer: bigRadius.outer + 46
+      inner: bigRadius.outer,
+      outer: bigRadius.outer
     },
     leavingRadiusTarget: middleRadius.outer,
     id: 'test_blue',
@@ -99,11 +92,11 @@ const testChildren = [
     rotation: -90.25
   },
   {
-    angle: 27,
+    angle: 0,
     fill: 'yellow',
     radius: {
-      inner: bigRadius.outer + 1,
-      outer: bigRadius.outer + 46
+      inner: bigRadius.outer,
+      outer: bigRadius.outer
     },
     leavingRadiusTarget: middleRadius.outer,
     id: 'test_yellow',
@@ -111,11 +104,11 @@ const testChildren = [
     rotation: -63.5
   },
   {
-    angle: 26.25,
+    angle: 0,
     fill: 'red',
     radius: {
-      inner: bigRadius.outer + 1,
-      outer: bigRadius.outer + 46
+      inner: bigRadius.outer,
+      outer: bigRadius.outer
     },
     leavingRadiusTarget: middleRadius.outer,
     id: 'test_red',
@@ -143,7 +136,6 @@ const businessWheel: BusinessArc[] = [
     icon: icons.paw,
     active: true,
     text: 'Tierhalterhaftpflicht',
-    sexyChildren: testChildren2
   },
   {
     id: '4',
@@ -182,7 +174,7 @@ const fromBusinessToMetal = businessWheel => {
         fill: '#00fff0',
         opacity: 1,
         radius: bigRadius,
-        image: getImage(icon, {width: 80, height: 80}, {offsetScale: 0.75})
+        // image: getImage(icon, {width: 80, height: 80}, {offsetScale: 0.75})
       }
     }
 
@@ -192,7 +184,7 @@ const fromBusinessToMetal = businessWheel => {
         fill: '#00fff0',
         opacity: 1,
         radius: bigRadius,
-        image: getImage(icon, {width: 60, height: 60})
+        // image: getImage(icon, {width: 60, height: 60})
       }
     }
 
@@ -202,7 +194,7 @@ const fromBusinessToMetal = businessWheel => {
         fill: '#00fff0',
         opacity: 0.7,
         radius: middleRadius,
-        image: getImage(icon, {width: 40, height: 40})
+        // image: getImage(icon, {width: 40, height: 40})
       }
     }
 
@@ -211,7 +203,7 @@ const fromBusinessToMetal = businessWheel => {
       fill: '#34495e',
       opacity: 0.5,
       radius: smallRadius,
-      image: getImage(icon, {width: 40, height: 40}, {opacity: 0.5})
+      // image: getImage(icon, {width: 40, height: 40}, {opacity: 0.5})
     }
   }
 
@@ -232,7 +224,7 @@ const fromBusinessToMetal = businessWheel => {
           inner: centerWheel.radius.inner,
           outer: centerWheel.radius.outer + 105
         },
-        image: getImage('http://www.clker.com/cliparts/L/q/T/i/P/S/add-button-white-hi.png', {width: 50, height: 50})
+        // image: getImage('http://www.clker.com/cliparts/L/q/T/i/P/S/add-button-white-hi.png', {width: 50, height: 50})
       }
     ]
   };
@@ -299,7 +291,12 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
       wheel: s.wheel.map(w => w.id === id
         ? {
           ...w,
-          focused: true
+          focused: true,
+          children: w.children ? w.children.map(child => ({
+            ...child,
+            radius: childRadius,
+            angle: testChildAngle
+          })) : undefined
         }
         : w)
     }))
@@ -311,7 +308,15 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
       wheel: s.wheel.map(w => w.id === id
         ? {
           ...w,
-          focused: false
+          focused: false,
+          children: w.children ? w.children.map(child => ({
+            ...child,
+            radius: {
+              inner: bigRadius.outer,
+              outer: bigRadius.outer
+            },
+            angle: 0
+          })) : undefined
         }
         : w)
     }))
