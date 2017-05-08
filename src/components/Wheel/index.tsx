@@ -173,34 +173,32 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                       onMouseOut={active ? this.props.onFocusLost.bind(undefined, id) : undefined}
                       onClick={active ? this.props.onSelect.bind(undefined, id, selected) : undefined}
                     />
-                    {children && children.map(child => ({...child, width: 30})).map((child, childIndex) => <Motion
-                       key={child.id}
-                       defaultStyle={{
-                         angle: (style.angle - children.length + 1) / children.length,
-                         innerRadius: style.outerRadius,
-                         outerRadius: style.outerRadius,
-                         rotation: style.rotation + ((style.angle - children.length) / children.length + 1) * childIndex
-                       }}
-                       style={{
-                         angle: spring(style.angle / children.length - 0.5, presets.wobbly),
-                         innerRadius: style.outerRadius,
-                         outerRadius: spring(style.outerRadius + (selected ? child.width : 10), presets.wobbly),
-                         rotation: spring(style.rotation + (style.angle / children.length + (childIndex === 0 ? 0 : 0.5)) * childIndex, presets.wobbly)
-                       }}
-                      >
-                      {interpolatedStyles =>
-                        <Arc
-                          opacity={style.opacity}
-                          angle={interpolatedStyles.angle}
-                          x={center.x}
-                          y={center.y}
-                          innerRadius={interpolatedStyles.innerRadius}
-                          outerRadius={interpolatedStyles.outerRadius}
-                          fill={child.fill}
-                          rotation={interpolatedStyles.rotation}
-                        />
-                      }
-                    </Motion>)}
+                    {children && children.map(child => ({...child, width: 30})).map((child, childIndex) => {
+                      const preset = presets[this.props.animationPreset]
+                      const rotationStyle = childIndex => style.rotation + (style.angle / children.length + (childIndex === 0 ? 0 : 0.5)) * childIndex
+                      return <Motion
+                         key={child.id}
+                         style={{
+                           angle: style.angle / children.length - 0.5,
+                           innerRadius: style.outerRadius,
+                           outerRadius: spring(style.outerRadius + (selected ? child.width : 10), preset),
+                           rotation: rotationStyle(childIndex)
+                         }}
+                        >
+                        {interpolatedStyles =>
+                          <Arc
+                            opacity={0.9 * style.opacity}
+                            angle={interpolatedStyles.angle}
+                            x={center.x}
+                            y={center.y}
+                            innerRadius={interpolatedStyles.innerRadius}
+                            outerRadius={interpolatedStyles.outerRadius}
+                            fill={child.fill}
+                            rotation={interpolatedStyles.rotation}
+                          />
+                        }
+                      </Motion>}
+                    )}
                   </Group>
                 )}
               </Layer>
