@@ -174,7 +174,7 @@ const fromBusinessToMetal = businessWheel => {
         fill: '#00fff0',
         opacity: 1,
         radius: bigRadius,
-        // image: getImage(icon, {width: 80, height: 80}, {offsetScale: 0.75})
+        image: getImage(icon, {width: 80, height: 80}, {offsetScale: 0.75})
       }
     }
 
@@ -184,7 +184,7 @@ const fromBusinessToMetal = businessWheel => {
         fill: '#00fff0',
         opacity: 1,
         radius: bigRadius,
-        // image: getImage(icon, {width: 60, height: 60})
+        image: getImage(icon, {width: 60, height: 60})
       }
     }
 
@@ -194,7 +194,7 @@ const fromBusinessToMetal = businessWheel => {
         fill: '#00fff0',
         opacity: 0.7,
         radius: middleRadius,
-        // image: getImage(icon, {width: 40, height: 40})
+        image: getImage(icon, {width: 40, height: 40})
       }
     }
 
@@ -203,7 +203,7 @@ const fromBusinessToMetal = businessWheel => {
       fill: '#34495e',
       opacity: 0.5,
       radius: smallRadius,
-      // image: getImage(icon, {width: 40, height: 40}, {opacity: 0.5})
+      image: getImage(icon, {width: 40, height: 40}, {opacity: 0.5})
     }
   }
 
@@ -224,7 +224,7 @@ const fromBusinessToMetal = businessWheel => {
           inner: centerWheel.radius.inner,
           outer: centerWheel.radius.outer + 105
         },
-        // image: getImage('http://www.clker.com/cliparts/L/q/T/i/P/S/add-button-white-hi.png', {width: 50, height: 50})
+        image: getImage('http://www.clker.com/cliparts/L/q/T/i/P/S/add-button-white-hi.png', {width: 50, height: 50})
       }
     ]
   };
