@@ -22,7 +22,7 @@ body {
 .circleTextContainer {
   position: absolute;
   left: 290px;
-  top: 447px;
+  top: 482px;
   display: table;
   table-layout: fixed;
   z-index: 9000;

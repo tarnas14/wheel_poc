@@ -248,7 +248,8 @@ export namespace PoC {
     circle: any,
     animationPreset: string,
     animationSetting: AnimationPreset,
-    centerText: string
+    centerText: string,
+    showChildren: boolean
   }
 }
 
@@ -262,7 +263,8 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
       circle: centerWheel,
       animationPreset: 'wobbly',
       centerText: '',
-      animationSetting: presets.wobbly
+      animationSetting: presets.wobbly,
+      showChildren: true
     }
   }
 
@@ -307,7 +309,7 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
 
   focusLost = (id) => {
     this.setState(s => ({
-      centerText: '',
+      centerText: s.wheel.filter(w => w.selected).length ? s.wheel.find(w => w.selected).text : '',
       wheel: s.wheel.map(w => w.id === id
         ? {
           ...w,
@@ -371,9 +373,16 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
     }))
   }
 
+  showChildren = (e) => {
+    this.setState(s => ({
+      showChildren: !s.showChildren
+    }))
+  }
+
   render () {
     const {animationSetting: {stiffness, damping}} = this.state;
     return <div>
+      <p><label><input type="checkbox" checked={this.state.showChildren} onChange={this.showChildren.bind(this)}/> children</label></p>
       <button onClick={this.removeData.bind(this)}>hide</button>
       <button onClick={this.addDataAgain.bind(this)}>show</button>
       <select onChange={this.setPreset.bind(this)} value={this.state.animationPreset}>
@@ -393,7 +402,7 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
       </div>
       <Wheel
         wheel={[
-          ...toWheel(fromBusinessToMetal(this.state.wheel))
+          ...toWheel(fromBusinessToMetal(this.state.wheel.map(w => ({...w, children: this.state.showChildren ? w.children : []}))))
         ]}
         circle={this.state.circle}
         animationPreset={this.state.animationSetting}
