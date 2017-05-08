@@ -9,7 +9,7 @@ body {
   font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
   line-height: 1.4em;
   background: #101c29;
-  color: #4d4d4d;
+  color: white;
   width: 700px;
   margin: 0 auto;
   -webkit-font-smoothing: antialiased;
@@ -22,7 +22,7 @@ body {
 .circleTextContainer {
   position: absolute;
   left: 290px;
-  top: 311px;
+  top: 447px;
   display: table;
   table-layout: fixed;
   z-index: 9000;

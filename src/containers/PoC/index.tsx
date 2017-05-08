@@ -247,6 +247,7 @@ export namespace PoC {
     testChildren: MotionArc[],
     circle: any,
     animationPreset: string,
+    animationSetting: AnimationPreset,
     centerText: string
   }
 }
@@ -260,7 +261,8 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
       testChildren: [],
       circle: centerWheel,
       animationPreset: 'wobbly',
-      centerText: ''
+      centerText: '',
+      animationSetting: presets.wobbly
     }
   }
 
@@ -281,7 +283,8 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
   setPreset = (e) => {
     const preset = e.currentTarget.value;
     this.setState({
-      animationPreset: preset
+      animationPreset: preset,
+      animationSetting: presets[preset]
     })
   }
 
@@ -334,6 +337,7 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
     }
 
     this.setState(s => ({
+      centerText: selected ? '' : s.wheel.find(w => w.id === id).text,
       wheel: s.wheel.map(w => w.id === id
         ? {
           ...w,
@@ -347,7 +351,28 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
     }))
   }
 
+  changeStiffness = (e) => {
+    const val = e.currentTarget.value;
+    this.setState(s => ({
+      animationSetting: {
+        ...s.animationSetting,
+        stiffness: val
+      }
+    }))
+  }
+
+  changeDamping = (e) => {
+    const val = e.currentTarget.value;
+    this.setState(s => ({
+      animationSetting: {
+        ...s.animationSetting,
+        damping: val
+      }
+    }))
+  }
+
   render () {
+    const {animationSetting: {stiffness, damping}} = this.state;
     return <div>
       <button onClick={this.removeData.bind(this)}>hide</button>
       <button onClick={this.addDataAgain.bind(this)}>show</button>
@@ -357,6 +382,12 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
         <option value="gentle">gentle</option>
         <option value="stiff">stiff</option>
       </select>
+      <p>
+        stiffness: ({stiffness}) <br/> <input type="range" min="0" max="300" value={stiffness} onChange={this.changeStiffness.bind(this)}/>
+      </p>
+      <p>
+        damping: ({damping}) <br /> <input type="range" min="0" max="40" value={damping} onChange={this.changeDamping.bind(this)}/>
+      </p>
       <div className={style.circleTextContainer}>
         <p>{this.state.centerText}</p>
       </div>
@@ -365,7 +396,7 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
           ...toWheel(fromBusinessToMetal(this.state.wheel))
         ]}
         circle={this.state.circle}
-        animationPreset={this.state.animationPreset}
+        animationPreset={this.state.animationSetting}
         onFocus={this.focus.bind(this)}
         onFocusLost={this.focusLost.bind(this)}
         onSelect={this.selected.bind(this)}

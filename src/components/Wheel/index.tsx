@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Image as KonvaImage, Group, Layer, Stage, Arc} from 'react-konva';
-import {TransitionMotion, Motion, spring, presets} from 'react-motion';
+import {TransitionMotion, Motion, spring} from 'react-motion';
 
 const center = {
   x: 350,
@@ -11,7 +11,7 @@ export namespace Wheel {
   export interface Props {
     wheel: MotionArc[],
     circle: any,
-    animationPreset: string,
+    animationPreset: AnimationPreset,
     onFocus: (id: string) => void,
     onFocusLost: (id: string) => void,
     onSelect: (id: string) => void,
@@ -39,7 +39,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
   }
 
   getStyles = () => {
-    const preset = presets[this.props.animationPreset];
+    const preset = this.props.animationPreset;
     return this.props.wheel.map(arc => ({
       key: arc.id,
       data: {
@@ -174,7 +174,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                       onClick={active ? this.props.onSelect.bind(undefined, id, selected) : undefined}
                     />
                     {children && children.map(child => ({...child, width: 30})).map((child, childIndex) => {
-                      const preset = presets[this.props.animationPreset]
+                      const preset = this.props.animationPreset;
                       const rotationStyle = childIndex => style.rotation + (style.angle / children.length + (childIndex === 0 ? 0 : 0.5)) * childIndex
                       return <Motion
                          key={child.id}

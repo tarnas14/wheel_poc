@@ -39,3 +39,7 @@ declare interface MotionArc extends Arc {
   rotation: number
 }
 
+declare interface AnimationPreset {
+  stiffness: number,
+  damping: number
+}
