@@ -175,13 +175,21 @@ const fromBusinessToMetal = businessWheel => {
     }
 
     if (focused) {
-      return {
-        angle: focusedAngle,
-        fill: '#00fff0',
-        opacity: 1,
-        radius: bigRadius,
-        image: getImage(icon, {width: 70, height: 70})
-      }
+      return active
+        ? {
+          angle: focusedAngle,
+          fill: '#00fff0',
+          opacity: 1,
+          radius: bigRadius,
+          image: getImage(icon, {width: 70, height: 70})
+        }
+        : {
+          angle: focusedAngle,
+          fill: '#34495e',
+          opacity: 1,
+          radius: middleRadius,
+          image: getImage(icon, {width: 50, height: 50})
+        }
     }
 
     if (active) {
@@ -285,6 +293,10 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
   }
 
   focus = (id) => {
+    if (!this.state.wheel.filter(w => w.id === id).length) {
+      return;
+    }
+
     this.setState(s => ({
       centerText: s.wheel.find(w => w.id === id).text,
       wheel: s.wheel.map(w => w.id === id
@@ -300,6 +312,10 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
   }
 
   focusLost = (id) => {
+    if (!this.state.wheel.filter(w => w.id === id).length) {
+      return;
+    }
+
     this.setState(s => ({
       centerText: s.wheel.filter(w => w.selected).length ? s.wheel.find(w => w.selected).text : '',
       wheel: s.wheel.map(w => w.id === id
@@ -320,6 +336,10 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
   }
 
   selected = (id, selected) => {
+    if (!this.state.wheel.filter(w => w.id === id).length) {
+      return;
+    }
+
     this.setState(s => ({
       centerText: selected ? '' : s.wheel.find(w => w.id === id).text,
       wheel: s.wheel.map(w => w.id === id

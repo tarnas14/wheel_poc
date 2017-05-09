@@ -194,10 +194,10 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                         outerRadius={style.outerRadius}
                         fill={fill}
                         rotation={style.rotation}
-                        onMouseOver={active ? this.props.onFocus.bind(undefined, id) : undefined}
-                        onMouseOut={active ? this.props.onFocusLost.bind(undefined, id) : undefined}
-                        onTouchEnd={active ? this.props.onSelect.bind(undefined, id, selected) : undefined}
-                        onClick={active ? this.props.onSelect.bind(undefined, id, selected) : undefined}
+                        onMouseOver={this.props.onFocus.bind(undefined, id)}
+                        onMouseOut={this.props.onFocusLost.bind(undefined, id)}
+                        onTouchEnd={this.props.onSelect.bind(undefined, id, selected)}
+                        onClick={this.props.onSelect.bind(undefined, id, selected)}
                       />
                       {children && children.map(child => ({...child, width: 315 * 0.10})).map((child, childIndex) => {
                         const preset = this.props.animationPreset;
