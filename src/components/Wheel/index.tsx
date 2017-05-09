@@ -35,13 +35,16 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
   }
 
   componentDidMount () {
-    const innerWidth = ((window.innerWidth > 0) ? window.innerWidth : screen.width);
-    const scale = innerWidth / (center.x * 2);
+    const updateScale = () => {
+      const innerWidth = ((window.innerWidth > 0) ? window.innerWidth : screen.width);
+      const containerWidth = innerWidth > 740 ? 740 : innerWidth;
+      const scale = containerWidth / (center.x * 2);
 
-    if (scale < 1) {
       this.setState({scale});
     }
 
+    updateScale();
+    window.onresize = updateScale;
   }
 
   getDefaultStyles = () => {
