@@ -36,14 +36,8 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
     const innerWidth = ((window.innerWidth > 0) ? window.innerWidth : screen.width);
     const scale = innerWidth / (center.x * 2);
 
-    this.props.setText(`${innerWidth} : ${scale} : ${scale * center.x * 2}`);
-
     if (scale < 1) {
       this.setState({scale});
-      // this.stageRef.width(center.x * 2 * scale);
-      // this.stageRef.height(center.y * 2 * scale);
-      // this.stageRef.scale({ x: scale, y: scale });
-      // this.stageRef.draw();
     }
 
   }
