@@ -170,7 +170,7 @@ const fromBusinessToMetal = businessWheel => {
         fill: '#00fff0',
         opacity: 1,
         radius: bigRadius,
-        image: getImage(icon, {width: 80, height: 80}, {offsetScale: 0.75})
+        image: getImage(icon, {width: 90, height: 90}, {offsetScale: 0.8})
       }
     }
 
@@ -180,7 +180,7 @@ const fromBusinessToMetal = businessWheel => {
         fill: '#00fff0',
         opacity: 1,
         radius: bigRadius,
-        image: getImage(icon, {width: 60, height: 60})
+        image: getImage(icon, {width: 70, height: 70})
       }
     }
 
@@ -190,7 +190,7 @@ const fromBusinessToMetal = businessWheel => {
         fill: '#00fff0',
         opacity: 0.7,
         radius: middleRadius,
-        image: getImage(icon, {width: 40, height: 40})
+        image: getImage(icon, {width: 50, height: 50})
       }
     }
 
@@ -365,9 +365,6 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
     const {animationSetting: {stiffness, damping}} = this.state;
     return <div>
       <div className={style.fakeHeader}></div>
-      {/*<div className={style.circleTextContainer}>
-        <p>{this.state.centerText}</p>
-      </div>*/}
       <Wheel
         wheel={[
           ...toWheel(this.state.wheel && fromBusinessToMetal(this.state.wheel.map(w => ({...w, children: this.state.showChildren ? w.children : []}))))
@@ -378,6 +375,7 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
         onFocusLost={this.focusLost.bind(this)}
         onSelect={this.selected.bind(this)}
         setText={text => this.setState({centerText: text})}
+        centerText={this.state.centerText}
       />
       <p><label><input type="checkbox" checked={this.state.showChildren} onChange={this.showChildren.bind(this)}/> children</label></p>
       <button onClick={this.removeData.bind(this)}>hide</button>

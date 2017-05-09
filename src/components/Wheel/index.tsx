@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {Image as KonvaImage, Group, Layer, Stage, Arc} from 'react-konva';
 import {TransitionMotion, Motion, spring} from 'react-motion';
+import * as style from '../../containers/PoC/style.css';
 
 const center = {
   x: 370,
@@ -16,10 +17,11 @@ export namespace Wheel {
     onFocusLost: (id: string) => void,
     onSelect: (id: string) => void,
     setText: (text: string) => void,
+    centerText: string,
   }
 
   export interface State {
-    scale: number
+    scale: number,
   }
 }
 
@@ -138,7 +140,10 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
 
   render() {
     return (
-      <div id="stage-container" ref={containerRef => this.container = containerRef}>
+      <div id="stage-container" style={{position: 'relative', width: `${center.x*2*this.state.scale}px`, height: `${center.y*2*this.state.scale}px`}}>
+        <div className={style.circleTextContainer}>
+          <p>{this.props.centerText}</p>
+        </div>
         <Stage ref={stageRef => this.stageRef = stageRef} scaleX={this.state.scale} scaleY={this.state.scale} width={center.x*2*this.state.scale} height={center.y*2*this.state.scale}>
             {/* circle */}
             <TransitionMotion

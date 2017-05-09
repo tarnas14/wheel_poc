@@ -35,14 +35,14 @@ button {
 
 .circleTextContainer {
   position: absolute;
-  left: 290px;
-  top: 370px;
+  left: 39.2%;
+  top: 39.2%;
   display: table;
   table-layout: fixed;
   z-index: 9000;
-  width: 140px;
-  height: 140px;
-  padding: 10px;
+  width: 16.8%;
+  height: 21.7%;
+  padding: 2.5%;
   border-radius: 50%;
   text-align: center;
 }
@@ -52,6 +52,11 @@ button {
   display: table-cell;
   vertical-align: middle;
   color: white;
-  font-size: 1.4em;
   line-height: 1.5;
+}
+
+@media all and (min-width: 740px) {
+  .circleTextContainer p {
+    font-size: 1.4em;
+  }
 }
