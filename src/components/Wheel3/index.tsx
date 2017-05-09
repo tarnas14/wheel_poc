@@ -207,7 +207,7 @@ export class Wheel3 extends React.Component<Wheel3.Props, Wheel3.State> {
                   angle: this.state.mounted ? spring(arc.angle) : arc.angle,
                   rotation: this.state.mounted ? spring(arc.rotation) : arc.rotation,
                   innerRadius: arc.radius.inner,
-                  outerRadius: arc.radius.outer
+                  outerRadius: this.state.mounted ? spring(arc.radius.outer) : arc.radius.outer
                 }}
               >
                 {interpolatedStyle => <Group>
