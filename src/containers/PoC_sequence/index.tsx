@@ -40,7 +40,7 @@ const functions = [{
     return i === 0
       ? {rotation: -120 + i * 35, angle: spring(35, preset), outerRadius: spring(290, preset)}
       : {
-        rotation: -120 + i * 35,
+        rotation: -120 - i * 35,
         angle: previousStyles[i - 1].angle,
         outerRadius: previousStyles[i - 1].outerRadius
       }
