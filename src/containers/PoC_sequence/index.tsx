@@ -473,18 +473,20 @@ export class PoCSequence extends React.Component<PoCSequence.Props, PoCSequence.
   render () {
     const {animationSetting: {stiffness, damping}} = this.state;
     return <div>
+      <div>
+        <h3>Choose enter animation then click "toggle" twice to hide and show the wheel</h3>
+        <select style={{margin: '15px', marginLeft: '0', padding: '15px'}}value={this.state.animation.name} onChange={this.changeFunc.bind(this)}>
+          {functions.map(f => <option value={f.name}>{f.name}</option>)}
+        </select>
+      </div>
       <button onClick={this.toggleShow.bind(this)}>toggle</button>
+      <h3>animation settings here</h3>
       <div>
         <select onChange={this.setPreset.bind(this)} value={this.state.animationPreset}>
           <option value="noWobble">noWobble</option>
           <option value="wobbly">wobbly</option>
           <option value="gentle">gentle</option>
           <option value="stiff">stiff</option>
-        </select>
-      </div>
-      <div>
-        <select value={this.state.animation.name} onChange={this.changeFunc.bind(this)}>
-          {functions.map(f => <option value={f.name}>{f.name}</option>)}
         </select>
       </div>
       <p>
