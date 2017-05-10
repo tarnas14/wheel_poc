@@ -4,6 +4,9 @@ import {Image as KonvaImage, Group, Layer, Stage, Arc} from 'react-konva';
 import {TransitionMotion, Motion, spring, presets} from 'react-motion';
 import {Wheel} from '../../components';
 import * as style from './style.css'
+import * as successButtonStyle from './successButtonStyle.css';
+import * as errorButtonStyle from './errorButtonStyle.css';
+import {ThemeProvider, themr} from 'react-css-themr'
 
 const sameAngle = 35;
 const focusedAngle = sameAngle + 10;
@@ -243,6 +246,26 @@ const toWheel = (wheel): MotionArc[] => wheel ? wheel.arcs.reduce((allArcs, curr
   }]
 }, []) : [];
 
+export namespace ThemedButton {
+  export interface Props { theme?: any }
+
+  export interface State { }
+}
+
+@themr('ThemedButton')
+class ThemedButton extends React.Component<ThemedButton.Props, ThemedButton.State> {
+  render () {
+    return <button className={this.props.theme.button}> HEY </button>
+  }
+}
+
+@themr('ThemedButton', successButtonStyle)
+class SuccessButton extends React.Component<ThemedButton.Props, ThemedButton.State> {
+  render () {
+    return <ThemedButton theme={this.props.theme} />
+  }
+}
+
 export namespace PoC {
   export interface Props extends RouteComponentProps<void> { }
 
@@ -412,6 +435,15 @@ export class PoC extends React.Component<PoC.Props, PoC.State> {
       <p>
         damping: ({damping}) <br /> <input type="range" min="0" max="40" value={damping} onChange={this.changeDamping.bind(this)}/>
       </p>
+      <div>success: <ThemedButton theme={successButtonStyle} /> </div>
+      <div>error: <ThemedButton theme={errorButtonStyle} /> </div>
+      <div>default success: <SuccessButton/> </div>
+      <div>default success from theme: <ThemeProvider theme={{
+          ThemedButton: successButtonStyle
+        }}>
+          <ThemedButton />
+        </ThemeProvider>
+      </div>
     </div>;
   }
 }
