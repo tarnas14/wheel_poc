@@ -6,70 +6,96 @@ import {WheelSequence} from '../../components';
 import * as style from './style.css'
 
 const functions = [{
+  init: {rotation: -270, angle: 0, innerRadius: 90, outerRadius: 90},
   name: 'Rad', func: preset => previousStyles => previousStyles.map((_, i) => {
     return i === 0
-      ? {rotation: -120 + i * 35, angle: 35, outerRadius: spring(290, preset)}
+      ? {innerRadius: 90, rotation: -120 + i * 35, angle: 35, outerRadius: spring(290, preset)}
       : {
+        innerRadius: 90,
         rotation: -120 + i * 35,
         angle: previousStyles[i - 1].angle,
         outerRadius: previousStyles[i - 1].outerRadius
       }
   })
 }, {
+  init: {rotation: -270, angle: 0, innerRadius: 90, outerRadius: 90},
   name: 'Rad counter clockwise', func: preset => previousStyles => previousStyles.map((_, i) => {
     return i === 0
-      ? {rotation: -120 + i * 35, angle: 35, outerRadius: spring(290, preset)}
+      ? {innerRadius: 90, rotation: -120 + i * 35, angle: 35, outerRadius: spring(290, preset)}
       : {
+        innerRadius: 90,
         rotation:  -120 - i * 35,
         angle: previousStyles[i - 1].angle,
         outerRadius: previousStyles[i - 1].outerRadius
       }
   })
 }, {
+  init: {rotation: -270, angle: 0, innerRadius: 90, outerRadius: 90},
   name: 'Rad A', func: preset => previousStyles => previousStyles.map((_, i) => {
     return i === 0
-      ? {rotation: -120 + i * 35, angle: spring(35, preset), outerRadius: spring(290, preset)}
+      ? {innerRadius: 90, rotation: -120 + i * 35, angle: spring(35, preset), outerRadius: spring(290, preset)}
       : {
+innerRadius: 90,
         rotation: -120 + i * 35,
         angle: previousStyles[i - 1].angle,
         outerRadius: previousStyles[i - 1].outerRadius
       }
   })
 }, {
+  init: {rotation: -270, angle: 0, innerRadius: 90, outerRadius: 90},
   name: 'Rad A counter clockwise', func: preset => previousStyles => previousStyles.map((_, i) => {
     return i === 0
-      ? {rotation: -120 + i * 35, angle: spring(35, preset), outerRadius: spring(290, preset)}
+      ? {innerRadius: 90, rotation: -120 + i * 35, angle: spring(35, preset), outerRadius: spring(290, preset)}
       : {
+innerRadius: 90,
         rotation: -120 - i * 35,
         angle: previousStyles[i - 1].angle,
         outerRadius: previousStyles[i - 1].outerRadius
       }
   })
 }, {
+  init: {rotation: -270, angle: 0, innerRadius: 90, outerRadius: 90},
   name: 'Rad A Rot aka static fanout', func: preset => previousStyles => previousStyles.map((_, i) => {
     return i === 0
-      ? {rotation: -120 + i * 35, angle: spring(35, preset), outerRadius: spring(290, preset)}
+      ? {innerRadius: 90, rotation: -120 + i * 35, angle: spring(35, preset), outerRadius: spring(290, preset)}
       : {
+        innerRadius: 90,
         rotation: previousStyles[i -1].rotation + previousStyles[i - 1].angle,
         angle: previousStyles[i - 1].angle,
         outerRadius: previousStyles[i - 1].outerRadius
       }
   })
 }, {
+  init: {rotation: -270, angle: 0, innerRadius: 90, outerRadius: 90},
   name: 'Rad A Rot counter clockwise', func: preset => previousStyles => previousStyles.map((_, i) => {
     return i === 0
-      ? {rotation: -120 + i * 35, angle: spring(35, preset), outerRadius: spring(290, preset)}
+      ? {innerRadius: 90, rotation: -120 + i * 35, angle: spring(35, preset), outerRadius: spring(290, preset)}
       : {
+innerRadius: 90,
         rotation: previousStyles[i -1].rotation - previousStyles[i - 1].angle,
         angle: previousStyles[i - 1].angle,
         outerRadius: previousStyles[i - 1].outerRadius
       }
   })
 }, {
+  init: {rotation: -270, angle: 0, innerRadius: 90, outerRadius: 90},
   name: 'dynamic fanout', func: preset => previousStyles => previousStyles.map((_, i) => {
     return i === 0
-      ? {rotation: spring(-120 + i * 35), angle: spring(35, preset), outerRadius: spring(290, preset)}
+      ? {innerRadius: 90, rotation: spring(-120 + i * 35), angle: spring(35, preset), outerRadius: spring(290, preset)}
       : {
+innerRadius: 90,
+        rotation: previousStyles[i -1].rotation + previousStyles[i - 1].angle,
+        angle: previousStyles[i - 1].angle,
+        outerRadius: previousStyles[i - 1].outerRadius
+      }
+  })
+}, {
+  init: {rotation: -270, angle: 0, innerRadius: 0, outerRadius: 0},
+  name: 'vortex', func: preset => previousStyles => previousStyles.map((_, i) => {
+    return i === 0
+      ? {innerRadius: spring(90), rotation: spring(-120 + i * 35), angle: spring(35, preset), outerRadius: spring(290, preset)}
+      : {
+        innerRadius: previousStyles[i -1].innerRadius,
         rotation: previousStyles[i -1].rotation + previousStyles[i - 1].angle,
         angle: previousStyles[i - 1].angle,
         outerRadius: previousStyles[i - 1].outerRadius
@@ -326,7 +352,7 @@ export namespace PoCSequence {
     centerText: string,
     showChildren: boolean,
     show: boolean,
-    animation: {name: string, func: (preset: AnimationPreset) => (sth: any[]) => any[]}
+    animation: {init: any, name: string, func: (preset: AnimationPreset) => (sth: any[]) => any[]}
   }
 }
 
@@ -507,6 +533,7 @@ export class PoCSequence extends React.Component<PoCSequence.Props, PoCSequence.
         setText={text => this.setState({centerText: text})}
         centerText={this.state.centerText}
         animation={this.state.animation.func}
+        initialAnimationState={this.state.animation.init}
       />
       }
     </div>;

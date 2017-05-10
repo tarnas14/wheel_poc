@@ -18,7 +18,8 @@ export namespace WheelSequence {
     onSelect: (id: string) => void,
     setText: (text: string) => void,
     centerText: string,
-    animation: (preset: AnimationPreset) => (sth: any[]) => any[]
+    animation: (preset: AnimationPreset) => (sth: any[]) => any[],
+    initialAnimationState: any
   }
 
   export interface State {
@@ -40,7 +41,7 @@ export class WheelSequence extends React.Component<WheelSequence.Props, WheelSeq
   }
 
   componentDidMount () {
-    setTimeout(() => this.setState({mounted: true}), 500)
+    this.setState({mounted: true})
     const updateScale = () => {
       const innerWidth = ((window.innerWidth > 0) ? window.innerWidth : screen.width);
       const containerWidth = innerWidth > 740 ? 740 : innerWidth;
@@ -90,8 +91,8 @@ export class WheelSequence extends React.Component<WheelSequence.Props, WheelSeq
   willCircleEnter() {
     return {
       opacity: 0,
-      innerRadius: this.props.circle.radius.inner,
-      outerRadius: this.props.circle.radius.inner
+      innerRadius: this.props.initialAnimationState.innerRadius === 0 ? 0 : this.props.circle.radius.inner,
+      outerRadius: this.props.initialAnimationState.innerRadius === 0 ? 0 : this.props.circle.radius.inner,
     }
   }
 
@@ -139,7 +140,7 @@ export class WheelSequence extends React.Component<WheelSequence.Props, WheelSeq
               }
             </TransitionMotion>
            {this.state.mounted && <StaggeredMotion
-              defaultStyles={this.props.wheel.map(_ => ({rotation: -270, angle: 0, outerRadius: 90}))}
+              defaultStyles={this.props.wheel.map(_ => this.props.initialAnimationState)}
               styles={this.props.animation(preset)}
             >
               {styles =>
@@ -150,7 +151,7 @@ export class WheelSequence extends React.Component<WheelSequence.Props, WheelSeq
                       x={center.x}
                       y={center.y}
                       rotation={style.rotation}
-                      innerRadius={90}
+                      innerRadius={style.innerRadius}
                       outerRadius={style.outerRadius}
                       fill={colors[i]}
                   />)}
