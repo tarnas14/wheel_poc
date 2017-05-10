@@ -101,6 +101,30 @@ innerRadius: 90,
         outerRadius: previousStyles[i - 1].outerRadius
       }
   })
+},{
+  init: {rotation: -270, angle: 0, innerRadius: 90, outerRadius: 90},
+  name: 'sequence', func: preset => previousStyles => previousStyles.map((_, i) => {
+    return i === 0
+      ? {innerRadius: 90, rotation: -120 + i * 35, angle: spring(35, preset), outerRadius: 290}
+      : {
+        innerRadius: 90,
+        rotation: previousStyles[i - 1].rotation + previousStyles[i - 1].angle,
+        angle: previousStyles[i - 1].angle > 33 ? spring(35, preset) : 0,
+        outerRadius: 290,
+      }
+  })
+}, {
+  init: {rotation: -270, angle: 0, innerRadius: 90, outerRadius: 90},
+  name: 'Rot A', func: preset => previousStyles => previousStyles.map((_, i) => {
+    return i === 0
+      ? {innerRadius: 90, rotation: -120 + i * 35, angle: spring(35, preset), outerRadius: 290}
+      : {
+        innerRadius: 90,
+        rotation: previousStyles[i - 1].rotation + previousStyles[i - 1].angle,
+        angle: previousStyles[i - 1].angle,
+        outerRadius: 290,
+      }
+  })
 }]
 
 const sameAngle = 35;
