@@ -89,7 +89,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
     const {circle} = this.props;
     return {
       angle: 0,
-      rotation: 0,
+      rotation: -270,
       opacity: 0,
       innerRadius: circle.radius.inner,
       outerRadius: circle.radius.inner,
