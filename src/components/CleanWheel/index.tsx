@@ -42,6 +42,8 @@ export class CleanWheel extends React.Component<CleanWheel.Props, CleanWheel.Sta
       const containerHeight = innerHeight > 740 ? 740 : innerHeight;
       const heightScale = containerHeight / (center.x * 2);
 
+      this.props.setText(innerHeight.toString());
+
       const scale = Math.min(widthScale, heightScale);
 
       this.setState({scale});
