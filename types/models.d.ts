@@ -43,3 +43,13 @@ declare interface AnimationPreset {
   stiffness: number,
   damping: number
 }
+
+declare interface BusinessArc {
+  id: string,
+  icon: string,
+  text: string,
+  selected?: boolean,
+  active?: boolean,
+  focused?: boolean,
+}
+

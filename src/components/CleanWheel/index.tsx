@@ -29,7 +29,7 @@ export namespace CleanWheel {
 export class CleanWheel extends React.Component<CleanWheel.Props, CleanWheel.State> {
   state = {
     scale: 1,
-    touched: false
+    touched: false,
   }
 
   componentDidMount () {
