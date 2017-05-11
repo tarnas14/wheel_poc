@@ -56,6 +56,10 @@ button {
   font-size: 0.9em;
 }
 
+.stageContainer {
+  margin: 0 auto;
+}
+
 @media all and (min-width: 740px) {
   .circleTextContainer p {
     font-size: 1.4em;

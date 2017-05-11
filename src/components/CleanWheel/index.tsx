@@ -36,7 +36,13 @@ export class CleanWheel extends React.Component<CleanWheel.Props, CleanWheel.Sta
     const updateScale = () => {
       const innerWidth = ((window.innerWidth > 0) ? window.innerWidth : screen.width);
       const containerWidth = innerWidth > 740 ? 740 : innerWidth;
-      const scale = containerWidth / (center.x * 2);
+      const widthScale = containerWidth / (center.x * 2);
+
+      const innerHeight = (screen.height);
+      const containerHeight = innerHeight > 740 ? 740 : innerHeight;
+      const heightScale = containerHeight / (center.x * 2);
+
+      const scale = Math.min(widthScale, heightScale);
 
       this.setState({scale});
     }
@@ -96,7 +102,7 @@ export class CleanWheel extends React.Component<CleanWheel.Props, CleanWheel.Sta
   render() {
     const preset = this.props.animationPreset;
     return (
-      <div id="stage-container" style={{position: 'relative', width: `${center.x*2*this.state.scale}px`, height: `${center.y*2*this.state.scale}px`}}>
+      <div id="stage-container" className={style.stageContainer} style={{position: 'relative', width: `${center.x*2*this.state.scale}px`, height: `${center.y*2*this.state.scale}px`}}>
         <div className={style.circleTextContainer}>
           <p>{this.props.centerText}</p>
         </div>
