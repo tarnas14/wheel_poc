@@ -53,6 +53,7 @@ button {
   vertical-align: middle;
   color: white;
   line-height: 1.5;
+  font-size: 0.9em;
 }
 
 @media all and (min-width: 740px) {

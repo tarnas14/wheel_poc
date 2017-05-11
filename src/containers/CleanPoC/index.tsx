@@ -267,13 +267,16 @@ export class CleanPoC extends React.Component<CleanPoC.Props, CleanPoC.State> {
     }))
   }
 
-  selected = (id, selected) => {
-    if (!this.state.wheel.filter(w => w.id === id).length) {
+  selected = (id) => {
+    const wheel = this.state.wheel.find(w => w.id === id);
+    if (!wheel) {
       return;
     }
 
+    const {selected} = wheel;
+
     this.setState(s => ({
-      centerText: selected ? '' : s.wheel.find(w => w.id === id).text,
+      centerText: selected ? '' : wheel.text,
       wheel: s.wheel.map(w => w.id === id
         ? {
           ...w,
@@ -316,6 +319,19 @@ export class CleanPoC extends React.Component<CleanPoC.Props, CleanPoC.State> {
   render () {
     const {animationSetting: {stiffness, damping}} = this.state;
     return <div>
+      {this.state.show && <CleanWheel
+        wheel={[
+          ...toWheel(this.state.wheel && fromBusinessToMetal(this.state.wheel))
+        ]}
+        circle={this.state.circle}
+        animationPreset={this.state.animationSetting}
+        onFocus={this.focus.bind(this)}
+        onFocusLost={this.focusLost.bind(this)}
+        onSelect={this.selected.bind(this)}
+        setText={text => this.setState({centerText: text})}
+        centerText={this.state.centerText}
+      />
+      }
       <div>
         <h3>Choose enter animation then click "toggle" twice to hide and show the wheel</h3>
       </div>
@@ -335,19 +351,6 @@ export class CleanPoC extends React.Component<CleanPoC.Props, CleanPoC.State> {
       <p>
         damping: ({damping}) <br /> <input type="range" min="0" max="40" value={damping} onChange={this.changeDamping.bind(this)}/>
       </p>
-      {this.state.show && <CleanWheel
-        wheel={[
-          ...toWheel(this.state.wheel && fromBusinessToMetal(this.state.wheel))
-        ]}
-        circle={this.state.circle}
-        animationPreset={this.state.animationSetting}
-        onFocus={this.focus.bind(this)}
-        onFocusLost={this.focusLost.bind(this)}
-        onSelect={this.selected.bind(this)}
-        setText={text => this.setState({centerText: text})}
-        centerText={this.state.centerText}
-      />
-      }
     </div>;
   }
 }

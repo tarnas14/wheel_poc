@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Image as KonvaImage, Group, Layer, Stage, Arc} from 'react-konva';
 import {presets,StaggeredMotion, TransitionMotion, Motion, spring} from 'react-motion';
-import * as style from '../../containers/PoC/style.css';
+import * as style from '../../containers/CleanPoC/style.css';
 
 const center = {
   x: 370,
@@ -135,6 +135,9 @@ export class CleanWheel extends React.Component<CleanWheel.Props, CleanWheel.Sta
                   outerRadius: wheelPart.radius.outer,
                   angle: wheelPart.angle,
                   rotation: -270,
+                  imageWidth: 0,
+                  imageHeight: 0,
+                  imageOffsetScale: 0,
                 }
               })}
               styles={previousStyles => previousStyles.map((_, i) => {
@@ -148,6 +151,9 @@ export class CleanWheel extends React.Component<CleanWheel.Props, CleanWheel.Sta
                     outerRadius: spring(wheelPart.radius.outer, preset),
                     angle: spring(wheelPart.angle, preset),
                     rotation: spring(wheelPart.rotation, preset),
+                    imageWidth: spring(wheelPart.image.size.width, preset),
+                    imageHeight: spring(wheelPart.image.size.height, preset),
+                    imageOffsetScale: spring(wheelPart.image.offsetScale, preset),
                   }
                 }
 
@@ -158,31 +164,61 @@ export class CleanWheel extends React.Component<CleanWheel.Props, CleanWheel.Sta
                   outerRadius: spring(wheelPart.radius.outer, preset),
                   angle: spring(wheelPart.angle, preset),
                   rotation: spring(wheelPart.rotation, preset),
+                  imageWidth: spring(wheelPart.image.size.width, preset),
+                  imageHeight: spring(wheelPart.image.size.height, preset),
+                  imageOffsetScale: spring(wheelPart.image.offsetScale, preset),
                 } : {
                   opacity: spring(wheelPart.opacity, preset),
                   innerRadius: wheelPart.radius.inner,
                   outerRadius: spring(wheelPart.radius.outer, preset),
-                  angle: previousStyles[i - 1].angle,
+                  angle: spring(wheelPart.angle, preset),
                   rotation: previousStyles[i - 1].rotation + previousStyles[i - 1].angle + 1,
+                  imageWidth: spring(wheelPart.image.size.width, preset),
+                  imageHeight: spring(wheelPart.image.size.height, preset),
+                  imageOffsetScale: spring(wheelPart.image.offsetScale, preset),
                 }
               })}
             >
               {styles =>
                 <Layer>
-                  {styles.map((style, i) => <Arc
-                      opacity={style.opacity}
-                      key={i}
-                      angle={style.angle}
-                      x={center.x}
-                      y={center.y}
-                      rotation={style.rotation}
-                      innerRadius={style.innerRadius}
-                      outerRadius={style.outerRadius}
-                      fill={this.props.wheel[i].fill}
-                      onMouseOver={this.touched.bind(undefined, this.props.onFocus.bind(undefined, this.props.wheel[i].id))}
-                      onMouseOut={this.touched.bind(undefined, this.props.onFocusLost.bind(undefined, this.props.wheel[i].id))}
-                      onClick={this.touched.bind(undefined, this.props.onSelect.bind(undefined, this.props.wheel[i].id))}
-                  />)}
+                  {styles.map((style, i) => {
+                    const wheelPart = this.props.wheel[i];
+                    return <Group>
+                      <Arc
+                          opacity={style.opacity}
+                          key={i}
+                          angle={style.angle}
+                          x={center.x}
+                          y={center.y}
+                          rotation={style.rotation}
+                          innerRadius={style.innerRadius}
+                          outerRadius={style.outerRadius}
+                          fill={this.props.wheel[i].fill}
+                          onMouseOver={this.touched.bind(undefined, this.props.onFocus.bind(undefined, this.props.wheel[i].id))}
+                          onMouseOut={this.touched.bind(undefined, this.props.onFocusLost.bind(undefined, this.props.wheel[i].id))}
+                          onClick={this.touched.bind(undefined, this.props.onSelect.bind(undefined, this.props.wheel[i].id))}
+                          onTouchEnd={this.touched.bind(undefined, this.props.onSelect.bind(undefined, this.props.wheel[i].id))}
+                      />
+                      <Group
+                        key={`image_${i}`}
+                        x={center.x}
+                        y={center.y}
+                        offsetY={style.imageOffsetScale * (style.outerRadius - style.imageHeight / 2)}
+                        rotation={90 + style.rotation + style.angle / 2}
+                      >
+                        <KonvaImage
+                          image={wheelPart.image.image}
+                          height={style.imageHeight}
+                          width={style.imageWidth}
+                          opacity={wheelPart.image.opacity || 1}
+                          rotation={-(90 + style.rotation + style.angle / 2)}
+                          offsetX={style.imageWidth / 2}
+                          offsetY={style.imageHeight / 2}
+                          listening={false}
+                        />
+                      </Group>
+                    </Group>
+                  })}
                 </Layer>
               }
             </StaggeredMotion>
