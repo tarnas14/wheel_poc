@@ -5,128 +5,6 @@ import {TransitionMotion, Motion, spring, presets} from 'react-motion';
 import {CleanWheel} from '../../components';
 import * as style from './style.css'
 
-const functions = [{
-  init: {rotation: -270, angle: 0, innerRadius: 90, outerRadius: 90},
-  name: 'Rad', func: preset => previousStyles => previousStyles.map((_, i) => {
-    return i === 0
-      ? {innerRadius: 90, rotation: -120 + i * 35, angle: 35, outerRadius: spring(290, preset)}
-      : {
-        innerRadius: 90,
-        rotation: -120 + i * 35,
-        angle: previousStyles[i - 1].angle,
-        outerRadius: previousStyles[i - 1].outerRadius
-      }
-  })
-}, {
-  init: {rotation: -270, angle: 0, innerRadius: 90, outerRadius: 90},
-  name: 'Rad counter clockwise', func: preset => previousStyles => previousStyles.map((_, i) => {
-    return i === 0
-      ? {innerRadius: 90, rotation: -120 + i * 35, angle: 35, outerRadius: spring(290, preset)}
-      : {
-        innerRadius: 90,
-        rotation:  -120 - i * 35,
-        angle: previousStyles[i - 1].angle,
-        outerRadius: previousStyles[i - 1].outerRadius
-      }
-  })
-}, {
-  init: {rotation: -270, angle: 0, innerRadius: 90, outerRadius: 90},
-  name: 'Rad A', func: preset => previousStyles => previousStyles.map((_, i) => {
-    return i === 0
-      ? {innerRadius: 90, rotation: -120 + i * 35, angle: spring(35, preset), outerRadius: spring(290, preset)}
-      : {
-innerRadius: 90,
-        rotation: -120 + i * 35,
-        angle: previousStyles[i - 1].angle,
-        outerRadius: previousStyles[i - 1].outerRadius
-      }
-  })
-}, {
-  init: {rotation: -270, angle: 0, innerRadius: 90, outerRadius: 90},
-  name: 'Rad A counter clockwise', func: preset => previousStyles => previousStyles.map((_, i) => {
-    return i === 0
-      ? {innerRadius: 90, rotation: -120 + i * 35, angle: spring(35, preset), outerRadius: spring(290, preset)}
-      : {
-innerRadius: 90,
-        rotation: -120 - i * 35,
-        angle: previousStyles[i - 1].angle,
-        outerRadius: previousStyles[i - 1].outerRadius
-      }
-  })
-}, {
-  init: {rotation: -270, angle: 0, innerRadius: 90, outerRadius: 90},
-  name: 'Rad A Rot aka static fanout', func: preset => previousStyles => previousStyles.map((_, i) => {
-    return i === 0
-      ? {innerRadius: 90, rotation: -120 + i * 35, angle: spring(35, preset), outerRadius: spring(290, preset)}
-      : {
-        innerRadius: 90,
-        rotation: previousStyles[i -1].rotation + previousStyles[i - 1].angle,
-        angle: previousStyles[i - 1].angle,
-        outerRadius: previousStyles[i - 1].outerRadius
-      }
-  })
-}, {
-  init: {rotation: -270, angle: 0, innerRadius: 90, outerRadius: 90},
-  name: 'Rad A Rot counter clockwise', func: preset => previousStyles => previousStyles.map((_, i) => {
-    return i === 0
-      ? {innerRadius: 90, rotation: -120 + i * 35, angle: spring(35, preset), outerRadius: spring(290, preset)}
-      : {
-innerRadius: 90,
-        rotation: previousStyles[i -1].rotation - previousStyles[i - 1].angle,
-        angle: previousStyles[i - 1].angle,
-        outerRadius: previousStyles[i - 1].outerRadius
-      }
-  })
-}, {
-  init: {rotation: -270, angle: 0, innerRadius: 90, outerRadius: 90},
-  name: 'dynamic fanout', func: preset => previousStyles => previousStyles.map((_, i) => {
-    return i === 0
-      ? {innerRadius: 90, rotation: spring(-120 + i * 35), angle: spring(35, preset), outerRadius: spring(290, preset)}
-      : {
-innerRadius: 90,
-        rotation: previousStyles[i -1].rotation + previousStyles[i - 1].angle,
-        angle: previousStyles[i - 1].angle,
-        outerRadius: previousStyles[i - 1].outerRadius
-      }
-  })
-}, {
-  init: {rotation: -270, angle: 0, innerRadius: 0, outerRadius: 0},
-  name: 'vortex', func: preset => previousStyles => previousStyles.map((_, i) => {
-    return i === 0
-      ? {innerRadius: spring(90), rotation: spring(-120 + i * 35), angle: spring(35, preset), outerRadius: spring(290, preset)}
-      : {
-        innerRadius: previousStyles[i -1].innerRadius,
-        rotation: previousStyles[i -1].rotation + previousStyles[i - 1].angle,
-        angle: previousStyles[i - 1].angle,
-        outerRadius: previousStyles[i - 1].outerRadius
-      }
-  })
-},{
-  init: {rotation: -270, angle: 0, innerRadius: 90, outerRadius: 90},
-  name: 'sequence', func: preset => previousStyles => previousStyles.map((_, i) => {
-    return i === 0
-      ? {innerRadius: 90, rotation: -120 + i * 35, angle: spring(35, preset), outerRadius: 290}
-      : {
-        innerRadius: 90,
-        rotation: previousStyles[i - 1].rotation + previousStyles[i - 1].angle,
-        angle: previousStyles[i - 1].angle > 33 ? spring(35, preset) : 0,
-        outerRadius: 290,
-      }
-  })
-}, {
-  init: {rotation: -270, angle: 0, innerRadius: 90, outerRadius: 90},
-  name: 'Rot A', func: preset => previousStyles => previousStyles.map((_, i) => {
-    return i === 0
-      ? {innerRadius: 90, rotation: -120 + i * 35, angle: spring(35, preset), outerRadius: 290}
-      : {
-        innerRadius: 90,
-        rotation: previousStyles[i - 1].rotation + previousStyles[i - 1].angle,
-        angle: previousStyles[i - 1].angle,
-        outerRadius: 290,
-      }
-  })
-}]
-
 const sameAngle = 35;
 const focusedAngle = sameAngle + 10;
 const selectedAngle = sameAngle * 2 + 10;
@@ -160,8 +38,6 @@ const icons = {
   injury: 'https://d30y9cdsu7xlg0.cloudfront.net/png/191712-200.png'
 };
 
-const maxRadius = 490;
-
 const centerWheel = {
   opacity: 0.5,
   fill: '#95a5a6',
@@ -193,47 +69,7 @@ interface BusinessArc {
   selected?: boolean,
   active?: boolean,
   focused?: boolean,
-  children?: MotionArc[],
 }
-
-const testChildren = [
-  {
-    angle: 0,
-    fill: 'blue',
-    radius: {
-      inner: bigRadius.outer,
-      outer: bigRadius.outer
-    },
-    leavingRadiusTarget: middleRadius.outer,
-    id: 'test_blue',
-    opacity: 1,
-    rotation: -90.25
-  },
-  {
-    angle: 0,
-    fill: 'yellow',
-    radius: {
-      inner: bigRadius.outer,
-      outer: bigRadius.outer
-    },
-    leavingRadiusTarget: middleRadius.outer,
-    id: 'test_yellow',
-    opacity: 1,
-    rotation: -63.5
-  },
-  {
-    angle: 0,
-    fill: 'red',
-    radius: {
-      inner: bigRadius.outer,
-      outer: bigRadius.outer
-    },
-    leavingRadiusTarget: middleRadius.outer,
-    id: 'test_red',
-    opacity: 1,
-    rotation: -36
-  }
-];
 
 const businessWheel: BusinessArc[] = [
   {
@@ -246,7 +82,6 @@ const businessWheel: BusinessArc[] = [
     id: 'glass',
     icon: icons.glass,
     active: true,
-    children: testChildren,
     text: 'Privat Haftpflicht'
   },
   {
@@ -374,9 +209,7 @@ export namespace CleanPoC {
     animationPreset: string,
     animationSetting: AnimationPreset,
     centerText: string,
-    showChildren: boolean,
     show: boolean,
-    animation: {init: any, name: string, func: (preset: AnimationPreset) => (sth: any[]) => any[]}
   }
 }
 
@@ -390,24 +223,8 @@ export class CleanPoC extends React.Component<CleanPoC.Props, CleanPoC.State> {
       animationPreset: 'wobbly',
       centerText: '',
       animationSetting: presets.wobbly,
-      showChildren: true,
       show: true,
-      animation: functions[0]
     }
-  }
-
-  removeData = () => {
-    this.setState({
-      wheel: undefined,
-      circle: undefined
-    });
-  }
-
-  addDataAgain = () => {
-    this.setState({
-      wheel: businessWheel,
-      circle: centerWheel
-    })
   }
 
   setPreset = (e) => {
@@ -428,10 +245,7 @@ export class CleanPoC extends React.Component<CleanPoC.Props, CleanPoC.State> {
       wheel: s.wheel.map(w => w.id === id
         ? {
           ...w,
-          focused: true,
-          children: w.children ? w.children.map(child => ({
-            ...child,
-          })) : undefined
+          focused: true
         }
         : w)
     }))
@@ -447,15 +261,7 @@ export class CleanPoC extends React.Component<CleanPoC.Props, CleanPoC.State> {
       wheel: s.wheel.map(w => w.id === id
         ? {
           ...w,
-          focused: false,
-          children: w.children ? w.children.map(child => ({
-            ...child,
-            radius: {
-              inner: bigRadius.outer,
-              outer: bigRadius.outer
-            },
-            angle: 0
-          })) : undefined
+          focused: false
         }
         : w)
     }))
@@ -501,23 +307,10 @@ export class CleanPoC extends React.Component<CleanPoC.Props, CleanPoC.State> {
     }))
   }
 
-  showChildren = (e) => {
-    this.setState(s => ({
-      showChildren: !s.showChildren
-    }))
-  }
-
   toggleShow = () => {
     this.setState(s => ({
       show: !s.show
     }));
-  }
-
-  changeFunc = (e) => {
-    const f = e.currentTarget.value;
-    this.setState(s => ({
-      animation: functions.find(func => func.name === f)
-    }))
   }
 
   render () {
@@ -525,9 +318,6 @@ export class CleanPoC extends React.Component<CleanPoC.Props, CleanPoC.State> {
     return <div>
       <div>
         <h3>Choose enter animation then click "toggle" twice to hide and show the wheel</h3>
-        <select style={{margin: '15px', marginLeft: '0', padding: '15px'}}value={this.state.animation.name} onChange={this.changeFunc.bind(this)}>
-          {functions.map(f => <option key={f.name} value={f.name}>{f.name}</option>)}
-        </select>
       </div>
       <button onClick={this.toggleShow.bind(this)}>toggle</button>
       <h3>animation settings here</h3>
@@ -547,7 +337,7 @@ export class CleanPoC extends React.Component<CleanPoC.Props, CleanPoC.State> {
       </p>
       {this.state.show && <CleanWheel
         wheel={[
-          ...toWheel(this.state.wheel && fromBusinessToMetal(this.state.wheel.map(w => ({...w, children: this.state.showChildren ? w.children : []}))))
+          ...toWheel(this.state.wheel && fromBusinessToMetal(this.state.wheel))
         ]}
         circle={this.state.circle}
         animationPreset={this.state.animationSetting}
@@ -556,8 +346,6 @@ export class CleanPoC extends React.Component<CleanPoC.Props, CleanPoC.State> {
         onSelect={this.selected.bind(this)}
         setText={text => this.setState({centerText: text})}
         centerText={this.state.centerText}
-        animation={this.state.animation.func}
-        initialAnimationState={this.state.animation.init}
       />
       }
     </div>;

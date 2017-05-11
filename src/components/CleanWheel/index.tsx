@@ -18,8 +18,6 @@ export namespace CleanWheel {
     onSelect: (id: string) => void,
     setText: (text: string) => void,
     centerText: string,
-    animation: (preset: AnimationPreset) => (sth: any[]) => any[],
-    initialAnimationState: any
   }
 
   export interface State {
@@ -63,7 +61,7 @@ export class CleanWheel extends React.Component<CleanWheel.Props, CleanWheel.Sta
   }
 
   getCircleStyles = () => {
-    const {circle} = this.props
+    const {circle, animationPreset} = this.props
     if (!circle) {
       return [];
     }
@@ -74,9 +72,10 @@ export class CleanWheel extends React.Component<CleanWheel.Props, CleanWheel.Sta
         fill: circle.fill
       },
       style: {
-        opacity: spring(circle.opacity),
-        innerRadius: spring(circle.radius.inner),
-        outerRadius: spring(circle.radius.outer)
+        angle: spring(360, animationPreset),
+        opacity: spring(circle.opacity, animationPreset),
+        innerRadius: spring(circle.radius.inner, animationPreset),
+        outerRadius: spring(circle.radius.outer, animationPreset)
       }
     }]
   }
@@ -84,8 +83,9 @@ export class CleanWheel extends React.Component<CleanWheel.Props, CleanWheel.Sta
   willCircleEnter() {
     return {
       opacity: 0,
-      innerRadius: this.props.initialAnimationState.innerRadius === 0 ? 0 : this.props.circle.radius.inner,
-      outerRadius: this.props.initialAnimationState.innerRadius === 0 ? 0 : this.props.circle.radius.inner,
+      angle: 0,
+      innerRadius: this.props.circle.radius.inner,
+      outerRadius: this.props.circle.radius.inner,
     }
   }
 
@@ -113,7 +113,8 @@ export class CleanWheel extends React.Component<CleanWheel.Props, CleanWheel.Sta
                     <Arc
                       opacity={style.opacity}
                       key={key}
-                      angle={360}
+                      angle={style.angle}
+                      rotation={this.props.wheel[this.props.wheel.length - 2].rotation + this.props.wheel[this.props.wheel.length - 2].angle}
                       x={center.x}
                       y={center.y}
                       innerRadius={style.innerRadius}
