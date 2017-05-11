@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import {Image as KonvaImage, Group, Layer, Stage, Arc} from 'react-konva';
 import {TransitionMotion, Motion, spring, presets} from 'react-motion';
-import {WheelSequence} from '../../components';
+import {CleanWheel} from '../../components';
 import * as style from './style.css'
 
 const functions = [{
@@ -365,7 +365,7 @@ const toWheel = (wheel): MotionArc[] => wheel ? wheel.arcs.reduce((allArcs, curr
   }]
 }, []) : [];
 
-export namespace PoCSequence {
+export namespace CleanPoC {
   export interface Props extends RouteComponentProps<void> { }
 
   export interface State {
@@ -380,7 +380,7 @@ export namespace PoCSequence {
   }
 }
 
-export class PoCSequence extends React.Component<PoCSequence.Props, PoCSequence.State> {
+export class CleanPoC extends React.Component<CleanPoC.Props, CleanPoC.State> {
 
   constructor() {
     super();
@@ -545,7 +545,7 @@ export class PoCSequence extends React.Component<PoCSequence.Props, PoCSequence.
       <p>
         damping: ({damping}) <br /> <input type="range" min="0" max="40" value={damping} onChange={this.changeDamping.bind(this)}/>
       </p>
-      {this.state.show && <WheelSequence
+      {this.state.show && <CleanWheel
         wheel={[
           ...toWheel(this.state.wheel && fromBusinessToMetal(this.state.wheel.map(w => ({...w, children: this.state.showChildren ? w.children : []}))))
         ]}
