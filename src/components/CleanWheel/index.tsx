@@ -4,8 +4,8 @@ import {presets,StaggeredMotion, TransitionMotion, Motion, spring} from 'react-m
 import * as style from '../../containers/CleanPoC/style.css';
 
 const center = {
-  x: 370,
-  y: 370
+  x: 360,
+  y: 360
 };
 
 export namespace CleanWheel {

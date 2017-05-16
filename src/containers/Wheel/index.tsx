@@ -116,7 +116,7 @@ const fromBusinessToMetal = businessWheel => {
       ...arcs,
       {
         id: 'plus',
-        angle: 360 - sumAngles(arcs) - arcs.length - 1,
+        angle: 360 - sumAngles(arcs) + arcs.length/2,
         fill: '',
         radius: {
           inner: centerWheel.radius.inner,

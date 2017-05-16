@@ -37,12 +37,12 @@ const businessWheel: BusinessArc[] = [
   {
     id: '4',
     icon: icons.scales,
-    text: ''
+    text: 'Hausratversicherung'
   },
   {
     id: '5',
     icon: icons.phone,
-    text: ''
+    text: 'Handyversicherung'
   },
   {
     id: '6',
@@ -56,6 +56,21 @@ const businessWheel: BusinessArc[] = [
   },
 ];
 
+const additionalInfos = [
+  {
+    key: '1',
+    text: `Now that we know who you are, I know who I am. I'm not a mistake! It all makes sense! In a comic, you know how you can tell who the arch-villain's going to be? He's the exact opposite of the hero. And most times they're friends, like you and me! I should've known way back when... You know why, David? Because of the kids. They called me Mr Glass.`
+  },
+  {
+    key: '2',
+    text: `Look, just because I don't be givin' no man a foot massage don't make it right for Marsellus to throw Antwone into a glass motherfuckin' house, fuckin' up the way the nigger talks. Motherfucker do that shit to me, he better paralyze my ass, 'cause I'll kill the motherfucker, know what I'm sayin'?`
+  },
+  {
+    key: '3',
+    text: `Now that there is the Tec-9, a crappy spray gun from South Miami. This gun is advertised as the most popular gun in American crime. Do you believe that shit? It actually says that in the little book that comes with it: the most popular gun in American crime. Like they're actually proud of that shit.`
+  }
+]
+
 export namespace CleanPoC {
   export interface Props extends RouteComponentProps<void> { }
 
@@ -65,6 +80,7 @@ export namespace CleanPoC {
     animationSetting: AnimationPreset,
     centerText: string,
     show: boolean,
+    additionalInfo: {key: string, text: string}[]
   }
 }
 
@@ -74,10 +90,11 @@ export class CleanPoC extends React.Component<CleanPoC.Props, CleanPoC.State> {
     super();
     this.state = {
       wheel: businessWheel,
-      animationPreset: 'gentle',
+      animationPreset: 'noWobble',
       centerText: '',
-      animationSetting: presets.wobbly,
+      animationSetting: presets.noWobble,
       show: true,
+      additionalInfo: [additionalInfos[0]]
     }
   }
 
@@ -129,6 +146,7 @@ export class CleanPoC extends React.Component<CleanPoC.Props, CleanPoC.State> {
 
     const {selected} = wheel;
 
+    this.changeAdditionalInfo();
     this.setState(s => ({
       centerText: selected ? '' : wheel.text,
       wheel: s.wheel.map(w => w.id === id
@@ -170,9 +188,77 @@ export class CleanPoC extends React.Component<CleanPoC.Props, CleanPoC.State> {
     }));
   }
 
+  getDefaultStyles = () => {
+    return this.state.additionalInfo.map(i => ({
+      ...i,
+      data: i,
+      style: {
+        opacity: 1,
+        left: 0
+      }
+    }))
+  }
+
+  getStyles = () => {
+    return this.state.additionalInfo.map(i => ({
+      ...i,
+      data: i,
+      style: {
+        opacity: spring(1, this.state.animationSetting),
+        left: spring(0, this.state.animationSetting)
+      }
+    }))
+  }
+
+  willLeave = () => {
+    return {
+      opacity: spring(0, this.state.animationSetting),
+      left: spring(-100, this.state.animationSetting)
+    }
+  }
+
+  willEnter = () => {
+    return {
+      opacity: 0,
+      left: 100
+    }
+  }
+
+  changeAdditionalInfo = () => {
+    this.setState(s => {
+      const currentKey = Number(s.additionalInfo[0].key);
+      const nextKey = (currentKey === 3 ? 1 : currentKey + 1) - 1
+
+      return {
+        additionalInfo: [additionalInfos[nextKey]]
+      }
+    })
+  }
+
   render () {
     const {animationSetting: {stiffness, damping}} = this.state;
     return <div>
+      <TransitionMotion
+        styles={this.getStyles()}
+        willEnter={this.willEnter}
+        willLeave={this.willLeave}
+      >
+        {styles => <div className={style.additionalInfo}>
+          {styles.map(({key, style, data}) => <div
+            key={key}
+            style={{
+              opacity: style.opacity.toString(),
+              left: `${style.left}%`
+            }}
+          >
+            <h2>additional information here</h2>
+            <p>
+              {data.text}
+            </p>
+          </div>)}
+        </div>}
+      </TransitionMotion>
+      <hr className={style.divider}/>
       {this.state.show && <Wheel
         wheel={this.state.wheel}
         animationPreset={this.state.animationSetting}
