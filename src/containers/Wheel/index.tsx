@@ -11,7 +11,7 @@ const centerWheel = {
   opacity: 0.5,
   fill: '#95a5a6',
   radius: {
-    inner: 80,
+    inner: 85,
     outer: 90
   }
 };
@@ -142,7 +142,7 @@ const toWheel = (wheel): MotionArc[] => wheel ? wheel.arcs.reduce((allArcs, curr
     ...currentArc,
     angle: currentArc.angle,
     fill: currentArc.fill,
-    rotation: wheel.startRotation + sumAngles(allArcs) + allArcs.length
+    rotation: wheel.startRotation + sumAngles(allArcs) - allArcs.length/2
   }]
 }, []) : [];
 

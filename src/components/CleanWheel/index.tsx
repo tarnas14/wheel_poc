@@ -154,7 +154,7 @@ export class CleanWheel extends React.Component<CleanWheel.Props, CleanWheel.Sta
 
                 if (touched) {
                   return {
-                    opacity: spring(wheelPart.opacity), preset,
+                    opacity: spring(wheelPart.opacity),
                     innerRadius: wheelPart.radius.inner,
                     outerRadius: spring(wheelPart.radius.outer, preset),
                     angle: spring(wheelPart.angle, preset),
@@ -180,7 +180,7 @@ export class CleanWheel extends React.Component<CleanWheel.Props, CleanWheel.Sta
                   innerRadius: wheelPart.radius.inner,
                   outerRadius: spring(wheelPart.radius.outer, preset),
                   angle: spring(wheelPart.angle, preset),
-                  rotation: previousStyles[i - 1].rotation + previousStyles[i - 1].angle + 1,
+                  rotation: previousStyles[i - 1].rotation + previousStyles[i - 1].angle - 0.5,
                   imageWidth: spring(wheelPart.image.size.width, preset),
                   imageHeight: spring(wheelPart.image.size.height, preset),
                   imageOffsetScale: spring(wheelPart.image.offsetScale, preset),
