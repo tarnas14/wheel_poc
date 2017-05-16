@@ -54,6 +54,11 @@ const businessWheel: BusinessArc[] = [
     icon: icons.wheel,
     text: ''
   },
+  {
+    id: '8',
+    icon: icons.injury,
+    text: 'dummy'
+  }
 ];
 
 const additionalInfos = [
@@ -80,7 +85,8 @@ export namespace CleanPoC {
     animationSetting: AnimationPreset,
     centerText: string,
     show: boolean,
-    additionalInfo: {key: string, text: string}[]
+    additionalInfo: {key: string, text: string}[],
+    slideFromLeft: boolean
   }
 }
 
@@ -94,7 +100,8 @@ export class CleanPoC extends React.Component<CleanPoC.Props, CleanPoC.State> {
       centerText: '',
       animationSetting: presets.noWobble,
       show: true,
-      additionalInfo: [additionalInfos[0]]
+      additionalInfo: [additionalInfos[0]],
+      slideFromLeft: false
     }
   }
 
@@ -138,7 +145,7 @@ export class CleanPoC extends React.Component<CleanPoC.Props, CleanPoC.State> {
     }))
   }
 
-  selected = (id) => {
+  selected = (id: string, rotation: number) => {
     const wheel = this.state.wheel.find(w => w.id === id);
     if (!wheel) {
       return;
@@ -146,20 +153,23 @@ export class CleanPoC extends React.Component<CleanPoC.Props, CleanPoC.State> {
 
     const {selected} = wheel;
 
-    this.changeAdditionalInfo();
-    this.setState(s => ({
-      centerText: selected ? '' : wheel.text,
-      wheel: s.wheel.map(w => w.id === id
-        ? {
-          ...w,
-          selected: !w.selected,
-          focused: false
-        }
-        : {
-          ...w,
-          selected: false
-        })
-    }))
+    const fromTheLeft = rotation <= -90;
+    this.setState({slideFromLeft: fromTheLeft}, () => {
+      this.changeAdditionalInfo();
+      this.setState(s => ({
+        centerText: selected ? '' : wheel.text,
+        wheel: s.wheel.map(w => w.id === id
+          ? {
+            ...w,
+            selected: !w.selected,
+            focused: false
+          }
+          : {
+            ...w,
+            selected: false
+          })
+      }))
+    })
   }
 
   changeStiffness = (e) => {
@@ -211,16 +221,20 @@ export class CleanPoC extends React.Component<CleanPoC.Props, CleanPoC.State> {
   }
 
   willLeave = () => {
+    const {slideFromLeft} = this.state;
+
     return {
       opacity: spring(0, this.state.animationSetting),
-      left: spring(-100, this.state.animationSetting)
+      left: slideFromLeft ? spring(100, this.state.animationSetting) : spring(-100, this.state.animationSetting)
     }
   }
 
   willEnter = () => {
+    const {slideFromLeft} = this.state;
+
     return {
       opacity: 0,
-      left: 100
+      left: slideFromLeft ? -100 : 100
     }
   }
 

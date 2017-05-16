@@ -15,7 +15,7 @@ export namespace CleanWheel {
     animationPreset: AnimationPreset,
     onFocus: (id: string) => void,
     onFocusLost: (id: string) => void,
-    onSelect: (id: string) => void,
+    onSelect: (id: string, rotation: number) => void,
     setText: (text: string) => void,
     centerText: string,
   }
@@ -204,7 +204,7 @@ export class CleanWheel extends React.Component<CleanWheel.Props, CleanWheel.Sta
                           fill={this.props.wheel[i].fill}
                           onMouseOver={this.touched.bind(undefined, this.props.onFocus.bind(undefined, this.props.wheel[i].id))}
                           onMouseOut={this.touched.bind(undefined, this.props.onFocusLost.bind(undefined, this.props.wheel[i].id))}
-                          onClick={this.touched.bind(undefined, this.props.onSelect.bind(undefined, this.props.wheel[i].id))}
+                          onClick={this.touched.bind(undefined, this.props.onSelect.bind(undefined, this.props.wheel[i].id, wheelPart.rotation + wheelPart.angle/2))}
                           onTouchEnd={this.touched.bind(undefined, this.props.onSelect.bind(undefined, this.props.wheel[i].id))}
                       />
                       <Group

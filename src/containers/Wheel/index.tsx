@@ -133,7 +133,7 @@ export interface Props {
   animationPreset: AnimationPreset,
   onFocus: (id: string) => void,
   onFocusLost: (id: string) => void,
-  onSelect: (id: string) => void,
+  onSelect: (id: string, rotation: number) => void,
   setText: (text: string) => void,
   centerText: string,
 }
