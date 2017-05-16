@@ -138,6 +138,10 @@ export interface Props {
   centerText: string,
 }
 
+export interface State {
+  rotation: number
+}
+
 const toWheel = (wheel): MotionArc[] => wheel ? wheel.arcs.reduce((allArcs, currentArc) => {
   return [...allArcs, {
     ...currentArc,
@@ -163,13 +167,26 @@ const rotateToSelectedOn12Oclock = (wheel: MotionArc[]) : MotionArc[] => {
   return rotate(wheel, difference);
 }
 
-export default ({wheel, animationPreset, onFocus, onFocusLost, onSelect, setText, centerText}: Props ) => <CleanWheel
-  wheel={rotateToSelectedOn12Oclock(toWheel(fromBusinessToMetal(wheel)))}
-  circle={centerWheel}
-  animationPreset={animationPreset}
-  onFocus={onFocus}
-  onFocusLost={onFocusLost}
-  onSelect={onSelect}
-  setText={setText}
-  centerText={centerText}
-/>
+export default class extends React.Component<Props, State> {
+  constructor () {
+    super()
+    this.state = {rotation: 0}
+  }
+
+  render () {
+    const {wheel, animationPreset, onFocus, onFocusLost, onSelect, setText, centerText} = this.props;
+
+    return <CleanWheel
+      wheel={rotate(rotateToSelectedOn12Oclock(toWheel(fromBusinessToMetal(wheel))), this.state.rotation)}
+      circle={centerWheel}
+      animationPreset={animationPreset}
+      onFocus={onFocus}
+      onFocusLost={onFocusLost}
+      onSelect={onSelect}
+      setText={setText}
+      centerText={centerText}
+      rotate={r => this.setState({rotation: r})}
+      resetRotation={() => this.setState({rotation: 0})}
+    />
+  }
+}

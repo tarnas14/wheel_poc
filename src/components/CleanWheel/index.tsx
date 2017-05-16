@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Image as KonvaImage, Group, Layer, Stage, Arc} from 'react-konva';
+import {Line, Image as KonvaImage, Group, Layer, Stage, Arc} from 'react-konva';
 import {presets,StaggeredMotion, TransitionMotion, Motion, spring} from 'react-motion';
 import * as style from '../../containers/CleanPoC/style.css';
 
@@ -7,6 +7,12 @@ const center = {
   x: 360,
   y: 360
 };
+
+const degrees = radians => radians * 180 / Math.PI;
+const getAngle = ({x, y}) => degrees(Math.atan(y/x));
+const getCartesianCoordinates = (offset, center) => ({x: offset.layerX - center.x, y: center.y - offset.layerY})
+const cartesianAngle = (offset, center) => getAngle(getCartesianCoordinates(offset, center))
+const showCartesianAngle = (offset, center) => console.log(getAngle(getCartesianCoordinates(offset, center)))
 
 export namespace CleanWheel {
   export interface Props {
@@ -18,29 +24,35 @@ export namespace CleanWheel {
     onSelect: (id: string, rotation: number) => void,
     setText: (text: string) => void,
     centerText: string,
+    rotate: (rotation: number) => void,
+    resetRotation: () => void,
   }
 
   export interface State {
     scale: number,
     touched: boolean,
+    dragStart: number,
   }
 }
 
 export class CleanWheel extends React.Component<CleanWheel.Props, CleanWheel.State> {
+  layer: any
+
   state = {
     scale: 1,
     touched: false,
+    dragStart: 666
   }
 
   componentDidMount () {
     const updateScale = () => {
       const innerWidth = ((window.innerWidth > 0) ? window.innerWidth : screen.width);
-      const containerWidth = innerWidth > 740 ? 740 : innerWidth;
+      const containerWidth = innerWidth > center.x * 2 ? center.x * 2 : innerWidth;
       const widthScale = containerWidth / (center.x * 2);
 
       const innerHeight = (screen.height);
-      const containerHeight = innerHeight > 740 ? 740 : innerHeight;
-      const heightScale = containerHeight / (center.x * 2);
+      const containerHeight = innerHeight > center.y * 2 ? center.y * 2 : innerHeight;
+      const heightScale = containerHeight / (center.y * 2);
 
       this.props.setText(innerHeight.toString());
 
@@ -101,6 +113,16 @@ export class CleanWheel extends React.Component<CleanWheel.Props, CleanWheel.Sta
     this.setState({touched: true}, callback);
   }
 
+  dragMove = angle => {
+    if (this.state.dragStart === 666) {
+      console.log('oh no drag move before dragstart')
+      return
+    }
+    const draggedAngle = this.state.dragStart - angle;
+    this.props.rotate(draggedAngle);
+    this.layer.draw();
+  }
+
   render() {
     const preset = this.props.animationPreset;
     return (
@@ -109,30 +131,6 @@ export class CleanWheel extends React.Component<CleanWheel.Props, CleanWheel.Sta
           <p>{this.props.centerText}</p>
         </div>
         <Stage scaleX={this.state.scale} scaleY={this.state.scale} width={center.x*2*this.state.scale} height={center.y*2*this.state.scale}>
-            {/* circle */}
-            <TransitionMotion
-              defaultStyles={this.getDefaultCircleStyles()}
-              styles={this.getCircleStyles()}
-              willEnter={this.willCircleEnter.bind(this)}
-            >
-              {styles =>
-                <Layer>
-                  {styles.map(({style, key, data: {fill}}) =>
-                    <Arc
-                      opacity={style.opacity}
-                      key={key}
-                      angle={style.angle}
-                      rotation={this.props.wheel[this.props.wheel.length - 2].rotation + this.props.wheel[this.props.wheel.length - 2].angle}
-                      x={center.x}
-                      y={center.y}
-                      innerRadius={style.innerRadius}
-                      outerRadius={style.outerRadius}
-                      fill={fill}
-                    />
-                  )}
-                </Layer>
-              }
-            </TransitionMotion>
            <StaggeredMotion
               defaultStyles={this.props.wheel.map((_, i) => {
                 const wheelPart = this.props.wheel[i];
@@ -188,7 +186,41 @@ export class CleanWheel extends React.Component<CleanWheel.Props, CleanWheel.Sta
               })}
             >
               {styles =>
-                <Layer>
+                <Layer
+                  ref={r => {this.layer = r}}
+                  draggable={true}
+                  onDragStart={({evt: e}) => this.setState({dragStart: cartesianAngle(e, center)})}
+                  onDragMove={({evt: e}) => this.dragMove(cartesianAngle(e, center))}
+                  onDragEnd={({evt: e}) => {
+                    this.dragMove(cartesianAngle(e, center))
+                    this.props.resetRotation()
+                  }}
+                  dragBoundFunc={_ => ({x: 0, y: 0})}
+                >
+                  {/* circle */}
+                  <TransitionMotion
+                    defaultStyles={this.getDefaultCircleStyles()}
+                    styles={this.getCircleStyles()}
+                    willEnter={this.willCircleEnter.bind(this)}
+                  >
+                    {styles =>
+                      <Group>
+                        {styles.map(({style, key, data: {fill}}) =>
+                          <Arc
+                            opacity={style.opacity}
+                            key={key}
+                            angle={style.angle}
+                            rotation={this.props.wheel[this.props.wheel.length - 2].rotation + this.props.wheel[this.props.wheel.length - 2].angle}
+                            x={center.x}
+                            y={center.y}
+                            innerRadius={style.innerRadius}
+                            outerRadius={style.outerRadius}
+                            fill={fill}
+                          />
+                        )}
+                      </Group>
+                    }
+                  </TransitionMotion>
                   {styles.map((style, i) => {
                     const wheelPart = this.props.wheel[i];
                     return <Group key={wheelPart.id}>
