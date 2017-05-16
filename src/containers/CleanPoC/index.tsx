@@ -74,7 +74,7 @@ export class CleanPoC extends React.Component<CleanPoC.Props, CleanPoC.State> {
     super();
     this.state = {
       wheel: businessWheel,
-      animationPreset: 'wobbly',
+      animationPreset: 'gentle',
       centerText: '',
       animationSetting: presets.wobbly,
       show: true,

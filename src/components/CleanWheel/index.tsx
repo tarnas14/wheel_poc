@@ -191,7 +191,7 @@ export class CleanWheel extends React.Component<CleanWheel.Props, CleanWheel.Sta
                 <Layer>
                   {styles.map((style, i) => {
                     const wheelPart = this.props.wheel[i];
-                    return <Group>
+                    return <Group key={wheelPart.id}>
                       <Arc
                           opacity={style.opacity}
                           key={i}

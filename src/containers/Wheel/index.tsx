@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {CleanWheel} from '../../components/CleanWheel';
+import {find} from 'lodash';
 
 const sameAngle = 35;
 const focusedAngle = sameAngle + 10;
@@ -59,7 +60,7 @@ const fromBusinessToMetal = businessWheel => {
   const getTemplate = ({active, focused, selected, icon}) => {
     if (selected) {
       return {
-        angle: selectedAngle,
+        angle: focusedAngle,
         fill: '#00fff0',
         opacity: 1,
         radius: bigRadius,
@@ -146,8 +147,24 @@ const toWheel = (wheel): MotionArc[] => wheel ? wheel.arcs.reduce((allArcs, curr
   }]
 }, []) : [];
 
+const rotate = (wheel: MotionArc[], rotation: number): MotionArc[] => Boolean(!wheel)
+  ? []
+  : wheel.map(a => ({...a, rotation: a.rotation + rotation}))
+
+const rotateToSelectedOn12Oclock = (wheel: MotionArc[]) : MotionArc[] => {
+  const selected = find(wheel, a => Boolean(a.selected));
+  if (!selected) {
+    return wheel;
+  }
+
+  const targetRotation = -90 - selected.angle/2;
+  const difference = targetRotation - selected.rotation;
+
+  return rotate(wheel, difference);
+}
+
 export default ({wheel, animationPreset, onFocus, onFocusLost, onSelect, setText, centerText}: Props ) => <CleanWheel
-  wheel={toWheel(fromBusinessToMetal(wheel))}
+  wheel={rotateToSelectedOn12Oclock(toWheel(fromBusinessToMetal(wheel)))}
   circle={centerWheel}
   animationPreset={animationPreset}
   onFocus={onFocus}
