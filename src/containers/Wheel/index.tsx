@@ -49,6 +49,14 @@ const getImage = (src, size, additional = {}): ImageWithPromise => {
   };
 }
 
+const focus = (arc: MotionArc): MotionArc => ({
+  ...arc,
+  angle: focusedAngle,
+  fill: '#00fff0',
+  opacity: 1,
+  radius: bigRadius
+})
+
 const fromBusinessToMetal = businessWheel => {
   if (!businessWheel) {
     return {
@@ -169,6 +177,18 @@ const rotateToSelectedOn12Oclock = (wheel: MotionArc[]) : MotionArc[] => {
 
   return rotate(wheel, difference);
 }
+
+const set12OClockAsFocused = (wheel: MotionArc[]) : MotionArc[] => wheel.reduce((accumulator, current) => {
+  const shouldBeFocused = Boolean(current.rotation <= -90 && -90 <= current.rotation + focusedAngle)
+
+  return {
+    rotationOffset: shouldBeFocused ? (focusedAngle - current.angle) : accumulator.rotationOffset,
+    wheel: [...accumulator.wheel, shouldBeFocused ? focus(current) : {
+      ...current,
+      rotation: current.rotation + accumulator.rotationOffset
+    }]
+  }
+}, {rotationOffset: 0, wheel: []}).wheel
 
 export default class extends React.Component<Props, State> {
   constructor () {
