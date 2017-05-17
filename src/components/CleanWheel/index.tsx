@@ -9,7 +9,17 @@ const center = {
 };
 
 const degrees = radians => radians * 180 / Math.PI;
-const getAngle = ({x, y}) => degrees(Math.atan(y/x));
+const getAngle = ({x, y}) => {
+  if (x < 0 && y > 0) {
+    return 90 + degrees(Math.atan(-x/y))
+  }
+
+  if (x < 0 && y < 0) {
+    return 180 + degrees(Math.atan(-y/-x))
+  }
+
+  return degrees(Math.atan(y/x))
+};
 const getCartesianCoordinates = (offset, center) => ({x: offset.layerX - center.x, y: center.y - offset.layerY})
 const cartesianAngle = (offset, center) => getAngle(getCartesianCoordinates(offset, center))
 const showCartesianAngle = (offset, center) => console.log(getAngle(getCartesianCoordinates(offset, center)))
@@ -24,7 +34,7 @@ export namespace CleanWheel {
     onSelect: (id: string, rotation: number) => void,
     setText: (text: string) => void,
     centerText: string,
-    rotate: (rotation: number) => void,
+    rotate: (rotationStart: number, currentRotation: number) => void,
     resetRotation: () => void,
   }
 
@@ -119,7 +129,7 @@ export class CleanWheel extends React.Component<CleanWheel.Props, CleanWheel.Sta
       return
     }
     const draggedAngle = this.state.dragStart - angle;
-    this.props.rotate(draggedAngle);
+    this.props.rotate(this.state.dragStart, angle);
     this.layer.draw();
   }
 

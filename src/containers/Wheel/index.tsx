@@ -139,7 +139,10 @@ export interface Props {
 }
 
 export interface State {
-  rotation: number
+  clockwiseOverflow: boolean,
+  rotationStarted: boolean,
+  rotation: number,
+  previousRotationState: number
 }
 
 const toWheel = (wheel): MotionArc[] => wheel ? wheel.arcs.reduce((allArcs, currentArc) => {
@@ -170,7 +173,59 @@ const rotateToSelectedOn12Oclock = (wheel: MotionArc[]) : MotionArc[] => {
 export default class extends React.Component<Props, State> {
   constructor () {
     super()
-    this.state = {rotation: 0}
+    this.state = {
+      clockwiseOverflow: false,
+      rotationStarted: false,
+      rotation: 0,
+      previousRotationState: 0
+    }
+  }
+
+  handleRotation = (start, current) => {
+    if (!this.state.rotationStarted) {
+      this.setState({
+        rotationStarted: true,
+        rotation: start - current,
+        previousRotationState: current
+      })
+      return
+    }
+
+    const getQuadrant = angle => {
+      if (angle >= 0 && angle < 90) {
+        return 1
+      }
+      if (angle >= 90 && angle < 180) {
+        return 2
+      }
+      if (angle >= 180 && angle < 270) {
+        return 3
+      }
+      if (angle < 0 && angle >= -90) {
+        return 4
+      }
+    }
+
+    const difference = (previous, current) => {
+      const previousQuadrant = getQuadrant(previous)
+      const currentQuadrant = getQuadrant(current)
+
+      if (previousQuadrant === 3 && currentQuadrant === 4) {
+        return 0
+      }
+
+      if (previousQuadrant === 4 && currentQuadrant === 3) {
+        return 0
+      }
+
+      return previous - current
+    }
+
+    this.setState(s => ({
+      rotationStarted: true,
+      rotation: s.rotation + difference(s.previousRotationState, current),
+      previousRotationState: current
+    }))
   }
 
   render () {
@@ -185,8 +240,8 @@ export default class extends React.Component<Props, State> {
       onSelect={onSelect}
       setText={setText}
       centerText={centerText}
-      rotate={r => this.setState({rotation: r})}
-      resetRotation={() => this.setState({rotation: 0})}
+      rotate={this.handleRotation}
+      resetRotation={() => this.setState({clockwiseOverflow: false, rotation: 0, rotationStarted: false})}
     />
   }
 }
