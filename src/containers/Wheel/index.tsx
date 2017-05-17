@@ -5,6 +5,7 @@ import {find} from 'lodash';
 const sameAngle = 35;
 const focusedAngle = sameAngle + 10;
 const selectedAngle = sameAngle * 2 + 10;
+const collapsedAngle = 3;
 
 const sumAngles = arcs => arcs.reduce((angle, arc) => angle += arc.angle, 0);
 
@@ -65,13 +66,23 @@ const fromBusinessToMetal = businessWheel => {
     }
   }
 
-  const getTemplate = ({active, focused, selected, icon}) => {
+  const getTemplate = ({collapsed, active, focused, selected, icon}) => {
     if (selected) {
       return {
         angle: focusedAngle,
         fill: '#00fff0',
         opacity: 1,
         radius: bigRadius,
+        image: getImage(icon, {width: 90, height: 90}, {offsetScale: 0.8})
+      }
+    }
+
+    if (collapsed) {
+      return {
+        angle: collapsedAngle,
+        fill: '#00fff0',
+        opacity: 0.7,
+        radius: middleRadius,
         image: getImage(icon, {width: 90, height: 90}, {offsetScale: 0.8})
       }
     }

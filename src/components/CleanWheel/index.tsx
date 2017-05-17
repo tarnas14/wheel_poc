@@ -249,7 +249,7 @@ export class CleanWheel extends React.Component<CleanWheel.Props, CleanWheel.Sta
                           onClick={this.touched.bind(undefined, this.props.onSelect.bind(undefined, this.props.wheel[i].id, wheelPart.rotation + wheelPart.angle/2))}
                           onTouchEnd={this.touched.bind(undefined, this.props.onSelect.bind(undefined, this.props.wheel[i].id))}
                       />
-                      <Group
+                      {!Boolean(wheelPart.collapsed && !wheelPart.selected) && <Group
                         key={`image_${i}`}
                         x={center.x}
                         y={center.y}
@@ -266,7 +266,7 @@ export class CleanWheel extends React.Component<CleanWheel.Props, CleanWheel.Sta
                           offsetY={style.imageHeight / 2}
                           listening={false}
                         />
-                      </Group>
+                      </Group>}
                     </Group>
                   })}
                 </Layer>

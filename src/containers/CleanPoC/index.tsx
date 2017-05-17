@@ -17,6 +17,27 @@ const icons = {
 
 const businessWheel: BusinessArc[] = [
   {
+    id: '-2',
+    icon: icons.home,
+    collapsed: true,
+    active: true,
+    text: 'collapsed -2'
+  },
+  {
+    id: '-1',
+    icon: icons.home,
+    collapsed: true,
+    active: true,
+    text: 'collapsed -1'
+  },
+  {
+    id: '0',
+    icon: icons.home,
+    collapsed: true,
+    active: true,
+    text: 'collapsed 0'
+  },
+  {
     id: '1',
     icon: icons.home,
     active: true,
@@ -151,9 +172,42 @@ export class CleanPoC extends React.Component<CleanPoC.Props, CleanPoC.State> {
       return;
     }
 
+    const fromTheLeft = rotation <= -90;
+
+    if (wheel.collapsed) {
+      const howManyCollapsed = this.state.wheel.filter(w => w.collapsed).length
+
+      const collapse = (wheel) => {
+        if (wheel[0].collapsed) {
+          const uncollapsed = wheel.map(w => ({...w, collapsed: false}));
+          return [
+            ...uncollapsed.slice(0, -howManyCollapsed),
+            ...uncollapsed.slice(-howManyCollapsed).map(w => ({...w, collapsed: true}))
+          ]
+        }
+
+        const uncollapsed = wheel.map(w => ({...w, collapsed: false}));
+        return [
+          ...uncollapsed.slice(0, howManyCollapsed).map(w => ({...w, collapsed: true})),
+          ...uncollapsed.slice(howManyCollapsed)
+        ]
+      }
+
+      this.setState({slideFromLeft: fromTheLeft}, () => {
+        this.changeAdditionalInfo();
+        this.setState(s => ({
+          wheel: [
+            ...collapse(s.wheel.filter(w => w.active)),
+            ...s.wheel.filter(w => !w.active)
+          ]
+        }))
+      })
+
+      return
+    }
+
     const {selected} = wheel;
 
-    const fromTheLeft = rotation <= -90;
     this.setState({slideFromLeft: fromTheLeft}, () => {
       this.changeAdditionalInfo();
       this.setState(s => ({

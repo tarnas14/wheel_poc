@@ -33,6 +33,7 @@ declare interface Arc {
   children?: MotionArc[],
   sexyChildren?: any,
   selected?: boolean,
+  collapsed?: boolean,
 }
 
 declare interface MotionArc extends Arc {
@@ -48,6 +49,7 @@ declare interface BusinessArc {
   id: string,
   icon: string,
   text: string,
+  collapsed?: boolean,
   selected?: boolean,
   active?: boolean,
   focused?: boolean,

@@ -71,6 +71,7 @@ interface BusinessArc {
   id: string,
   icon: string,
   text: string,
+  collapsed?: boolean,
   selected?: boolean,
   active?: boolean,
   focused?: boolean,
@@ -117,6 +118,24 @@ const testChildren = [
 ];
 
 const businessWheel: BusinessArc[] = [
+  {
+    id: '-2',
+    icon: icons.home,
+    collapsed: true,
+    text: 'collapsed -2'
+  },
+  {
+    id: '-1',
+    icon: icons.home,
+    collapsed: true,
+    text: 'collapsed -1'
+  },
+  {
+    id: '0',
+    icon: icons.home,
+    collapsed: true,
+    text: 'collapsed 0'
+  },
   {
     id: '1',
     icon: icons.home,
