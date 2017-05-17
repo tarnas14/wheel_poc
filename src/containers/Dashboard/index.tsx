@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import {Image as KonvaImage, Group, Layer, Stage, Arc} from 'react-konva';
 import {TransitionMotion, Motion, spring, presets} from 'react-motion';
-import Wheel from '../Wheel';
+import BusinessWheel from '../BusinessWheel';
 import * as style from './style.css'
 
 const icons = {
@@ -58,7 +58,8 @@ const businessWheel: BusinessArc[] = [
   {
     id: '4',
     icon: icons.scales,
-    text: 'Hausratversicherung'
+    text: 'Hausratversicherung',
+    padding: 10
   },
   {
     id: '5',
@@ -97,7 +98,7 @@ const additionalInfos = [
   }
 ]
 
-export namespace CleanPoC {
+export namespace Dashboard {
   export interface Props extends RouteComponentProps<void> { }
 
   export interface State {
@@ -111,7 +112,7 @@ export namespace CleanPoC {
   }
 }
 
-export class CleanPoC extends React.Component<CleanPoC.Props, CleanPoC.State> {
+export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State> {
 
   constructor() {
     super();
@@ -327,7 +328,7 @@ export class CleanPoC extends React.Component<CleanPoC.Props, CleanPoC.State> {
         </div>}
       </TransitionMotion>
       <hr className={style.divider}/>
-      {this.state.show && <Wheel
+      {this.state.show && <BusinessWheel
         wheel={this.state.wheel}
         animationPreset={this.state.animationSetting}
         onFocus={this.focus.bind(this)}

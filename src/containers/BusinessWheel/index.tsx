@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {CleanWheel} from '../../components/CleanWheel';
+import {Wheel} from '../../components/Wheel';
 import {find} from 'lodash';
 
 const sameAngle = 35;
@@ -55,7 +55,8 @@ const focus = (arc: MotionArc): MotionArc => ({
   angle: focusedAngle,
   fill: '#00fff0',
   opacity: 1,
-  radius: bigRadius
+  radius: bigRadius,
+  padding: 0,
 })
 
 const fromBusinessToMetal = businessWheel => {
@@ -66,14 +67,15 @@ const fromBusinessToMetal = businessWheel => {
     }
   }
 
-  const getTemplate = ({collapsed, active, focused, selected, icon}) => {
+  const getTemplate = ({padding, collapsed, active, focused, selected, icon}) => {
     if (selected) {
       return {
         angle: focusedAngle,
         fill: '#00fff0',
         opacity: 1,
         radius: bigRadius,
-        image: getImage(icon, {width: 90, height: 90}, {offsetScale: 0.8})
+        padding: padding || 0,
+        // image: getImage(icon, {width: 90, height: 90}, {offsetScale: 0.8})
       }
     }
 
@@ -83,7 +85,8 @@ const fromBusinessToMetal = businessWheel => {
         fill: '#00fff0',
         opacity: 0.7,
         radius: middleRadius,
-        image: getImage(icon, {width: 90, height: 90}, {offsetScale: 0.8})
+        padding: padding || 0,
+        // image: getImage(icon, {width: 90, height: 90}, {offsetScale: 0.8})
       }
     }
 
@@ -94,14 +97,16 @@ const fromBusinessToMetal = businessWheel => {
           fill: '#00fff0',
           opacity: 1,
           radius: bigRadius,
-          image: getImage(icon, {width: 70, height: 70})
+          padding: padding || 0,
+          // image: getImage(icon, {width: 70, height: 70})
         }
         : {
           angle: focusedAngle,
           fill: '#34495e',
           opacity: 1,
           radius: middleRadius,
-          image: getImage(icon, {width: 50, height: 50})
+          padding: padding || 0,
+          // image: getImage(icon, {width: 50, height: 50})
         }
     }
 
@@ -111,7 +116,8 @@ const fromBusinessToMetal = businessWheel => {
         fill: '#00fff0',
         opacity: 0.7,
         radius: middleRadius,
-        image: getImage(icon, {width: 50, height: 50})
+        padding: padding || 0,
+        // image: getImage(icon, {width: 50, height: 50})
       }
     }
 
@@ -120,7 +126,8 @@ const fromBusinessToMetal = businessWheel => {
       fill: '#34495e',
       opacity: 0.5,
       radius: smallRadius,
-      image: getImage(icon, {width: 40, height: 40}, {opacity: 0.5})
+      padding: padding || 0,
+      // image: getImage(icon, {width: 40, height: 40}, {opacity: 0.5})
     }
   }
 
@@ -136,12 +143,13 @@ const fromBusinessToMetal = businessWheel => {
       {
         id: 'plus',
         angle: 360 - sumAngles(arcs) + arcs.length/2,
+        padding: 0,
         fill: '',
         radius: {
           inner: centerWheel.radius.inner,
           outer: centerWheel.radius.outer + 105
         },
-        image: getImage('http://www.clker.com/cliparts/L/q/T/i/P/S/add-button-white-hi.png', {width: 50, height: 50})
+        // image: getImage('http://www.clker.com/cliparts/L/q/T/i/P/S/add-button-white-hi.png', {width: 50, height: 50})
       }
     ]
   };
@@ -262,7 +270,7 @@ export default class extends React.Component<Props, State> {
   render () {
     const {wheel, animationPreset, onFocus, onFocusLost, onSelect, setText, centerText} = this.props;
 
-    return <CleanWheel
+    return <Wheel
       wheel={rotate(rotateToSelectedOn12Oclock(toWheel(fromBusinessToMetal(wheel))), this.state.rotation)}
       circle={centerWheel}
       animationPreset={animationPreset}

@@ -1,12 +1,28 @@
 import * as React from 'react';
-import {Image as KonvaImage, Group, Layer, Stage, Arc} from 'react-konva';
-import {TransitionMotion, Motion, spring} from 'react-motion';
-import * as style from '../../containers/PoC/style.css';
+import {Line, Image as KonvaImage, Group, Layer, Stage, Arc} from 'react-konva';
+import {presets,StaggeredMotion, TransitionMotion, Motion, spring} from 'react-motion';
+import * as style from '../../containers/Dashboard/style.css';
 
 const center = {
-  x: 370,
-  y: 370
+  x: 360,
+  y: 360
 };
+
+const degrees = radians => radians * 180 / Math.PI;
+const getAngle = ({x, y}) => {
+  if (x < 0 && y > 0) {
+    return 90 + degrees(Math.atan(-x/y))
+  }
+
+  if (x < 0 && y < 0) {
+    return 180 + degrees(Math.atan(-y/-x))
+  }
+
+  return degrees(Math.atan(y/x))
+};
+const getCartesianCoordinates = (offset, center) => ({x: offset.layerX - center.x, y: center.y - offset.layerY})
+const cartesianAngle = (offset, center) => getAngle(getCartesianCoordinates(offset, center))
+const showCartesianAngle = (offset, center) => console.log(getAngle(getCartesianCoordinates(offset, center)))
 
 export namespace Wheel {
   export interface Props {
@@ -15,88 +31,48 @@ export namespace Wheel {
     animationPreset: AnimationPreset,
     onFocus: (id: string) => void,
     onFocusLost: (id: string) => void,
-    onSelect: (id: string) => void,
+    onSelect: (id: string, rotation: number) => void,
     setText: (text: string) => void,
     centerText: string,
+    rotate: (rotationStart: number, currentRotation: number) => void,
+    resetRotation: () => void,
   }
 
   export interface State {
     scale: number,
+    touched: boolean,
+    dragStart: number,
   }
 }
 
 export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
-  container: any = {};
-  stageRef: any = {};
-  arcRefs = {};
-  layer: {draw: () => void} = undefined;
+  layer: any
+
   state = {
-    scale: 1
+    scale: 1,
+    touched: false,
+    dragStart: 666
   }
 
   componentDidMount () {
     const updateScale = () => {
       const innerWidth = ((window.innerWidth > 0) ? window.innerWidth : screen.width);
-      const containerWidth = innerWidth > 740 ? 740 : innerWidth;
-      const scale = containerWidth / (center.x * 2);
+      const containerWidth = innerWidth > center.x * 2 ? center.x * 2 : innerWidth;
+      const widthScale = containerWidth / (center.x * 2);
+
+      const innerHeight = (screen.height);
+      const containerHeight = innerHeight > center.y * 2 ? center.y * 2 : innerHeight;
+      const heightScale = containerHeight / (center.y * 2);
+
+      this.props.setText(innerHeight.toString());
+
+      const scale = Math.min(widthScale, heightScale);
 
       this.setState({scale});
     }
 
     updateScale();
     window.onresize = updateScale;
-  }
-
-  getDefaultStyles = () => {
-    const self = this;
-    return this.props.wheel.map(arc => ({
-      key: arc.fill,
-      data: {
-        ...arc,
-        innerRadius: arc.radius.inner
-      },
-      style: this.willEnter.bind(self)()
-    }))
-  }
-
-  getStyles = () => {
-    const preset = this.props.animationPreset;
-    return this.props.wheel.map(arc => ({
-      key: arc.id,
-      data: {
-        ...arc
-      },
-      style: {
-        opacity: spring(arc.opacity),
-        angle: spring(arc.angle, preset),
-        rotation: spring(arc.rotation, preset),
-        innerRadius: spring(arc.radius.inner, preset),
-        outerRadius: spring(arc.radius.outer, preset),
-        imageOffsetScale: arc.image
-          ? spring (arc.image.offsetScale)
-          : 0,
-        imageHeight: arc.image
-          ? spring(arc.image.size.height)
-          : 0,
-        imageWidth: arc.image
-          ? spring(arc.image.size.width)
-          : 0
-      }
-    }))
-  }
-
-  willEnter() {
-    const {circle} = this.props;
-    return {
-      angle: 0,
-      rotation: -270,
-      opacity: 0,
-      innerRadius: circle.radius.inner,
-      outerRadius: circle.radius.inner,
-      imageOffsetScale: 0,
-      imageHeight: 0,
-      imageWidth: 0,
-    }
   }
 
   getDefaultCircleStyles = () => {
@@ -115,7 +91,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
   }
 
   getCircleStyles = () => {
-    const {circle} = this.props
+    const {circle, animationPreset} = this.props
     if (!circle) {
       return [];
     }
@@ -126,9 +102,10 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
         fill: circle.fill
       },
       style: {
-        opacity: spring(circle.opacity),
-        innerRadius: spring(circle.radius.inner),
-        outerRadius: spring(circle.radius.outer)
+        angle: spring(360, animationPreset),
+        opacity: spring(circle.opacity, animationPreset),
+        innerRadius: spring(circle.radius.inner, animationPreset),
+        outerRadius: spring(circle.radius.outer, animationPreset)
       }
     }]
   }
@@ -136,132 +113,165 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
   willCircleEnter() {
     return {
       opacity: 0,
+      angle: 0,
       innerRadius: this.props.circle.radius.inner,
-      outerRadius: this.props.circle.radius.inner
+      outerRadius: this.props.circle.radius.inner,
     }
   }
 
+  touched = (callback) => {
+    this.setState({touched: true}, callback);
+  }
+
+  dragMove = angle => {
+    if (this.state.dragStart === 666) {
+      console.log('oh no drag move before dragstart')
+      return
+    }
+    const draggedAngle = this.state.dragStart - angle;
+    this.props.rotate(this.state.dragStart, angle);
+    this.layer.draw();
+  }
+
   render() {
+    const preset = this.props.animationPreset;
     return (
-      <div id="stage-container" style={{position: 'relative', width: `${center.x*2*this.state.scale}px`, height: `${center.y*2*this.state.scale}px`}}>
+      <div id="stage-container" className={style.stageContainer} style={{position: 'relative', width: `${center.x*2*this.state.scale}px`, height: `${center.y*2*this.state.scale}px`}}>
         <div className={style.circleTextContainer}>
           <p>{this.props.centerText}</p>
         </div>
-        <Stage ref={stageRef => this.stageRef = stageRef} scaleX={this.state.scale} scaleY={this.state.scale} width={center.x*2*this.state.scale} height={center.y*2*this.state.scale}>
-            {/* circle */}
-            <TransitionMotion
-              defaultStyles={this.getDefaultCircleStyles()}
-              styles={this.getCircleStyles()}
-              willEnter={this.willCircleEnter.bind(this)}
+        <Stage scaleX={this.state.scale} scaleY={this.state.scale} width={center.x*2*this.state.scale} height={center.y*2*this.state.scale}>
+           <StaggeredMotion
+              defaultStyles={this.props.wheel.map((_, i) => {
+                const wheelPart = this.props.wheel[i];
+
+                return {
+                  opacity: wheelPart.opacity,
+                  innerRadius: wheelPart.radius.inner,
+                  outerRadius: wheelPart.radius.outer,
+                  angle: wheelPart.angle,
+                  rotation: -270,
+                  imageWidth: 0,
+                  imageHeight: 0,
+                  imageOffsetScale: 0,
+                }
+              })}
+              styles={previousStyles => previousStyles.map((_, i) => {
+                const {touched} = this.state;
+                const wheelPart = this.props.wheel[i];
+
+                if (touched) {
+                  return {
+                    opacity: spring(wheelPart.opacity),
+                    innerRadius: wheelPart.radius.inner,
+                    outerRadius: spring(wheelPart.radius.outer, preset),
+                    angle: spring(wheelPart.angle, preset),
+                    rotation: spring(wheelPart.rotation, preset),
+                    imageWidth: wheelPart.image && spring(wheelPart.image.size.width, preset) || 0,
+                    imageHeight:  wheelPart.image && spring(wheelPart.image.size.height, preset) || 0,
+                    imageOffsetScale:  wheelPart.image && spring(wheelPart.image.offsetScale, preset) || 0,
+                  }
+                }
+
+                return i === 0
+                ? {
+                  opacity: spring(wheelPart.opacity, preset),
+                  innerRadius: wheelPart.radius.inner,
+                  outerRadius: spring(wheelPart.radius.outer, preset),
+                  angle: spring(wheelPart.angle, preset),
+                  rotation: spring(wheelPart.rotation, preset),
+                  imageWidth:  wheelPart.image && spring(wheelPart.image.size.width, preset) || 0 ,
+                  imageHeight:  wheelPart.image && spring(wheelPart.image.size.height, preset) || 0,
+                  imageOffsetScale:  wheelPart.image && spring(wheelPart.image.offsetScale, preset) || 0,
+                } : {
+                  opacity: spring(wheelPart.opacity, preset),
+                  innerRadius: wheelPart.radius.inner,
+                  outerRadius: spring(wheelPart.radius.outer, preset),
+                  angle: spring(wheelPart.angle, preset),
+                  rotation: previousStyles[i - 1].rotation + previousStyles[i - 1].angle + 0.5 + wheelPart.padding,
+                  imageWidth:  wheelPart.image && spring(wheelPart.image.size.width, preset) || 0,
+                  imageHeight:  wheelPart.image && spring(wheelPart.image.size.height, preset) || 0,
+                  imageOffsetScale:  wheelPart.image && spring(wheelPart.image.offsetScale, preset) || 0,
+                }
+              })}
             >
               {styles =>
-                <Layer>
-                  {styles.map(({style, key, data: {fill}}) =>
-                    <Arc
-                      opacity={style.opacity}
-                      key={key}
-                      ref={arcRef => this.arcRefs['innerCircle'] = arcRef}
-                      angle={360}
-                      x={center.x}
-                      y={center.y}
-                      innerRadius={style.innerRadius}
-                      outerRadius={style.outerRadius}
-                      fill={fill}
-                    />
-                  )}
-                </Layer>
-              }
-            </TransitionMotion>
-            {/* actual arcs */}
-            <TransitionMotion
-              defaultStyles={this.getDefaultStyles()}
-              styles={this.getStyles()}
-              willEnter={this.willEnter.bind(this)}
-            >
-              {styles =>
-                <Layer>
-                  {styles.map(({style, key, data: {children, active, focused, selected, image, fill, id, innerRadius}}) =>
-                    <Group
-                      key={key}
-                    >
+                <Layer
+                  ref={r => {this.layer = r}}
+                  draggable={true}
+                  onDragStart={({evt: e}) => this.setState({dragStart: cartesianAngle(e, center)})}
+                  onDragMove={({evt: e}) => this.dragMove(cartesianAngle(e, center))}
+                  onDragEnd={({evt: e}) => {
+                    this.dragMove(cartesianAngle(e, center))
+                    this.props.resetRotation()
+                  }}
+                  dragBoundFunc={_ => ({x: 0, y: 0})}
+                >
+                  {/* circle */}
+                  <TransitionMotion
+                    defaultStyles={this.getDefaultCircleStyles()}
+                    styles={this.getCircleStyles()}
+                    willEnter={this.willCircleEnter.bind(this)}
+                  >
+                    {styles =>
+                      <Group>
+                        {styles.map(({style, key, data: {fill}}) =>
+                          <Arc
+                            opacity={style.opacity}
+                            key={key}
+                            angle={style.angle}
+                            rotation={this.props.wheel[this.props.wheel.length - 2].rotation + this.props.wheel[this.props.wheel.length - 2].angle}
+                            x={center.x}
+                            y={center.y}
+                            innerRadius={style.innerRadius}
+                            outerRadius={style.outerRadius}
+                            fill={fill}
+                          />
+                        )}
+                      </Group>
+                    }
+                  </TransitionMotion>
+                  {styles.map((style, i) => {
+                    const wheelPart = this.props.wheel[i];
+                    return <Group key={wheelPart.id}>
                       <Arc
-                        opacity={style.opacity}
-                        ref={arcRef => this.arcRefs[key] = arcRef}
-                        angle={style.angle}
+                          opacity={style.opacity}
+                          key={i}
+                          angle={style.angle}
+                          x={center.x}
+                          y={center.y}
+                          rotation={style.rotation}
+                          innerRadius={style.innerRadius}
+                          outerRadius={style.outerRadius}
+                          fill={this.props.wheel[i].fill}
+                          onMouseOver={this.touched.bind(undefined, this.props.onFocus.bind(undefined, this.props.wheel[i].id))}
+                          onMouseOut={this.touched.bind(undefined, this.props.onFocusLost.bind(undefined, this.props.wheel[i].id))}
+                          onClick={this.touched.bind(undefined, this.props.onSelect.bind(undefined, this.props.wheel[i].id, wheelPart.rotation + wheelPart.angle/2))}
+                          onTouchEnd={this.touched.bind(undefined, this.props.onSelect.bind(undefined, this.props.wheel[i].id))}
+                      />
+                      {wheelPart.image && !Boolean(wheelPart.collapsed && !wheelPart.selected) && <Group
+                        key={`image_${i}`}
                         x={center.x}
                         y={center.y}
-                        innerRadius={style.innerRadius}
-                        outerRadius={style.outerRadius}
-                        fill={fill}
-                        rotation={style.rotation}
-                        onMouseOver={this.props.onFocus.bind(undefined, id)}
-                        onMouseOut={this.props.onFocusLost.bind(undefined, id)}
-                        onTouchEnd={this.props.onSelect.bind(undefined, id, selected)}
-                        onClick={this.props.onSelect.bind(undefined, id, selected)}
-                      />
-                      {children && children.map(child => ({...child, width: 315 * 0.10})).map((child, childIndex) => {
-                        const preset = this.props.animationPreset;
-                        const rotationStyle = childIndex => style.rotation + (style.angle / children.length + (childIndex === 0 ? 0 : 0.5)) * childIndex
-                        return <Motion
-                           key={child.id}
-                           style={{
-                             angle: style.angle / children.length - 0.5,
-                             innerRadius: style.outerRadius,
-                             outerRadius: spring(style.outerRadius + (selected ? child.width : 10), preset),
-                             rotation: rotationStyle(childIndex)
-                           }}
-                          >
-                          {interpolatedStyles =>
-                            <Arc
-                              opacity={0.9 * style.opacity}
-                              angle={interpolatedStyles.angle}
-                              x={center.x}
-                              y={center.y}
-                              innerRadius={interpolatedStyles.innerRadius}
-                              outerRadius={interpolatedStyles.outerRadius}
-                              fill={child.fill}
-                              rotation={interpolatedStyles.rotation}
-                            />
-                          }
-                        </Motion>}
-                      )}
+                        offsetY={style.imageOffsetScale * (style.outerRadius - style.imageHeight / 2)}
+                        rotation={90 + style.rotation + style.angle / 2}
+                      >
+                        <KonvaImage
+                          image={wheelPart.image.image}
+                          height={style.imageHeight}
+                          width={style.imageWidth}
+                          opacity={wheelPart.image.opacity || 1}
+                          rotation={-(90 + style.rotation + style.angle / 2)}
+                          offsetX={style.imageWidth / 2}
+                          offsetY={style.imageHeight / 2}
+                          listening={false}
+                        />
+                      </Group>}
                     </Group>
-                  )}
+                  })}
                 </Layer>
               }
-            </TransitionMotion>
-
-            {/* images */}
-            <TransitionMotion
-              defaultStyles={this.getDefaultStyles()}
-              styles={this.getStyles()}
-              willEnter={this.willEnter.bind(this)}
-            >
-              {styles =>
-                <Layer>
-                  {styles.filter(({data: {image}}) => image).map(({style, key, data: {image, fill, innerRadius}}) =>
-                    <Group
-                      key={key}
-                      x={center.x}
-                      y={center.y}
-                      offsetY={style.imageOffsetScale * (style.outerRadius - style.imageHeight / 2)}
-                      rotation={90 + style.rotation + style.angle / 2}
-                    >
-                      <KonvaImage
-                        image={image.image}
-                        height={style.imageHeight}
-                        width={style.imageWidth}
-                        opacity={image.opacity || 1}
-                        rotation={-(90 + style.rotation + style.angle / 2)}
-                        offsetX={style.imageWidth / 2}
-                        offsetY={style.imageHeight / 2}
-                        listening={false}
-                      />
-                    </Group>
-                  )}
-                </Layer>
-              }
-            </TransitionMotion>
+            </StaggeredMotion>
         </Stage>
       </div>
     );

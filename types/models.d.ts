@@ -29,6 +29,7 @@ declare interface Arc {
   radius: DonutRadius,
   id: string,
   opacity: number,
+  padding: number,
   image?: any,
   children?: MotionArc[],
   sexyChildren?: any,
@@ -53,5 +54,6 @@ declare interface BusinessArc {
   selected?: boolean,
   active?: boolean,
   focused?: boolean,
+  padding?: number
 }
 
