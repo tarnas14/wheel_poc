@@ -199,7 +199,7 @@ export class CleanPoC extends React.Component<CleanPoC.Props, CleanPoC.State> {
           wheel: [
             ...collapse(s.wheel.filter(w => w.active)),
             ...s.wheel.filter(w => !w.active)
-          ]
+          ].map(w => ({...w, selected: false}))
         }))
       })
 

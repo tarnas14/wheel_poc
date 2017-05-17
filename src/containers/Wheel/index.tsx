@@ -169,7 +169,7 @@ const toWheel = (wheel): MotionArc[] => wheel ? wheel.arcs.reduce((allArcs, curr
     ...currentArc,
     angle: currentArc.angle,
     fill: currentArc.fill,
-    rotation: wheel.startRotation + sumAngles(allArcs) - allArcs.length/2
+    rotation: wheel.startRotation + sumAngles(allArcs) + allArcs.length/2
   }]
 }, []) : [];
 
@@ -271,7 +271,7 @@ export default class extends React.Component<Props, State> {
       onSelect={onSelect}
       setText={setText}
       centerText={centerText}
-      rotate={this.handleRotation}
+      rotate={() => {}}
       resetRotation={() => this.setState({clockwiseOverflow: false, rotation: 0, rotationStarted: false})}
     />
   }

@@ -8,7 +8,8 @@
     "start": "npm run build && node server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack-dev-server --debug --devtool cheap-module-source-map --output-pathinfo --history-api-fallback --hot --inline --progress --colors --port 3001 --open",
-    "build": "webpack -p --progress --colors"
+    "build": "webpack -p --progress --colors",
+    "tunnel-dev": "ngrok http 3001 -host-header=\"localhost:3001\""
   },
   "license": "MIT",
   "dependencies": {
@@ -54,5 +55,8 @@
     "webpack": "^2.4.1",
     "webpack-dev-server": "^2.4.5",
     "webpack-hot-middleware": "^2.18.0"
+  },
+  "devDependencies": {
+    "ngrok": "^2.2.9"
   }
 }
