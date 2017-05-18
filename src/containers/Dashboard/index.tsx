@@ -1,9 +1,10 @@
-import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
-import {Image as KonvaImage, Group, Layer, Stage, Arc} from 'react-konva';
-import {TransitionMotion, Motion, spring, presets} from 'react-motion';
-import BusinessWheel from '../BusinessWheel';
+import * as React from 'react'
+import { RouteComponentProps } from 'react-router'
+import {Image as KonvaImage, Group, Layer, Stage, Arc} from 'react-konva'
+import {TransitionMotion, Motion, spring, presets} from 'react-motion'
+import BusinessWheel from '../BusinessWheel'
 import * as style from './style.css'
+import State from '../../constants/state'
 
 const icons = {
   home: 'https://api.icons8.com/download/4662d6548b0042ab2fa5afe9429d21d7309b1559/windows10/PNG/256/Very_Basic/home-256.png',
@@ -13,7 +14,7 @@ const icons = {
   scales: 'https://d30y9cdsu7xlg0.cloudfront.net/png/331-200.png',
   wheel: 'http://www.tireworksmb.com/wp-content/uploads/2015/10/tire-icon.png',
   injury: 'https://d30y9cdsu7xlg0.cloudfront.net/png/191712-200.png'
-};
+}
 
 const businessWheel: BusinessArc[] = [
   // {
@@ -38,51 +39,51 @@ const businessWheel: BusinessArc[] = [
     id: '1',
     icon: icons.home,
     text: 'Hausrat',
-    state: 'active',
+    state: State.active,
   },
   {
     id: 'glass',
     icon: icons.glass,
     text: 'Privat Haftpflicht',
-    state: 'active',
+    state: State.active,
   },
   {
     id: '3',
     icon: icons.paw,
     text: 'Tierhalterhaftpflicht',
-    state: 'active',
+    state: State.active,
   },
   {
     id: '4',
     icon: icons.scales,
     text: 'Hausratversicherung',
-    state: 'pending',
+    state: State.pending,
   },
   {
     id: '5',
     icon: icons.phone,
     text: 'Handyversicherung',
-    state: 'pending',
+    state: State.pending,
   },
   {
     id: '6',
     icon: icons.injury,
     text: '',
-    state: 'pending',
+    state: State.pending,
   },
   {
     id: '7',
     icon: icons.wheel,
     text: '',
-    state: 'suggestion',
+    state: State.suggestion,
   },
   {
     id: '8',
     icon: icons.injury,
     text: 'dummy',
-    state: 'suggestion',
+    state: State.suggestion,
   }
-];
+]
 
 const additionalInfos = [
   {
@@ -116,7 +117,7 @@ export namespace Dashboard {
 export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State> {
 
   constructor() {
-    super();
+    super()
     this.state = {
       wheel: businessWheel,
       animationPreset: 'noWobble',
@@ -129,7 +130,7 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
   }
 
   setPreset = (e) => {
-    const preset = e.currentTarget.value;
+    const preset = e.currentTarget.value
     this.setState({
       animationPreset: preset,
       animationSetting: presets[preset]
@@ -137,7 +138,7 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
   }
 
   changeStiffness = (e) => {
-    const val = e.currentTarget.value;
+    const val = e.currentTarget.value
     this.setState(s => ({
       animationSetting: {
         ...s.animationSetting,
@@ -147,7 +148,7 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
   }
 
   changeDamping = (e) => {
-    const val = e.currentTarget.value;
+    const val = e.currentTarget.value
     this.setState(s => ({
       animationSetting: {
         ...s.animationSetting,
@@ -159,7 +160,7 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
   toggleShow = () => {
     this.setState(s => ({
       show: !s.show
-    }));
+    }))
   }
 
   getDefaultStyles = () => {
@@ -185,7 +186,7 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
   }
 
   willLeave = () => {
-    const {slideFromLeft} = this.state;
+    const {slideFromLeft} = this.state
 
     return {
       opacity: spring(0, this.state.animationSetting),
@@ -194,7 +195,7 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
   }
 
   willEnter = () => {
-    const {slideFromLeft} = this.state;
+    const {slideFromLeft} = this.state
 
     return {
       opacity: 0,
@@ -204,7 +205,7 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
 
   changeAdditionalInfo = () => {
     this.setState(s => {
-      const currentKey = Number(s.additionalInfo[0].key);
+      const currentKey = Number(s.additionalInfo[0].key)
       const nextKey = (currentKey === 3 ? 1 : currentKey + 1) - 1
 
       return {
@@ -234,7 +235,7 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
   }
 
   render () {
-    const {animationSetting: {stiffness, damping}} = this.state;
+    const {animationSetting: {stiffness, damping}} = this.state
     return <div>
       <TransitionMotion
         styles={this.getStyles()}
@@ -284,6 +285,6 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
       <p>
         damping: ({damping}) <br /> <input type="range" min="0" max="40" value={damping} onChange={this.changeDamping.bind(this)}/>
       </p>
-    </div>;
+    </div>
   }
 }

@@ -1,16 +1,18 @@
 /** TodoMVC model definitions **/
 
 declare interface TodoItemData {
-  id?: TodoItemId;
-  text?: string;
-  completed?: boolean;
+  id?: TodoItemId
+  text?: string
+  completed?: boolean
 }
 
-declare type TodoItemId = number;
+declare type TodoItemId = number
 
-declare type TodoFilterType = 'SHOW_ALL' | 'SHOW_ACTIVE' | 'SHOW_COMPLETED';
+declare type TodoFilterType = 'SHOW_ALL' | 'SHOW_ACTIVE' | 'SHOW_COMPLETED'
 
-declare type TodoStoreState = TodoItemData[];
+declare type TodoStoreState = TodoItemData[]
+
+declare type State = 'active' | 'pending' | 'suggestion'
 
 declare interface ImageWithPromise {
   image: any,
@@ -48,7 +50,7 @@ declare interface BusinessArc {
   id: string,
   icon: string,
   text: string,
-  state: string,
+  state: State,
   selected?: boolean,
   hidden?: boolean,
 }

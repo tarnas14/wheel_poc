@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {Wheel} from '../../components/Wheel'
 import {find} from 'lodash'
+import State from '../../constants/state'
 
 const focusedAngle = angle => angle + 10
 const selectedAngle = angle => angle * 2 + 10
@@ -160,13 +161,13 @@ const selectTransform = (wheel: GestaltArc[]) : GestaltArc[] => wheel.map(w => {
 })
 
 const padSuggestions = (wheel: GestaltArc[], suggestionPadding: number) : GestaltArc[] => [
-  ...wheel.slice(0, wheel.findIndex(w => w.state === 'suggestion')),
+  ...wheel.slice(0, wheel.findIndex(w => w.state === State.suggestion)),
   {
-    ...wheel.find(w => w.state === 'suggestion'),
+    ...wheel.find(w => w.state === State.suggestion),
     padding: suggestionPadding,
   },
-  ...wheel.slice(wheel.findIndex(w => w.state === 'suggestion') + 1)
-].map(w => w.state === 'suggestion' ? {...w, rotation: w.rotation + suggestionPadding} : w)
+  ...wheel.slice(wheel.findIndex(w => w.state === State.suggestion) + 1)
+].map(w => w.state === State.suggestion ? {...w, rotation: w.rotation + suggestionPadding} : w)
 
 // const debug = (wheel: MotionArc[]): MotionArc[] => wheel.map(w => console.log(w.image) || w)
 const debug = wheel => wheel
