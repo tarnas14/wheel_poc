@@ -15,7 +15,9 @@ declare type TodoStoreState = TodoItemData[];
 declare interface ImageWithPromise {
   image: any,
   size: {height: number, width: number},
-  loaded: Promise<void>
+  loaded: Promise<void>,
+  rotation: (rotation: number, angle: number) => number,
+  offsetScale: number,
 }
 
 declare interface DonutRadius {

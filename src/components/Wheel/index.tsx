@@ -69,6 +69,10 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                   outerRadius: wheelPart.radius.outer,
                   angle: wheelPart.angle,
                   rotation: -270,
+                  imageWidth: 0,
+                  imageHeight: 0,
+                  imageOffsetScale: 0,
+                  imageRotation: 0,
                 }
               })}
               styles={previousStyles => previousStyles.map((_, i) => {
@@ -82,6 +86,10 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                     outerRadius: spring(wheelPart.radius.outer, preset),
                     angle: spring(wheelPart.angle, preset),
                     rotation: spring(wheelPart.rotation, preset),
+                    imageWidth: wheelPart.image ? spring(wheelPart.image.size.width) : 0,
+                    imageHeight: wheelPart.image ? spring(wheelPart.image.size.height) : 0,
+                    imageOffsetScale: wheelPart.image ? spring(wheelPart.image.offsetScale) : 0,
+                    imageRotation: wheelPart.image ? spring(wheelPart.image.rotation(wheelPart.rotation, wheelPart.angle)) : 0,
                   }
                 }
 
@@ -92,12 +100,20 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                   outerRadius: spring(wheelPart.radius.outer, preset),
                   angle: spring(wheelPart.angle, preset),
                   rotation: spring(wheelPart.rotation, preset),
+                  imageWidth: wheelPart.image ? spring(wheelPart.image.size.width) : 0,
+                  imageHeight: wheelPart.image ? spring(wheelPart.image.size.height) : 0,
+                  imageOffsetScale: wheelPart.image ? spring(wheelPart.image.offsetScale) : 0,
+                  imageRotation: wheelPart.image ? spring(wheelPart.image.rotation(wheelPart.rotation, wheelPart.angle)) : 0,
                 } : {
                   opacity: previousStyles[i - 1].opacity,
                   innerRadius: wheelPart.radius.inner,
                   outerRadius: spring(wheelPart.radius.outer, preset),
                   angle: spring(wheelPart.angle, preset),
                   rotation: previousStyles[i - 1].rotation + previousStyles[i - 1].angle + 0.5 + wheelPart.padding,
+                  imageWidth: wheelPart.image ? spring(wheelPart.image.size.width) : 0,
+                  imageHeight: wheelPart.image ? spring(wheelPart.image.size.height) : 0,
+                  imageOffsetScale: wheelPart.image ? spring(wheelPart.image.offsetScale) : 0,
+                  imageRotation: wheelPart.image ? spring(wheelPart.image.rotation(wheelPart.rotation, wheelPart.angle)) : 0,
                 }
               })}
             >
@@ -121,18 +137,18 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                           onClick={this.touched.bind(undefined, this.props.arcClick.bind(undefined, wheelPart.id))}
                       />
                       {wheelPart.image && <Group
-                        key={`image_${i}`}
+                        key={`image_${wheelPart.id}`}
                         x={center.x}
                         y={center.y}
                         offsetY={style.imageOffsetScale * (style.outerRadius - style.imageHeight / 2)}
-                        rotation={90 + style.rotation + style.angle / 2}
+                        rotation={style.imageRotation}
                       >
                         <KonvaImage
                           image={wheelPart.image.image}
                           height={style.imageHeight}
                           width={style.imageWidth}
                           opacity={wheelPart.image.opacity || 1}
-                          rotation={-(90 + style.rotation + style.angle / 2)}
+                          rotation={-style.imageRotation}
                           offsetX={style.imageWidth / 2}
                           offsetY={style.imageHeight / 2}
                           listening={false}

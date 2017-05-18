@@ -2,7 +2,6 @@ import * as React from 'react'
 import {Wheel} from '../../components/Wheel'
 import {find} from 'lodash'
 
-const sameAngle = 35
 const focusedAngle = angle => angle + 10
 const selectedAngle = angle => angle * 2 + 10
 const collapsedAngle = 3
@@ -14,25 +13,25 @@ const centerArea = {
 
 const pending = {
   fill: '#4b7f96',
-  angle: 35,
+  angle: 33,
   radius: {
     inner: centerArea.outer,
     outer: centerArea.outer + centerArea.inner * 2 * 1.15,
-  }
+  },
 }
 
 const active = {
   fill: '#69b8d4',
-  angle: 35,
+  angle: 33,
   radius: {
     ...pending.radius,
     outer: pending.radius.outer * 1.15,
-  }
+  },
 }
 
 const suggestion = {
   fill: '#34495e',
-  angle: 35,
+  angle: 33,
   radius: {
     ...pending.radius,
     outer: pending.radius.outer * 0.85
@@ -47,7 +46,7 @@ const definitions = {
 
 const sumAngles = arcs => arcs.reduce((angle, arc) => angle += arc.angle, 0)
 
-const getImage = (src, size, additional = {}): ImageWithPromise => {
+const getImage = (src: string): ImageWithPromise => {
   const img = new Image()
   img.src = src
 
@@ -57,30 +56,35 @@ const getImage = (src, size, additional = {}): ImageWithPromise => {
 
   return {
     image: img,
-    size: size,
+    size: {
+      width: 40,
+      height: 40
+    },
     loaded: loaded,
-    offsetScale: 0.9,
-    ...additional
+    rotation: (arcRotation, arcAngle) => 90 + arcRotation + arcAngle / 4,
+    offsetScale: 0.96,
   }
 }
 
 const fromBusinessToMetal = (businessWheel: BusinessArc[]): MotionArc[] => {
-  const getTemplate = ({state, ...rest}) => {
+  const getTemplate = ({state, icon}) => {
     if (state === 'active') {
       return {
-        rest,
         ...definitions.active,
+        image: Boolean(icon) && getImage(icon),
       }
     }
 
     if (state === 'pending') {
       return {
-        ...definitions.pending
+        ...definitions.pending,
+        image: Boolean(icon) && getImage(icon),
       }
     }
 
     return {
-      ...definitions.suggestion
+      ...definitions.suggestion,
+      image: Boolean(icon) && getImage(icon),
     }
   }
 
@@ -89,7 +93,7 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[]): MotionArc[] => {
     opacity: 1,
     padding: 0,
     rotation: 0,
-    ...getTemplate(businessArc)
+    ...getTemplate(businessArc),
   }))
 }
 
@@ -118,6 +122,15 @@ const selectTransform = (wheel: MotionArc[]) : MotionArc[] => wheel.map(w => {
       radius: {
         outer: active.radius.outer,
         inner: 50
+      },
+      image: {
+        ...w.image,
+        rotation: (arcRotation, arcAngle) => 90 + arcRotation + arcAngle / 2,
+        size: {
+          height: 1.5 * w.image.size.height,
+          width: 1.5 * w.image.size.width
+        },
+        offsetScale: 0.65
       }
     }
   }
@@ -131,6 +144,14 @@ const selectTransform = (wheel: MotionArc[]) : MotionArc[] => wheel.map(w => {
       radius: {
         outer: active.radius.outer,
         inner: 50
+      },
+      image: w.image && {
+        ...w.image,
+        size: {
+          height: 1,
+          width: 1,
+        },
+        opacity: 0
       }
     }
   }
@@ -138,13 +159,16 @@ const selectTransform = (wheel: MotionArc[]) : MotionArc[] => wheel.map(w => {
   return w
 })
 
+// const debug = (wheel: MotionArc[]): MotionArc[] => wheel.map(w => console.log(w.image) || w)
+const debug = wheel => wheel
+
 export default class extends React.Component<Props, {}> {
 
   render () {
     const {wheel, animationPreset, centerText, select} = this.props
 
     return <Wheel
-      wheel={selectTransform(toWheel(fromBusinessToMetal(wheel), -126))}
+      wheel={debug(selectTransform(toWheel(fromBusinessToMetal(wheel), -126)))}
       animationPreset={animationPreset}
       centerText={centerText}
       arcClick={select.bind(undefined)}
