@@ -50,10 +50,5 @@ declare interface BusinessArc {
   id: string,
   icon: string,
   text: string,
-  collapsed?: boolean,
-  selected?: boolean,
-  active?: boolean,
-  focused?: boolean,
-  padding?: number
+  state: string,
 }
-

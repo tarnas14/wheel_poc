@@ -16,70 +16,71 @@ const icons = {
 };
 
 const businessWheel: BusinessArc[] = [
-  {
-    id: '-2',
-    icon: icons.home,
-    collapsed: true,
-    active: true,
-    text: 'collapsed -2'
-  },
-  {
-    id: '-1',
-    icon: icons.home,
-    collapsed: true,
-    active: true,
-    text: 'collapsed -1'
-  },
-  {
-    id: '0',
-    icon: icons.home,
-    collapsed: true,
-    active: true,
-    text: 'collapsed 0'
-  },
+  // {
+    // id: '-2',
+    // icon: icons.home,
+    // text: 'collapsed -2',
+    // state: 'active',
+  // },
+  // {
+    // id: '-1',
+    // icon: icons.home,
+    // text: 'collapsed -1',
+    // state: 'active',
+  // },
+  // {
+    // id: '0',
+    // icon: icons.home,
+    // text: 'collapsed 0',
+    // state: 'active',
+  // },
   {
     id: '1',
     icon: icons.home,
-    active: true,
-    text: 'Hausrat'
+    text: 'Hausrat',
+    state: 'active',
   },
   {
     id: 'glass',
     icon: icons.glass,
-    active: true,
-    text: 'Privat Haftpflicht'
+    text: 'Privat Haftpflicht',
+    state: 'active',
   },
   {
     id: '3',
     icon: icons.paw,
-    active: true,
     text: 'Tierhalterhaftpflicht',
+    state: 'active',
   },
   {
     id: '4',
     icon: icons.scales,
     text: 'Hausratversicherung',
-    padding: 10
+    state: 'pending',
   },
   {
     id: '5',
     icon: icons.phone,
-    text: 'Handyversicherung'
+    text: 'Handyversicherung',
+    state: 'pending',
   },
   {
     id: '6',
     icon: icons.injury,
-    text: ''
+    text: '',
+    state: 'pending',
   },
   {
     id: '7',
     icon: icons.wheel,
-    text: ''
+    text: '',
+    state: 'suggestion',
   },
   {
     id: '8',
     icon: icons.injury,
-    text: 'dummy'
+    text: 'dummy',
+    state: 'suggestion',
   }
 ];
 
@@ -132,98 +133,6 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
     this.setState({
       animationPreset: preset,
       animationSetting: presets[preset]
-    })
-  }
-
-  focus = (id) => {
-    if (!this.state.wheel.filter(w => w.id === id).length) {
-      return;
-    }
-
-    this.setState(s => ({
-      centerText: s.wheel.find(w => w.id === id).text,
-      wheel: s.wheel.map(w => w.id === id
-        ? {
-          ...w,
-          focused: true
-        }
-        : w)
-    }))
-  }
-
-  focusLost = (id) => {
-    if (!this.state.wheel.filter(w => w.id === id).length) {
-      return;
-    }
-
-    this.setState(s => ({
-      centerText: s.wheel.filter(w => w.selected).length ? s.wheel.find(w => w.selected).text : '',
-      wheel: s.wheel.map(w => w.id === id
-        ? {
-          ...w,
-          focused: false
-        }
-        : w)
-    }))
-  }
-
-  selected = (id: string, rotation: number) => {
-    const wheel = this.state.wheel.find(w => w.id === id);
-    if (!wheel) {
-      return;
-    }
-
-    const fromTheLeft = rotation <= -90;
-
-    if (wheel.collapsed) {
-      const howManyCollapsed = this.state.wheel.filter(w => w.collapsed).length
-
-      const collapse = (wheel) => {
-        if (wheel[0].collapsed) {
-          const uncollapsed = wheel.map(w => ({...w, collapsed: false}));
-          return [
-            ...uncollapsed.slice(0, -howManyCollapsed),
-            ...uncollapsed.slice(-howManyCollapsed).map(w => ({...w, collapsed: true}))
-          ]
-        }
-
-        const uncollapsed = wheel.map(w => ({...w, collapsed: false}));
-        return [
-          ...uncollapsed.slice(0, howManyCollapsed).map(w => ({...w, collapsed: true})),
-          ...uncollapsed.slice(howManyCollapsed)
-        ]
-      }
-
-      this.setState({slideFromLeft: fromTheLeft}, () => {
-        this.changeAdditionalInfo();
-        this.setState(s => ({
-          wheel: [
-            ...collapse(s.wheel.filter(w => w.active)),
-            ...s.wheel.filter(w => !w.active)
-          ].map(w => ({...w, selected: false}))
-        }))
-      })
-
-      return
-    }
-
-    const {selected} = wheel;
-
-    this.setState({slideFromLeft: fromTheLeft}, () => {
-      this.changeAdditionalInfo();
-      this.setState(s => ({
-        centerText: selected ? '' : wheel.text,
-        wheel: s.wheel.map(w => w.id === id
-          ? {
-            ...w,
-            selected: !w.selected,
-            focused: false
-          }
-          : {
-            ...w,
-            selected: false
-          })
-      }))
     })
   }
 
@@ -331,10 +240,6 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
       {this.state.show && <BusinessWheel
         wheel={this.state.wheel}
         animationPreset={this.state.animationSetting}
-        onFocus={this.focus.bind(this)}
-        onFocusLost={this.focusLost.bind(this)}
-        onSelect={this.selected.bind(this)}
-        setText={text => this.setState({centerText: text})}
         centerText={this.state.centerText}
       />
       }
