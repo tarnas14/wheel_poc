@@ -66,7 +66,7 @@ const getImage = (src: string): ImageWithPromise => {
   }
 }
 
-const fromBusinessToMetal = (businessWheel: BusinessArc[]): MotionArc[] => {
+const fromBusinessToMetal = (businessWheel: BusinessArc[]): GestaltArc[] => {
   const getTemplate = ({state, icon}) => {
     if (state === 'active') {
       return {
@@ -104,7 +104,7 @@ export interface Props {
   select: (id: string) => void,
 }
 
-const toWheel = (wheel: MotionArc[], startRotation: number): MotionArc[] => wheel ? wheel.reduce((allArcs, currentArc) => {
+const toWheel = (wheel: GestaltArc[], startRotation: number): GestaltArc[] => wheel ? wheel.reduce((allArcs, currentArc) => {
   return [...allArcs, {
     ...currentArc,
     angle: currentArc.angle,
@@ -113,7 +113,7 @@ const toWheel = (wheel: MotionArc[], startRotation: number): MotionArc[] => whee
   }]
 }, []) : []
 
-const selectTransform = (wheel: MotionArc[]) : MotionArc[] => wheel.map(w => {
+const selectTransform = (wheel: GestaltArc[]) : GestaltArc[] => wheel.map(w => {
   if (w.selected) {
     return {
       ...w,
@@ -159,6 +159,15 @@ const selectTransform = (wheel: MotionArc[]) : MotionArc[] => wheel.map(w => {
   return w
 })
 
+const padSuggestions = (wheel: GestaltArc[], suggestionPadding: number) : GestaltArc[] => [
+  ...wheel.slice(0, wheel.findIndex(w => w.state === 'suggestion')),
+  {
+    ...wheel.find(w => w.state === 'suggestion'),
+    padding: suggestionPadding,
+  },
+  ...wheel.slice(wheel.findIndex(w => w.state === 'suggestion') + 1)
+].map(w => w.state === 'suggestion' ? {...w, rotation: w.rotation + suggestionPadding} : w)
+
 // const debug = (wheel: MotionArc[]): MotionArc[] => wheel.map(w => console.log(w.image) || w)
 const debug = wheel => wheel
 
@@ -168,7 +177,7 @@ export default class extends React.Component<Props, {}> {
     const {wheel, animationPreset, centerText, select} = this.props
 
     return <Wheel
-      wheel={debug(selectTransform(toWheel(fromBusinessToMetal(wheel), -126)))}
+      wheel={debug(selectTransform(padSuggestions(toWheel(fromBusinessToMetal(wheel), -126), 10)))}
       animationPreset={animationPreset}
       centerText={centerText}
       arcClick={select.bind(undefined)}

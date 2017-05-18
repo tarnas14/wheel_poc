@@ -31,14 +31,12 @@ declare interface Arc {
   radius: DonutRadius,
   id: string,
   opacity: number,
-  padding: number,
   image?: any,
-  selected?: boolean,
-  hidden?: boolean,
 }
 
 declare interface MotionArc extends Arc {
   rotation: number,
+  padding: number,
 }
 
 declare interface AnimationPreset {
@@ -54,3 +52,5 @@ declare interface BusinessArc {
   selected?: boolean,
   hidden?: boolean,
 }
+
+declare interface GestaltArc extends MotionArc, BusinessArc {}
