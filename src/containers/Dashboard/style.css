@@ -33,37 +33,8 @@ button {
   height: 80px;
 }
 
-.circleTextContainer {
-  position: absolute;
-  left: 39.2%;
-  top: 39.2%;
-  display: table;
-  table-layout: fixed;
-  z-index: 9000;
-  width: 16.8%;
-  height: 21.7%;
-  padding: 2.5%;
-  border-radius: 50%;
-  text-align: center;
-}
-
-.circleTextContainer p {
-  overflow-wrap: break-word;
-  display: table-cell;
-  vertical-align: middle;
-  color: white;
-  line-height: 1.5;
-  font-size: 0.9em;
-}
-
 .stageContainer {
   margin: 0 auto;
-}
-
-@media all and (min-width: 720px) {
-  .circleTextContainer p {
-    font-size: 1.4em;
-  }
 }
 
 .additionalInfo {

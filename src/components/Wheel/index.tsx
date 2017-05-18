@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {Image as KonvaImage, Group, Layer, Stage, Arc} from 'react-konva'
 import {StaggeredMotion, spring} from 'react-motion'
-import * as style from '../../containers/Dashboard/style.css'
+import * as style from './style.css'
 
 const center = {
   x: 360,
@@ -12,8 +12,11 @@ export namespace Wheel {
   export interface Props {
     wheel: MotionArc[],
     animationPreset: AnimationPreset,
-    centerText: string,
+    center: any,
     arcClick: (id: string) => void,
+    colourPalette: {
+      schaboHighlight: string
+    },
   }
 
   export interface State {
@@ -55,8 +58,8 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
     const preset = this.props.animationPreset
     return (
       <div id="stage-container" className={style.stageContainer} style={{position: 'relative', width: `${center.x*2*this.state.scale}px`, height: `${center.y*2*this.state.scale}px`}}>
-        <div className={style.circleTextContainer}>
-          <p>{this.props.centerText}</p>
+        <div className={style.centerContainer}>
+          <p>{this.props.center}</p>
         </div>
         <Stage scaleX={this.state.scale} scaleY={this.state.scale} width={center.x*2*this.state.scale} height={center.y*2*this.state.scale}>
            <StaggeredMotion
@@ -145,7 +148,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                           rotation={style.rotation}
                           innerRadius={style.innerRadius - 3}
                           outerRadius={style.innerRadius}
-                          fill='white'
+                          fill={this.props.colourPalette.schaboHighlight}
                       />}
                       {wheelPart.image && <Group
                         key={`image_${wheelPart.id}`}

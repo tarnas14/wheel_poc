@@ -2,6 +2,8 @@ import * as React from 'react'
 import {Wheel} from '../../components/Wheel'
 import {find} from 'lodash'
 import State from '../../constants/state'
+import ColourPalette from '../../constants/colourPalette'
+import ActionHome from 'material-ui/svg-icons/hardware/keyboard-arrow-left'
 
 const focusedAngle = angle => angle + 10
 const selectedAngle = angle => angle * 2 + 10
@@ -13,7 +15,7 @@ const centerArea = {
 }
 
 const pending = {
-  fill: '#4b7f96',
+  fill: ColourPalette.pending,
   angle: 33,
   radius: {
     inner: centerArea.outer,
@@ -22,7 +24,7 @@ const pending = {
 }
 
 const active = {
-  fill: '#69b8d4',
+  fill: ColourPalette.active,
   angle: 33,
   radius: {
     ...pending.radius,
@@ -31,7 +33,7 @@ const active = {
 }
 
 const suggestion = {
-  fill: '#34495e',
+  fill: ColourPalette.suggestion,
   angle: 33,
   radius: {
     ...pending.radius,
@@ -97,13 +99,6 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[]): GestaltArc[] => {
     raised: Boolean(businessArc.schabo),
     ...getTemplate(businessArc),
   }))
-}
-
-export interface Props {
-  wheel: BusinessArc[],
-  animationPreset: AnimationPreset,
-  centerText: string,
-  select: (id: string) => void,
 }
 
 const toWheel = (wheel: GestaltArc[], startRotation: number): GestaltArc[] => wheel ? wheel.reduce((allArcs, currentArc) => {
@@ -173,16 +168,73 @@ const padSuggestions = (wheel: GestaltArc[], suggestionPadding: number) : Gestal
 // const debug = (wheel: MotionArc[]): MotionArc[] => wheel.map(w => console.log(w.image) || w)
 const debug = wheel => wheel
 
-export default class extends React.Component<Props, {}> {
+interface Props {
+  wheel: BusinessArc[],
+  animationPreset: AnimationPreset,
+  select: (id: string) => void,
+  clearSelection: () => void,
+}
+
+interface State {
+  center: any,
+  previous: any,
+}
+
+const getSchaboText = (businessWheel: BusinessArc[]) => <span><b style={{fontSize: '1.4em'}}>{businessWheel.reduce((accumulator, current) => accumulator + current.schabo, 0)} €</b> Schadensfreibonus</span>
+
+export default class extends React.Component<Props, State> {
+
+  constructor() {
+    super()
+    this.state = {
+      previous: null,
+      center: null
+    }
+  }
+
+  componentDidMount () {
+    const {wheel} = this.props
+    this.setState({
+      center: getSchaboText(wheel)
+    })
+  }
+
+  preventMultiple = (id: string) => {
+    const {selected} = this.props.wheel.find(w => w.id === id)
+
+    if (!selected) {
+      this.setCenter(<ActionHome
+        style={{height: 'auto', width: 'auto', color: ColourPalette.active}}
+        onClick={this.clearSelection}
+      />)
+      this.props.select(id)
+    }
+  }
+
+  setCenter = (center: any) => {
+    this.setState(s => ({
+      previous: s.center,
+      center: center
+    }))
+  }
+
+  clearSelection = () => {
+    this.setState(s => ({
+      previous: s.center,
+      center: s.previous
+    }))
+    this.props.clearSelection()
+  }
 
   render () {
-    const {wheel, animationPreset, centerText, select} = this.props
+    const {wheel, animationPreset, select} = this.props
 
     return <Wheel
       wheel={debug(goToCDStateOnSelect(padSuggestions(toWheel(fromBusinessToMetal(wheel), -126), 10)))}
       animationPreset={animationPreset}
-      centerText={centerText}
-      arcClick={select.bind(undefined)}
+      center={this.state.center}
+      arcClick={this.preventMultiple}
+      colourPalette={ColourPalette}
     />
   }
 }

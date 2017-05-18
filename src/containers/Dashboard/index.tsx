@@ -5,6 +5,8 @@ import {TransitionMotion, Motion, spring, presets} from 'react-motion'
 import BusinessWheel from '../BusinessWheel'
 import * as style from './style.css'
 import State from '../../constants/state'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import ColourPalette from '../../constants/colourPalette'
 
 const icons = {
   home: 'https://api.icons8.com/download/4662d6548b0042ab2fa5afe9429d21d7309b1559/windows10/PNG/256/Very_Basic/home-256.png',
@@ -116,15 +118,12 @@ export namespace Dashboard {
     wheel: BusinessArc[],
     animationPreset: string,
     animationSetting: AnimationPreset,
-    previousText: any,
-    centerText: any,
     show: boolean,
     additionalInfo: {key: string, text: string}[],
     slideFromLeft: boolean
   }
 }
 
-const getSchaboText = (businessWheel: BusinessArc[]) => <span><b style={{fontSize: '1.4em'}}>{businessWheel.reduce((accumulator, current) => accumulator + current.schabo, 0)} €</b> Schadensfreibonus</span>
 
 export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State> {
 
@@ -133,8 +132,6 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
     this.state = {
       wheel: businessWheel,
       animationPreset: 'noWobble',
-      previousText: '',
-      centerText: getSchaboText(businessWheel),
       animationSetting: presets.noWobble,
       show: true,
       additionalInfo: [additionalInfos[0]],
@@ -229,8 +226,6 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
 
   select = (id: string) => {
     this.setState(s => ({
-      previousText: s.centerText,
-      centerText: '',
       wheel: s.wheel.map(w => ({
         ...w,
         selected: w.id === id,
@@ -239,10 +234,8 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
     }))
   }
 
-  unselect = () => {
+  clearSelection = () => {
     this.setState(s => ({
-      previousText: s.centerText,
-      centerText: s.previousText,
       wheel: s.wheel.map(w => ({
         ...w,
         selected: false,
@@ -253,7 +246,7 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
 
   render () {
     const {animationSetting: {stiffness, damping}} = this.state
-    return <div>
+    return <MuiThemeProvider><div>
       <TransitionMotion
         styles={this.getStyles()}
         willEnter={this.willEnter}
@@ -275,12 +268,12 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
         </div>}
       </TransitionMotion>
       <hr className={style.divider}/>
-      <button onClick={this.unselect}>deselect</button>
+
       {this.state.show && <BusinessWheel
         wheel={this.state.wheel}
         animationPreset={this.state.animationSetting}
-        centerText={this.state.centerText}
         select={this.select}
+        clearSelection={this.clearSelection}
       />
       }
       <div>
@@ -302,6 +295,6 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
       <p>
         damping: ({damping}) <br /> <input type="range" min="0" max="40" value={damping} onChange={this.changeDamping.bind(this)}/>
       </p>
-    </div>
+    </div></MuiThemeProvider>
   }
 }
