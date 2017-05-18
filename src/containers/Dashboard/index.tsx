@@ -29,59 +29,68 @@ const businessWheel: BusinessArc[] = [
     // text: 'collapsed -1',
     // state: 'active',
   // },
-  // {
-    // id: '0',
-    // icon: icons.home,
-    // text: 'collapsed 0',
-    // state: 'active',
-  // },
+  {
+    id: '0',
+    icon: icons.glass,
+    text: 'collapsed 0',
+    state: State.active,
+    schabo: 0,
+  },
   {
     id: '1',
     icon: icons.home,
     text: 'Hausrat',
     state: State.active,
+    schabo: 13,
   },
   {
     id: 'glass',
     icon: icons.glass,
     text: 'Privat Haftpflicht',
     state: State.active,
+    schabo: 0,
   },
   {
     id: '3',
     icon: icons.paw,
     text: 'Tierhalterhaftpflicht',
     state: State.active,
+    schabo: 10.75,
   },
   {
     id: '4',
     icon: icons.scales,
     text: 'Hausratversicherung',
     state: State.pending,
+    schabo: 0,
   },
   {
     id: '5',
     icon: icons.phone,
     text: 'Handyversicherung',
     state: State.pending,
+    schabo: 0,
   },
   {
     id: '6',
     icon: icons.injury,
     text: '',
     state: State.pending,
+    schabo: 0,
   },
   {
     id: '7',
     icon: icons.wheel,
     text: '',
     state: State.suggestion,
+    schabo: 0,
   },
   {
     id: '8',
     icon: icons.injury,
     text: 'dummy',
     state: State.suggestion,
+    schabo: 0,
   }
 ]
 
@@ -107,12 +116,15 @@ export namespace Dashboard {
     wheel: BusinessArc[],
     animationPreset: string,
     animationSetting: AnimationPreset,
-    centerText: string,
+    previousText: any,
+    centerText: any,
     show: boolean,
     additionalInfo: {key: string, text: string}[],
     slideFromLeft: boolean
   }
 }
+
+const getSchaboText = (businessWheel: BusinessArc[]) => <span><b style={{fontSize: '1.4em'}}>{businessWheel.reduce((accumulator, current) => accumulator + current.schabo, 0)} €</b> Schadensfreibonus</span>
 
 export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State> {
 
@@ -121,7 +133,8 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
     this.state = {
       wheel: businessWheel,
       animationPreset: 'noWobble',
-      centerText: '',
+      previousText: '',
+      centerText: getSchaboText(businessWheel),
       animationSetting: presets.noWobble,
       show: true,
       additionalInfo: [additionalInfos[0]],
@@ -216,6 +229,8 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
 
   select = (id: string) => {
     this.setState(s => ({
+      previousText: s.centerText,
+      centerText: '',
       wheel: s.wheel.map(w => ({
         ...w,
         selected: w.id === id,
@@ -226,6 +241,8 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
 
   unselect = () => {
     this.setState(s => ({
+      previousText: s.centerText,
+      centerText: s.previousText,
       wheel: s.wheel.map(w => ({
         ...w,
         selected: false,

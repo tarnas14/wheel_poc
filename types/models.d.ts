@@ -39,6 +39,7 @@ declare interface Arc {
 declare interface MotionArc extends Arc {
   rotation: number,
   padding: number,
+  raised: boolean,
 }
 
 declare interface AnimationPreset {
@@ -51,6 +52,7 @@ declare interface BusinessArc {
   icon: string,
   text: string,
   state: State,
+  schabo: number,
   selected?: boolean,
   hidden?: boolean,
 }

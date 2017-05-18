@@ -94,6 +94,7 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[]): GestaltArc[] => {
     opacity: 1,
     padding: 0,
     rotation: 0,
+    raised: Boolean(businessArc.schabo),
     ...getTemplate(businessArc),
   }))
 }
@@ -114,7 +115,7 @@ const toWheel = (wheel: GestaltArc[], startRotation: number): GestaltArc[] => wh
   }]
 }, []) : []
 
-const selectTransform = (wheel: GestaltArc[]) : GestaltArc[] => wheel.map(w => {
+const goToCDStateOnSelect = (wheel: GestaltArc[]) : GestaltArc[] => wheel.map(w => {
   if (w.selected) {
     return {
       ...w,
@@ -178,7 +179,7 @@ export default class extends React.Component<Props, {}> {
     const {wheel, animationPreset, centerText, select} = this.props
 
     return <Wheel
-      wheel={debug(selectTransform(padSuggestions(toWheel(fromBusinessToMetal(wheel), -126), 10)))}
+      wheel={debug(goToCDStateOnSelect(padSuggestions(toWheel(fromBusinessToMetal(wheel), -126), 10)))}
       animationPreset={animationPreset}
       centerText={centerText}
       arcClick={select.bind(undefined)}

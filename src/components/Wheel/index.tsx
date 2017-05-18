@@ -124,7 +124,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                     return <Group key={wheelPart.id}>
                       <Arc
                           opacity={style.opacity}
-                          key={i}
+                          key={wheelPart.id}
                           angle={style.angle}
                           x={center.x}
                           y={center.y}
@@ -136,6 +136,17 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                           onMouseOver={this.touched.bind(undefined, () => {})}
                           onClick={this.touched.bind(undefined, this.props.arcClick.bind(undefined, wheelPart.id))}
                       />
+                      {wheelPart.raised && <Arc
+                          opacity={style.opacity}
+                          key={`indicator_${wheelPart.id}`}
+                          angle={style.angle}
+                          x={center.x}
+                          y={center.y}
+                          rotation={style.rotation}
+                          innerRadius={style.innerRadius - 3}
+                          outerRadius={style.innerRadius}
+                          fill='white'
+                      />}
                       {wheelPart.image && <Group
                         key={`image_${wheelPart.id}`}
                         x={center.x}
