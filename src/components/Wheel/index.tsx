@@ -113,7 +113,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                   imageWidth: wheelPart.image ? spring(wheelPart.image.size.width) : 0,
                   imageHeight: wheelPart.image ? spring(wheelPart.image.size.height) : 0,
                   imageOffsetScale: wheelPart.image ? spring(wheelPart.image.offsetScale) : 0,
-                  imageRotation: wheelPart.image ? spring(wheelPart.image.rotation(wheelPart.rotation, wheelPart.angle)) : 0,
+                  imageRotation: wheelPart.image ? wheelPart.image.rotation(previousStyles[i - 1].rotation + previousStyles[i - 1].angle + 0.5 + wheelPart.padding, wheelPart.angle) : 0,
                 }
               })}
             >
