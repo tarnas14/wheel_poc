@@ -213,6 +213,26 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
     })
   }
 
+  select = (id: string) => {
+    this.setState(s => ({
+      wheel: s.wheel.map(w => ({
+        ...w,
+        selected: w.id === id,
+        hidden: w.id !== id
+      }))
+    }))
+  }
+
+  unselect = () => {
+    this.setState(s => ({
+      wheel: s.wheel.map(w => ({
+        ...w,
+        selected: false,
+        hidden: false
+      }))
+    }))
+  }
+
   render () {
     const {animationSetting: {stiffness, damping}} = this.state;
     return <div>
@@ -237,10 +257,12 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
         </div>}
       </TransitionMotion>
       <hr className={style.divider}/>
+      <button onClick={this.unselect}>unselect</button>
       {this.state.show && <BusinessWheel
         wheel={this.state.wheel}
         animationPreset={this.state.animationSetting}
         centerText={this.state.centerText}
+        select={this.select}
       />
       }
       <div>

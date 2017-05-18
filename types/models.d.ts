@@ -20,7 +20,7 @@ declare interface ImageWithPromise {
 
 declare interface DonutRadius {
   inner: number,
-  outer: number
+  outer: number,
 }
 
 declare interface Arc {
@@ -31,15 +31,17 @@ declare interface Arc {
   opacity: number,
   padding: number,
   image?: any,
+  selected?: boolean,
+  hidden?: boolean,
 }
 
 declare interface MotionArc extends Arc {
-  rotation: number
+  rotation: number,
 }
 
 declare interface AnimationPreset {
   stiffness: number,
-  damping: number
+  damping: number,
 }
 
 declare interface BusinessArc {
@@ -47,4 +49,6 @@ declare interface BusinessArc {
   icon: string,
   text: string,
   state: string,
+  selected?: boolean,
+  hidden?: boolean,
 }

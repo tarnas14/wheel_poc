@@ -65,9 +65,10 @@ const getImage = (src, size, additional = {}): ImageWithPromise => {
 }
 
 const fromBusinessToMetal = (businessWheel: BusinessArc[]): MotionArc[] => {
-  const getTemplate = ({state, icon}): {fill: string, angle: number, radius: DonutRadius} => {
+  const getTemplate = ({state, ...rest}) => {
     if (state === 'active') {
       return {
+        rest,
         ...definitions.active,
       }
     }
@@ -84,7 +85,7 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[]): MotionArc[] => {
   }
 
   return businessWheel.map(businessArc => ({
-    id: businessArc.id,
+    ...businessArc,
     opacity: 1,
     padding: 0,
     rotation: 0,
@@ -96,6 +97,7 @@ export interface Props {
   wheel: BusinessArc[],
   animationPreset: AnimationPreset,
   centerText: string,
+  select: (id: string) => void,
 }
 
 const toWheel = (wheel: MotionArc[], startRotation: number): MotionArc[] => wheel ? wheel.reduce((allArcs, currentArc) => {
@@ -107,16 +109,45 @@ const toWheel = (wheel: MotionArc[], startRotation: number): MotionArc[] => whee
   }]
 }, []) : []
 
+const selectTransform = (wheel: MotionArc[]) : MotionArc[] => wheel.map(w => {
+  if (w.selected) {
+    return {
+      ...w,
+      angle: 360,
+      rotation: -270,
+      radius: {
+        outer: active.radius.outer,
+        inner: 50
+      }
+    }
+  }
+
+  if (w.hidden) {
+    return {
+      ...w,
+      angle: 0,
+      rotation: -270,
+      opacity: 0,
+      radius: {
+        outer: active.radius.outer,
+        inner: 50
+      }
+    }
+  }
+
+  return w
+})
 
 export default class extends React.Component<Props, {}> {
 
   render () {
-    const {wheel, animationPreset, centerText} = this.props
+    const {wheel, animationPreset, centerText, select} = this.props
 
     return <Wheel
-      wheel={toWheel(fromBusinessToMetal(wheel), -126)}
+      wheel={selectTransform(toWheel(fromBusinessToMetal(wheel), -126))}
       animationPreset={animationPreset}
       centerText={centerText}
+      arcClick={select.bind(undefined)}
     />
   }
 }

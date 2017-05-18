@@ -13,11 +13,12 @@ export namespace Wheel {
     wheel: MotionArc[],
     animationPreset: AnimationPreset,
     centerText: string,
+    arcClick: (id: string) => void,
   }
 
   export interface State {
     scale: number,
-    touched: boolean
+    touched: boolean,
   }
 }
 
@@ -77,7 +78,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                 if (touched) {
                   return {
                     opacity: spring(wheelPart.opacity, preset),
-                    innerRadius: wheelPart.radius.inner,
+                    innerRadius: spring(wheelPart.radius.inner, preset),
                     outerRadius: spring(wheelPart.radius.outer, preset),
                     angle: spring(wheelPart.angle, preset),
                     rotation: spring(wheelPart.rotation, preset),
@@ -87,7 +88,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                 return i === 0
                 ? {
                   opacity: spring(wheelPart.opacity, preset),
-                  innerRadius: wheelPart.radius.inner,
+                  innerRadius: spring(wheelPart.radius.inner, preset),
                   outerRadius: spring(wheelPart.radius.outer, preset),
                   angle: spring(wheelPart.angle, preset),
                   rotation: spring(wheelPart.rotation, preset),
@@ -115,6 +116,9 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                           innerRadius={style.innerRadius}
                           outerRadius={style.outerRadius}
                           fill={this.props.wheel[i].fill}
+
+                          onMouseOver={this.touched.bind(undefined, () => {})}
+                          onClick={this.touched.bind(undefined, this.props.arcClick.bind(undefined, wheelPart.id))}
                       />
                       {wheelPart.image && <Group
                         key={`image_${i}`}
