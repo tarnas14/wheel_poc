@@ -257,7 +257,7 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
         </div>}
       </TransitionMotion>
       <hr className={style.divider}/>
-      <button onClick={this.unselect}>unselect</button>
+      <button onClick={this.unselect}>deselect</button>
       {this.state.show && <BusinessWheel
         wheel={this.state.wheel}
         animationPreset={this.state.animationSetting}

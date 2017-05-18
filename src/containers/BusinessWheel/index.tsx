@@ -13,7 +13,7 @@ const centerArea = {
 }
 
 const pending = {
-  fill: '#34495e',
+  fill: '#4b7f96',
   angle: 35,
   radius: {
     inner: centerArea.outer,
@@ -22,7 +22,7 @@ const pending = {
 }
 
 const active = {
-  fill: '#00fff0',
+  fill: '#69b8d4',
   angle: 35,
   radius: {
     ...pending.radius,
