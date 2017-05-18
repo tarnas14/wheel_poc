@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Image as KonvaImage, Group, Layer, Stage, Arc} from 'react-konva'
+import {Text, Image as KonvaImage, Group, Layer, Stage, Arc} from 'react-konva'
 import {StaggeredMotion, spring} from 'react-motion'
 import * as style from './style.css'
 
@@ -76,6 +76,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                   imageHeight: 0,
                   imageOffsetScale: 0,
                   imageRotation: 0,
+                  imageFontSize: 0,
                 }
               })}
               styles={previousStyles => previousStyles.map((_, i) => {
@@ -93,6 +94,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                     imageHeight: wheelPart.image ? spring(wheelPart.image.size.height) : 0,
                     imageOffsetScale: wheelPart.image ? spring(wheelPart.image.offsetScale) : 0,
                     imageRotation: wheelPart.image ? spring(wheelPart.image.rotation(wheelPart.rotation, wheelPart.angle)) : 0,
+                    imageFontSize: wheelPart.image ? spring(wheelPart.image.textFontSize) : 0,
                   }
                 }
 
@@ -107,6 +109,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                   imageHeight: wheelPart.image ? spring(wheelPart.image.size.height) : 0,
                   imageOffsetScale: wheelPart.image ? spring(wheelPart.image.offsetScale) : 0,
                   imageRotation: wheelPart.image ? spring(wheelPart.image.rotation(wheelPart.rotation, wheelPart.angle)) : 0,
+                  imageFontSize: 0,
                 } : {
                   opacity: previousStyles[i - 1].opacity,
                   innerRadius: wheelPart.radius.inner,
@@ -117,6 +120,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                   imageHeight: wheelPart.image ? spring(wheelPart.image.size.height) : 0,
                   imageOffsetScale: wheelPart.image ? spring(wheelPart.image.offsetScale) : 0,
                   imageRotation: wheelPart.image ? wheelPart.image.rotation(previousStyles[i - 1].rotation + previousStyles[i - 1].angle + 0.5 + wheelPart.padding, wheelPart.angle) : 0,
+                  imageFontSize: 0,
                 }
               })}
             >
@@ -156,6 +160,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                         y={center.y}
                         offsetY={style.imageOffsetScale * (style.outerRadius - style.imageHeight / 2)}
                         rotation={style.imageRotation}
+                        listening={false}
                       >
                         <KonvaImage
                           image={wheelPart.image.image}
@@ -165,7 +170,16 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                           rotation={-style.imageRotation}
                           offsetX={style.imageWidth / 2}
                           offsetY={style.imageHeight / 2}
-                          listening={false}
+                        />
+                        <Text
+                          rotation={-style.imageRotation}
+                          text={wheelPart.text}
+                          width={center.x}
+                          align='center'
+                          offsetX={center.x/2}
+                          // offsetX={style.imageWidth / 2}
+                          offsetY={-style.imageHeight}
+                          fontSize={style.imageFontSize}
                         />
                       </Group>}
                     </Group>

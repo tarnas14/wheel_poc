@@ -66,28 +66,31 @@ const getImage = (src: string): ImageWithPromise => {
     loaded: loaded,
     rotation: (arcRotation, arcAngle) => 90 + arcRotation + arcAngle / 4,
     offsetScale: 0.96,
+    textFontSize: 0,
   }
 }
+
+const loadImages = true
 
 const fromBusinessToMetal = (businessWheel: BusinessArc[]): GestaltArc[] => {
   const getTemplate = ({state, icon}) => {
     if (state === 'active') {
       return {
         ...definitions.active,
-        image: Boolean(icon) && getImage(icon),
+        image: loadImages && Boolean(icon) && getImage(icon),
       }
     }
 
     if (state === 'pending') {
       return {
         ...definitions.pending,
-        image: Boolean(icon) && getImage(icon),
+        image: loadImages && Boolean(icon) && getImage(icon),
       }
     }
 
     return {
       ...definitions.suggestion,
-      image: Boolean(icon) && getImage(icon),
+      image: loadImages && Boolean(icon) && getImage(icon),
     }
   }
 
@@ -120,14 +123,15 @@ const goToCDStateOnSelect = (wheel: GestaltArc[]) : GestaltArc[] => wheel.map(w 
         outer: active.radius.outer,
         inner: 50
       },
-      image: {
+      image: w.image && {
         ...w.image,
         rotation: (arcRotation, arcAngle) => 90 + arcRotation + arcAngle / 2,
         size: {
           height: 1.5 * w.image.size.height,
           width: 1.5 * w.image.size.width
         },
-        offsetScale: 0.65
+        offsetScale: 0.65,
+        textFontSize: 20,
       }
     }
   }
@@ -148,7 +152,8 @@ const goToCDStateOnSelect = (wheel: GestaltArc[]) : GestaltArc[] => wheel.map(w 
           height: 1,
           width: 1,
         },
-        opacity: 0
+        opacity: 0,
+        textFontSize: 0,
       }
     }
   }

@@ -20,6 +20,7 @@ declare interface ImageWithPromise {
   loaded: Promise<void>,
   rotation: (rotation: number, angle: number) => number,
   offsetScale: number,
+  textFontSize: number,
 }
 
 declare interface DonutRadius {
@@ -40,6 +41,7 @@ declare interface MotionArc extends Arc {
   rotation: number,
   padding: number,
   raised: boolean,
+  text: string,
 }
 
 declare interface AnimationPreset {
