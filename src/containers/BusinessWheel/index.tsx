@@ -64,15 +64,8 @@ const getImage = (src, size, additional = {}): ImageWithPromise => {
   }
 }
 
-const fromBusinessToMetal = businessWheel => {
-  if (!businessWheel) {
-    return {
-      startRotation: 0,
-      arcs: []
-    }
-  }
-
-  const getTemplate = ({state, icon}) => {
+const fromBusinessToMetal = (businessWheel: BusinessArc[]): MotionArc[] => {
+  const getTemplate = ({state, icon}): {fill: string, angle: number, radius: DonutRadius} => {
     if (state === 'active') {
       return {
         ...definitions.active,
@@ -90,17 +83,13 @@ const fromBusinessToMetal = businessWheel => {
     }
   }
 
-  const arcs = businessWheel.map(businessArc => ({
+  return businessWheel.map(businessArc => ({
     id: businessArc.id,
+    opacity: 1,
+    padding: 0,
+    rotation: 0,
     ...getTemplate(businessArc)
   }))
-
-  return {
-    startRotation: -126,
-    arcs: [
-      ...arcs,
-    ]
-  }
 }
 
 export interface Props {
@@ -109,12 +98,12 @@ export interface Props {
   centerText: string,
 }
 
-const toWheel = (wheel): MotionArc[] => wheel ? wheel.arcs.reduce((allArcs, currentArc) => {
+const toWheel = (wheel: MotionArc[], startRotation: number): MotionArc[] => wheel ? wheel.reduce((allArcs, currentArc) => {
   return [...allArcs, {
     ...currentArc,
     angle: currentArc.angle,
     fill: currentArc.fill,
-    rotation: wheel.startRotation + sumAngles(allArcs) + allArcs.length/2
+    rotation: startRotation + sumAngles(allArcs) + allArcs.length/2
   }]
 }, []) : []
 
@@ -125,7 +114,7 @@ export default class extends React.Component<Props, {}> {
     const {wheel, animationPreset, centerText} = this.props
 
     return <Wheel
-      wheel={toWheel(fromBusinessToMetal(wheel))}
+      wheel={toWheel(fromBusinessToMetal(wheel), -126)}
       animationPreset={animationPreset}
       centerText={centerText}
     />

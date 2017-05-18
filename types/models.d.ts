@@ -31,10 +31,6 @@ declare interface Arc {
   opacity: number,
   padding: number,
   image?: any,
-  children?: MotionArc[],
-  sexyChildren?: any,
-  selected?: boolean,
-  collapsed?: boolean,
 }
 
 declare interface MotionArc extends Arc {

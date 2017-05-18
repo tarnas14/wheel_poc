@@ -63,14 +63,11 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                 const wheelPart = this.props.wheel[i]
 
                 return {
-                  opacity: wheelPart.opacity,
+                  opacity: 0,
                   innerRadius: wheelPart.radius.inner,
                   outerRadius: wheelPart.radius.outer,
                   angle: wheelPart.angle,
                   rotation: -270,
-                  imageWidth: 0,
-                  imageHeight: 0,
-                  imageOffsetScale: 0,
                 }
               })}
               styles={previousStyles => previousStyles.map((_, i) => {
@@ -79,7 +76,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
 
                 if (touched) {
                   return {
-                    opacity: spring(wheelPart.opacity),
+                    opacity: spring(wheelPart.opacity, preset),
                     innerRadius: wheelPart.radius.inner,
                     outerRadius: spring(wheelPart.radius.outer, preset),
                     angle: spring(wheelPart.angle, preset),
@@ -89,17 +86,17 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
 
                 return i === 0
                 ? {
-                  opacity: 1,
+                  opacity: spring(wheelPart.opacity, preset),
                   innerRadius: wheelPart.radius.inner,
                   outerRadius: spring(wheelPart.radius.outer, preset),
                   angle: spring(wheelPart.angle, preset),
                   rotation: spring(wheelPart.rotation, preset),
                 } : {
-                  opacity: 1,
+                  opacity: previousStyles[i - 1].opacity,
                   innerRadius: wheelPart.radius.inner,
                   outerRadius: spring(wheelPart.radius.outer, preset),
                   angle: spring(wheelPart.angle, preset),
-                  rotation: previousStyles[i - 1].rotation + previousStyles[i - 1].angle + 0.5,
+                  rotation: previousStyles[i - 1].rotation + previousStyles[i - 1].angle + 0.5 + wheelPart.padding,
                 }
               })}
             >
@@ -119,7 +116,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                           outerRadius={style.outerRadius}
                           fill={this.props.wheel[i].fill}
                       />
-                      {wheelPart.image && !Boolean(wheelPart.collapsed && !wheelPart.selected) && <Group
+                      {wheelPart.image && <Group
                         key={`image_${i}`}
                         x={center.x}
                         y={center.y}
