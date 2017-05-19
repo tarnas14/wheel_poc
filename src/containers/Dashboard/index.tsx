@@ -15,7 +15,8 @@ const icons = {
   phone: 'https://img.clipartfest.com/7a81181007424edbd234a5cefaf90e90_cell-phone-clipart-with-transparent-background-clipartfest-cell-phone-clipart-transparent_512-512.png',
   scales: 'https://d30y9cdsu7xlg0.cloudfront.net/png/331-200.png',
   wheel: 'http://www.tireworksmb.com/wp-content/uploads/2015/10/tire-icon.png',
-  injury: 'https://d30y9cdsu7xlg0.cloudfront.net/png/191712-200.png'
+  injury: 'https://d30y9cdsu7xlg0.cloudfront.net/png/191712-200.png',
+  plus: 'http://www.clker.com/cliparts/L/q/T/i/P/S/add-button-white-hi.png',
 }
 
 const businessWheel: BusinessArc[] = [
@@ -31,6 +32,13 @@ const businessWheel: BusinessArc[] = [
     // text: 'collapsed -1',
     // state: 'active',
   // },
+  {
+    id: 'plus',
+    icon: icons.plus,
+    text: 'PLUS',
+    state: State.plus,
+    schabo: 0,
+  },
   {
     id: '0',
     icon: icons.glass,

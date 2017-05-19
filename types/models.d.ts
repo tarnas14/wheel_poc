@@ -12,7 +12,7 @@ declare type TodoFilterType = 'SHOW_ALL' | 'SHOW_ACTIVE' | 'SHOW_COMPLETED'
 
 declare type TodoStoreState = TodoItemData[]
 
-declare type State = 'active' | 'pending' | 'suggestion'
+declare type State = 'active' | 'pending' | 'suggestion' | 'plus'
 
 declare interface ImageWithPromise {
   image: any,

@@ -47,9 +47,14 @@ const definitions = {
   suggestion,
 }
 
-const sumAngles = arcs => arcs.reduce((angle, arc) => angle += arc.angle, 0)
+const sumAngles = arcs => arcs.reduce((angle, arc) => angle + arc.angle + arc.padding, 0)
+
+const loadImages = false
 
 const getImage = (src: string): ImageWithPromise => {
+  if (!loadImages) {
+    return undefined
+  }
   const img = new Image()
   img.src = src
 
@@ -70,27 +75,38 @@ const getImage = (src: string): ImageWithPromise => {
   }
 }
 
-const loadImages = true
 
 const fromBusinessToMetal = (businessWheel: BusinessArc[]): GestaltArc[] => {
-  const getTemplate = ({state, icon}) => {
-    if (state === 'active') {
+  const getTemplate = ({state, selected, icon}: {state: any, selected?: boolean, icon: string}) => {
+    if (state === State.plus) {
       return {
         ...definitions.active,
-        image: loadImages && Boolean(icon) && getImage(icon),
+        fill: selected ? ColourPalette.activePlus : '',
+        image: Boolean(icon) && {
+          ...getImage(icon),
+          rotation: (arcRotation, arcAngle) => 90 + arcRotation + arcAngle / 2,
+          offsetScale: 0.65,
+        },
       }
     }
 
-    if (state === 'pending') {
+    if (state === State.active) {
+      return {
+        ...definitions.active,
+        image: Boolean(icon) && getImage(icon),
+      }
+    }
+
+    if (state === State.pending) {
       return {
         ...definitions.pending,
-        image: loadImages && Boolean(icon) && getImage(icon),
+        image: Boolean(icon) && getImage(icon),
       }
     }
 
     return {
       ...definitions.suggestion,
-      image: loadImages && Boolean(icon) && getImage(icon),
+      image: Boolean(icon) && getImage(icon),
     }
   }
 
@@ -117,8 +133,8 @@ const goToCDStateOnSelect = (wheel: GestaltArc[]) : GestaltArc[] => wheel.map(w 
   if (w.selected) {
     return {
       ...w,
-      angle: 360,
-      rotation: -270,
+      angle: 380,
+      rotation: -280,
       radius: {
         outer: active.radius.outer,
         inner: 50
@@ -183,9 +199,38 @@ interface Props {
 interface State {
   center: any,
   previous: any,
+  isPlusSelected: boolean,
 }
 
 const getSchaboText = (businessWheel: BusinessArc[]) => <span><b style={{fontSize: '1.4em'}}>{businessWheel.reduce((accumulator, current) => accumulator + current.schabo, 0)} €</b> Schadensfreibonus</span>
+
+const plusSelected = (wheel: GestaltArc[], selected: boolean): GestaltArc[] => selected
+  ? wheel.map(w => w.id === 'plus'
+    ? {
+      ...w,
+      rotation: -280,
+      angle: 380
+    }
+    : {
+      ...w,
+      rotation: -280,
+      angle: 0
+    }
+  )
+  : wheel
+
+const firstShouldFillTheWheel = (wheel: GestaltArc[]): GestaltArc[] => {
+  const originalAngle = wheel[0].angle
+  const angleToFill = 360 - sumAngles(wheel.slice(1)) - wheel.length
+  const rotationOffset = angleToFill - originalAngle
+  return [
+    {
+      ...wheel[0],
+      angle: angleToFill
+    },
+    ...wheel.slice(1).map(w => ({...w, rotation: w.rotation + rotationOffset}))
+  ]
+}
 
 export default class extends React.Component<Props, State> {
 
@@ -193,7 +238,8 @@ export default class extends React.Component<Props, State> {
     super()
     this.state = {
       previous: null,
-      center: null
+      center: null,
+      isPlusSelected: false,
     }
   }
 
@@ -208,13 +254,19 @@ export default class extends React.Component<Props, State> {
     const {selected} = this.props.wheel.find(w => w.id === id)
 
     if (!selected) {
-      this.setCenter(<ActionHome
-        style={{height: 'auto', width: 'auto', color: ColourPalette.active}}
-        onClick={this.clearSelection}
-      />)
+      this.showBackButton(id === 'plus' ? ColourPalette.activePlus_backButton : ColourPalette.active)
       this.props.select(id)
     }
   }
+
+  showBackButton = (colour: string) => {
+    this.setCenter(<ActionHome
+      style={{height: 'auto', width: 'auto', color: colour}}
+      onClick={this.clearSelection}
+    />)
+  }
+
+  select = (id: string) => this.preventMultiple(id)
 
   setCenter = (center: any) => {
     this.setState(s => ({
@@ -223,11 +275,15 @@ export default class extends React.Component<Props, State> {
     }))
   }
 
-  clearSelection = () => {
+  setPreviousCenter = () => {
     this.setState(s => ({
       previous: s.center,
       center: s.previous
     }))
+  }
+
+  clearSelection = () => {
+    this.setPreviousCenter()
     this.props.clearSelection()
   }
 
@@ -235,10 +291,10 @@ export default class extends React.Component<Props, State> {
     const {wheel, animationPreset, select} = this.props
 
     return <Wheel
-      wheel={debug(goToCDStateOnSelect(padSuggestions(toWheel(fromBusinessToMetal(wheel), -126), 10)))}
+      wheel={debug(goToCDStateOnSelect(firstShouldFillTheWheel(padSuggestions(toWheel(fromBusinessToMetal(wheel), -160), 10))))}
       animationPreset={animationPreset}
       center={this.state.center}
-      arcClick={this.preventMultiple}
+      arcClick={this.select}
       colourPalette={ColourPalette}
     />
   }
