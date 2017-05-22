@@ -219,7 +219,7 @@ interface State {
   scale: number,
 }
 
-const getSchaboText = (businessWheel: BusinessArc[]) => <span><b style={{fontSize: '1.4em'}}>{businessWheel.reduce((accumulator, current) => accumulator + current.schabo, 0)} €</b> Schadensfreibonus</span>
+const getSchaboText = (businessWheel: BusinessArc[]) => <p><b style={{fontSize: '1.3em'}}>{businessWheel.reduce((accumulator, current) => accumulator + current.schabo, 0)} €</b> Schadensfreibonus</p>
 
 const firstShouldFillTheWheel = (wheel: GestaltArc[]): GestaltArc[] => {
   const originalAngle = wheel[0].angle
@@ -395,7 +395,7 @@ export default class extends React.Component<Props, State> {
 
     return <div className={style.stageContainer} style={{position: 'relative', width: `${wheelOrigin.x*2*scale}px`, height: `${wheelOrigin.y*2*this.state.scale}px`}}>
       <div className={style.centerContainer}>
-        <p>{center}</p>
+        {center}
       </div>
       <Stage ref={r => {this.stage = r}} scaleX={scale} scaleY={scale} width={wheelOrigin.x*2*scale} height={wheelOrigin.y*2*scale}>
         <Wheel
