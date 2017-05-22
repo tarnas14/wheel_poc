@@ -1,13 +1,20 @@
 import * as React from 'react'
 import {Wheel} from '../../components/Wheel'
 import {find} from 'lodash'
+import {Text, Rect, Stage, Layer, Line} from 'react-konva'
 import State from '../../constants/state'
 import ColourPalette from '../../constants/colourPalette'
 import ActionHome from 'material-ui/svg-icons/hardware/keyboard-arrow-left'
+import * as style from './style.css'
 
 const focusedAngle = angle => angle + 10
 const selectedAngle = angle => angle * 2 + 10
 const collapsedAngle = 3
+
+const wheelOrigin = {
+  x: 360,
+  y: 360
+}
 
 const centerArea = {
   inner: 85,
@@ -41,6 +48,11 @@ const suggestion = {
   }
 }
 
+const cdRadius = {
+  inner: 50,
+  outer: active.radius.outer
+}
+
 const definitions = {
   pending,
   active,
@@ -49,7 +61,7 @@ const definitions = {
 
 const sumAngles = arcs => arcs.reduce((angle, arc) => angle + arc.angle + arc.padding, 0)
 
-const loadImages = false
+const loadImages = true
 
 const getImage = (src: string): ImageWithPromise => {
   if (!loadImages) {
@@ -77,12 +89,12 @@ const getImage = (src: string): ImageWithPromise => {
 
 
 const fromBusinessToMetal = (businessWheel: BusinessArc[]): GestaltArc[] => {
-  const getTemplate = ({state, selected, icon}: {state: any, selected?: boolean, icon: string}) => {
+  const getTemplate = ({state, icon}: {state: any, selected?: boolean, icon: string}) => {
     if (state === State.plus) {
       return {
         ...definitions.active,
-        fill: selected ? ColourPalette.activePlus : '',
-        image: Boolean(icon) && {
+        fill: '',
+        image: loadImages && Boolean(icon) && {
           ...getImage(icon),
           rotation: (arcRotation, arcAngle) => 90 + arcRotation + arcAngle / 2,
           offsetScale: 0.65,
@@ -135,19 +147,22 @@ const goToCDStateOnSelect = (wheel: GestaltArc[]) : GestaltArc[] => wheel.map(w 
       ...w,
       angle: 380,
       rotation: -280,
+      fill: w.id === 'plus' ? ColourPalette.activePlus : w.fill,
       radius: {
-        outer: active.radius.outer,
-        inner: 50
+        outer: cdRadius.outer,
+        inner: cdRadius.inner
       },
       image: w.image && {
         ...w.image,
-        rotation: (arcRotation, arcAngle) => 90 + arcRotation + arcAngle / 2,
+        rotation: w.id === 'plus'
+          ? (arcRotation, arcAngle) => -90
+          : (arcRotation, arcAngle) => -0,
         size: {
           height: 1.5 * w.image.size.height,
           width: 1.5 * w.image.size.width
         },
         offsetScale: 0.65,
-        textFontSize: 20,
+        textFontSize: 35,
       }
     }
   }
@@ -194,30 +209,17 @@ interface Props {
   animationPreset: AnimationPreset,
   select: (id: string) => void,
   clearSelection: () => void,
+  plusSelected: boolean,
 }
 
 interface State {
   center: any,
   previous: any,
   isPlusSelected: boolean,
+  scale: number,
 }
 
 const getSchaboText = (businessWheel: BusinessArc[]) => <span><b style={{fontSize: '1.4em'}}>{businessWheel.reduce((accumulator, current) => accumulator + current.schabo, 0)} €</b> Schadensfreibonus</span>
-
-const plusSelected = (wheel: GestaltArc[], selected: boolean): GestaltArc[] => selected
-  ? wheel.map(w => w.id === 'plus'
-    ? {
-      ...w,
-      rotation: -280,
-      angle: 380
-    }
-    : {
-      ...w,
-      rotation: -280,
-      angle: 0
-    }
-  )
-  : wheel
 
 const firstShouldFillTheWheel = (wheel: GestaltArc[]): GestaltArc[] => {
   const originalAngle = wheel[0].angle
@@ -233,6 +235,7 @@ const firstShouldFillTheWheel = (wheel: GestaltArc[]): GestaltArc[] => {
 }
 
 export default class extends React.Component<Props, State> {
+  stage: any
 
   constructor() {
     super()
@@ -240,10 +243,28 @@ export default class extends React.Component<Props, State> {
       previous: null,
       center: null,
       isPlusSelected: false,
+      scale: 1,
     }
   }
 
   componentDidMount () {
+    const updateScale = () => {
+      const innerWidth = ((window.innerWidth > 0) ? window.innerWidth : screen.width)
+      const containerWidth = innerWidth > wheelOrigin.x * 2 ? wheelOrigin.x * 2 : innerWidth
+      const widthScale = containerWidth / (wheelOrigin.x * 2)
+
+      const innerHeight = (screen.height)
+      const containerHeight = innerHeight > wheelOrigin.y * 2 ? wheelOrigin.y * 2 : innerHeight
+      const heightScale = containerHeight / (wheelOrigin.y * 2)
+
+      const scale = Math.min(widthScale, heightScale)
+
+      this.setState({scale})
+    }
+
+    updateScale()
+    window.onresize = updateScale
+
     const {wheel} = this.props
     this.setState({
       center: getSchaboText(wheel)
@@ -287,15 +308,105 @@ export default class extends React.Component<Props, State> {
     this.props.clearSelection()
   }
 
-  render () {
-    const {wheel, animationPreset, select} = this.props
+  cursor = cursorStyle => {
+    this.stage.getStage().container().style.cursor = cursorStyle
+  }
 
-    return <Wheel
-      wheel={debug(goToCDStateOnSelect(firstShouldFillTheWheel(padSuggestions(toWheel(fromBusinessToMetal(wheel), -160), 10))))}
-      animationPreset={animationPreset}
-      center={this.state.center}
-      arcClick={this.select}
-      colourPalette={ColourPalette}
-    />
+  renderPlusOptions = (showStroke) => {
+    const upperRect = {
+      x: wheelOrigin.x - (active.radius.outer/2),
+      y: wheelOrigin.y - (active.radius.outer * Math.sqrt(3) / 2) + cdRadius.inner*0.7,
+      width: active.radius.outer,
+      height: (active.radius.outer*Math.sqrt(3)/2) - cdRadius.inner*2.2,
+    }
+
+    const bottomRect = {
+      x:wheelOrigin.x - (active.radius.outer/2),
+      y:wheelOrigin.y + cdRadius.inner*2.5,
+      width:active.radius.outer,
+      height:(active.radius.outer*Math.sqrt(3)/2) - cdRadius.inner*3,
+    }
+
+    const rightRect = {
+      x: wheelOrigin.x + cdRadius.inner * 1.2,
+      y: wheelOrigin.y - active.radius.outer / 6,
+      height:active.radius.outer/3,
+      width:(active.radius.outer*Math.sqrt(3)/2-cdRadius.inner/2),
+    }
+
+    return <Layer>
+      <Rect stroke={showStroke && 'white'} strokeWidth={2} listening={false}
+        {...upperRect}
+      />
+      <Text
+        onMouseOver={() => this.cursor('pointer')}
+        onMouseLeave={() => this.cursor('default')}
+        fill='white'
+        padding={20}
+        fontSize={28}
+        lineHeight={1.3}
+        text='Bestehende Versicherung hinzufugen'
+        align='center'
+        {...upperRect}
+      />
+      <Rect stroke={showStroke && 'white'} strokeWidth={2} listening={false}
+        {...bottomRect}
+      />
+      <Text
+        onMouseOver={() => this.cursor('pointer')}
+        onMouseLeave={() => this.cursor('default')}
+        fill='white'
+        padding={20}
+        fontSize={28}
+        lineHeight={1.3}
+        text='Versicherungsbedarf ermitteln'
+        align='center'
+        {...bottomRect}
+      />
+      <Rect stroke={showStroke && 'white'} strokeWidth={2} listening={false}
+        {...rightRect}
+      />
+      <Text
+        onMouseOver={() => this.cursor('pointer')}
+        onMouseLeave={() => this.cursor('default')}
+        onClick={() => console.log('clicked right')}
+        fill='white'
+        padding={20}
+        fontSize={28}
+        lineHeight={1.2}
+        text='Neue abschliesen'
+        align='center'
+        {...rightRect}
+      />
+      <Line stroke={ColourPalette.activePlus_backButton} lineCap='round' strokeWidth={5} points={
+        [wheelOrigin.x + cdRadius.inner + 10, wheelOrigin.y - cdRadius.inner - 10,
+         wheelOrigin.x + cdRadius.outer/1.7, wheelOrigin.y - cdRadius.outer/1.7]
+      }/>
+      <Line stroke={ColourPalette.activePlus_backButton} lineCap='round' strokeWidth={5} points={
+        [wheelOrigin.x + cdRadius.inner + 10, wheelOrigin.y + cdRadius.inner + 10,
+         wheelOrigin.x + cdRadius.outer/1.7, wheelOrigin.y + cdRadius.outer/1.7]
+      }/>
+    </Layer>
+  }
+
+  render () {
+    const {plusSelected, wheel, animationPreset, select} = this.props
+    const {center, scale} = this.state
+
+    return <div className={style.stageContainer} style={{position: 'relative', width: `${wheelOrigin.x*2*scale}px`, height: `${wheelOrigin.y*2*this.state.scale}px`}}>
+      <div className={style.centerContainer}>
+        <p>{center}</p>
+      </div>
+      <Stage ref={r => {this.stage = r}} scaleX={scale} scaleY={scale} width={wheelOrigin.x*2*scale} height={wheelOrigin.y*2*scale}>
+        <Wheel
+          wheel={debug(goToCDStateOnSelect(firstShouldFillTheWheel(padSuggestions(toWheel(fromBusinessToMetal(wheel), -160), 10))))}
+          animationPreset={animationPreset}
+          arcClick={this.select}
+          origin={wheelOrigin}
+          colourPalette={ColourPalette}
+        />
+        {plusSelected && this.renderPlusOptions(false)}
+      </Stage>
+    </div>
   }
 }

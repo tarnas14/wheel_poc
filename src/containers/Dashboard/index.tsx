@@ -35,7 +35,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: 'plus',
     icon: icons.plus,
-    text: 'PLUS',
+    text: '',
     state: State.plus,
     schabo: 0,
   },
@@ -132,6 +132,7 @@ export namespace Dashboard {
   }
 }
 
+const plusSelected = (wheel: BusinessArc[]): boolean => Boolean(wheel.filter(w => w.state === State.plus && w.selected).length)
 
 export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State> {
 
@@ -282,6 +283,7 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
         animationPreset={this.state.animationSetting}
         select={this.select}
         clearSelection={this.clearSelection}
+        plusSelected={plusSelected(this.state.wheel)}
       />
       }
       <div>
