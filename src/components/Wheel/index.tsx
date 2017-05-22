@@ -113,6 +113,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
 
                       onMouseOver={this.touched.bind(undefined, () => {})}
                       onClick={this.touched.bind(undefined, this.props.arcClick.bind(undefined, wheelPart.id))}
+                      onTap={this.touched.bind(undefined, this.props.arcClick.bind(undefined, wheelPart.id))}
                   />
                   {wheelPart.raised && <Arc
                       opacity={style.opacity}
@@ -148,7 +149,6 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                       width={origin.x}
                       align='center'
                       offsetX={origin.x/2}
-                      // offsetX={style.imageWidth / 2}
                       offsetY={-style.imageHeight}
                       fontSize={style.imageFontSize}
                     />
