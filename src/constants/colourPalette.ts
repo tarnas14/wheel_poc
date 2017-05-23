@@ -8,5 +8,12 @@ export default {
   nextButton: {
     background: 'white',
     icon: '#69b8d4',
+  },
+  suggestionActions: {
+    divider: '#4b7f96',
+    action: {
+      background: '#ff4800',
+      font: 'white'
+    }
   }
 }

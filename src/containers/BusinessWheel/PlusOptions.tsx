@@ -1,7 +1,17 @@
 import * as React from 'react'
 import {Group, Circle, Text, Rect, Layer, Line} from 'react-konva'
 
-export default ({colourPalette, showStroke, wheelOrigin, activeRadius, cdRadius, setCursor}) => {
+export default ({
+  colourPalette,
+  showStroke,
+  wheelOrigin,
+  activeRadius,
+  cdRadius,
+  setCursor,
+  addExistingInsurance,
+  lockNewInsurance,
+  checkRequirements,
+}) => {
   const upperRect = {
     x: wheelOrigin.x - (activeRadius.outer/2),
     y: wheelOrigin.y - (activeRadius.outer * Math.sqrt(3) / 2) + cdRadius.inner*0.7,
@@ -30,11 +40,12 @@ export default ({colourPalette, showStroke, wheelOrigin, activeRadius, cdRadius,
     <Text
       onMouseOver={() => setCursor('pointer')}
       onMouseLeave={() => setCursor('default')}
+      onClick={addExistingInsurance}
       fill='white'
       padding={20}
       fontSize={28}
       lineHeight={1.3}
-      text='Bestehende Versicherung hinzufugen'
+      text='Bestehende Versicherung hinzufügen'
       align='center'
       {...upperRect}
     />
@@ -44,6 +55,7 @@ export default ({colourPalette, showStroke, wheelOrigin, activeRadius, cdRadius,
     <Text
       onMouseOver={() => setCursor('pointer')}
       onMouseLeave={() => setCursor('default')}
+      onClick={checkRequirements}
       fill='white'
       padding={20}
       fontSize={28}
@@ -58,12 +70,12 @@ export default ({colourPalette, showStroke, wheelOrigin, activeRadius, cdRadius,
     <Text
       onMouseOver={() => setCursor('pointer')}
       onMouseLeave={() => setCursor('default')}
-      onClick={() => console.log('clicked right')}
+      onClick={lockNewInsurance}
       fill='white'
       padding={20}
       fontSize={28}
       lineHeight={1.2}
-      text='Neue abschliesen'
+      text='Neue abschließen'
       align='center'
       {...rightRect}
     />

@@ -9,6 +9,7 @@ import * as style from './style.css'
 
 import PlusOptions from './PlusOptions'
 import GoForwardButton from './GoForwardButton'
+import SelectedSuggestionActions from './SelectedSuggestionActions'
 
 const focusedAngle = angle => angle + 10
 const selectedAngle = angle => angle * 2 + 10
@@ -340,7 +341,20 @@ export default class extends React.Component<Props, State> {
           activeRadius={active.radius}
           cdRadius={cdRadius}
           setCursor={this.cursor}
+          addExistingInsurance={() => console.log('Bestehende Versicherung hinzufugen')}
+          lockNewInsurance={() => console.log('Neue abschliesen')}
+          checkRequirements={() => console.log('Versicherungsbedarf ermitteln')}
         />}
+        <SelectedSuggestionActions
+          suggestion={wheel.find(w => Boolean(w.selected && w.state === State.suggestion))}
+          setCursor={this.cursor}
+          addExisting={id => console.log('adding existing to/with', id)}
+          lockNew={id => console.log('doing something with new insurance', id)}
+          colourPalette={ColourPalette.suggestionActions}
+          wheelOrigin={wheelOrigin}
+          cdRadius={cdRadius}
+          activeRadius={active.radius}
+        />
       </Stage>
       <GoForwardButton
         wheel={gestaltWheel}
