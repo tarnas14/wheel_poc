@@ -56,6 +56,7 @@ declare interface BusinessArc {
   state: State,
   schabo: number,
   selected?: boolean,
+  collapsed?: boolean,
   hidden?: boolean,
   nextAction?: () => void,
 }

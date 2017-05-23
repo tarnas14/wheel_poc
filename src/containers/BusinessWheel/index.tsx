@@ -93,7 +93,7 @@ const getImage = (src: string): ImageWithPromise => {
 
 
 const fromBusinessToMetal = (businessWheel: BusinessArc[]): GestaltArc[] => {
-  const getTemplate = ({state, icon}: {state: any, selected?: boolean, icon: string}) => {
+  const getTemplate = ({state, icon, collapsed}: {state: any, collapsed?: boolean, icon: string}) => {
     if (state === State.plus) {
       return {
         ...definitions.active,
@@ -104,6 +104,13 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[]): GestaltArc[] => {
           rotation: (arcRotation, arcAngle) => 90 + arcRotation + arcAngle / 2,
           offsetScale: 0.65,
         },
+      }
+    }
+
+    if (collapsed) {
+      return {
+        ...definitions.active,
+        angle: 5
       }
     }
 
@@ -206,8 +213,8 @@ const padSuggestions = (wheel: GestaltArc[], suggestionPadding: number) : Gestal
   ...wheel.slice(wheel.findIndex(w => w.state === State.suggestion) + 1)
 ].map(w => w.state === State.suggestion ? {...w, rotation: w.rotation + suggestionPadding} : w)
 
-// const debug = (wheel: MotionArc[]): MotionArc[] => wheel.map(w => console.log(w.image) || w)
-const debug = wheel => wheel
+// const motionDebug = (wheel: MotionArc[]): MotionArc[] => wheel.map(w => console.log(w.collapsed) || w)
+const motionDebug = wheel => wheel
 
 interface Props {
   wheel: BusinessArc[],
@@ -217,7 +224,6 @@ interface Props {
 }
 
 interface State {
-  center: any,
   previous: any,
   scale: number,
 }
@@ -246,7 +252,6 @@ export default class extends React.Component<Props, State> {
     super()
     this.state = {
       previous: null,
-      center: null,
       scale: 1,
     }
   }
@@ -268,47 +273,26 @@ export default class extends React.Component<Props, State> {
 
     updateScale()
     window.onresize = updateScale
-
-    const {wheel} = this.props
-    this.setState({
-      center: getSchaboText(wheel)
-    })
   }
 
   preventMultiple = (id: string) => {
     const {selected} = this.props.wheel.find(w => w.id === id)
 
     if (!selected) {
-      this.showBackButton(id === 'plus' ? ColourPalette.activePlus_backButton : ColourPalette.active)
       this.props.select(id)
     }
   }
 
-  showBackButton = (colour: string) => {
-    this.setCenter(<ArrowLeft
+  renderBackButton = (colour: string) => {
+    return <ArrowLeft
       style={{height: 'auto', width: 'auto', color: colour, cursor: 'pointer'}}
       onClick={this.clearSelection}
-    />)
+    />
   }
 
   select = (id: string) => this.preventMultiple(id)
 
-  setCenter = (center: any) => {
-    this.setState(s => ({
-      previous: s.center,
-      center: center
-    }))
-  }
-
-  setPreviousCenter = () => {
-    this.setState(s => ({
-      previous: s.center,
-      center: s.previous
-    }))
-  }
-
   clearSelection = () => {
-    this.setPreviousCenter()
     this.props.clearSelection()
   }
 
@@ -316,15 +300,25 @@ export default class extends React.Component<Props, State> {
     this.stage.getStage().container().style.cursor = cursorStyle
   }
 
+  renderCenter () {
+    const {wheel} = this.props
+    const selected = wheel.find(w => w.selected)
+    if (!selected) {
+      return getSchaboText(wheel)
+    }
+
+    return this.renderBackButton(selected.id === 'plus' ? ColourPalette.activePlus_backButton : ColourPalette.active)
+  }
+
   render () {
     const {wheel, animationPreset, select} = this.props
-    const {center, scale} = this.state
+    const {scale} = this.state
 
-    const gestaltWheel = debug(goToCDStateOnSelect(firstElementShouldFillTheWheel(padSuggestions(toWheel(fromBusinessToMetal(wheel), -160), 10))))
+    const gestaltWheel = motionDebug(goToCDStateOnSelect(firstElementShouldFillTheWheel(padSuggestions(toWheel(fromBusinessToMetal(wheel), -160), 10))))
 
     return <div className={style.stageContainer} style={{position: 'relative', width: `${wheelOrigin.x*2*scale}px`, height: `${wheelOrigin.y*2*this.state.scale}px`}}>
       <div className={style.centerContainer}>
-        {center}
+        {this.renderCenter()}
       </div>
       <Stage ref={r => {this.stage = r}} scaleX={scale} scaleY={scale} width={wheelOrigin.x*2*scale} height={wheelOrigin.y*2*scale}>
         <Wheel

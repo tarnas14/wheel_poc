@@ -19,6 +19,25 @@ const icons = {
   plus: 'http://www.clker.com/cliparts/L/q/T/i/P/S/add-button-white-hi.png',
 }
 
+const debug = (wheel: BusinessArc[]) : BusinessArc[] => console.log(wheel.length) || wheel.map(w => console.log(w.collapsed) || w)
+
+const collapse = (wheel: BusinessArc[]) : BusinessArc[] => {
+  const active = wheel.filter(w => w.state === State.active)
+
+  if (active.length <= 4) {
+    return wheel
+  }
+
+  const firstActive = wheel.findIndex(w => w.state === State.active)
+  const toCollapse = active.length - 3
+
+  return [
+    ...wheel.slice(0, firstActive),
+    ...wheel.slice(firstActive, firstActive + toCollapse).map(w => ({...w, collapsed: true})),
+    ...wheel.slice(firstActive + toCollapse)
+  ]
+}
+
 const businessWheel: BusinessArc[] = [
   // {
     // id: '-2',
@@ -26,17 +45,18 @@ const businessWheel: BusinessArc[] = [
     // text: 'collapsed -2',
     // state: 'active',
   // },
-  // {
-    // id: '-1',
-    // icon: icons.home,
-    // text: 'collapsed -1',
-    // state: 'active',
-  // },
   {
     id: 'plus',
     icon: icons.plus,
     text: '',
     state: State.plus,
+    schabo: 0,
+  },
+  {
+    id: '-1',
+    icon: icons.home,
+    text: 'collapsed -1',
+    state: State.active,
     schabo: 0,
   },
   {
@@ -123,6 +143,48 @@ const additionalInfos = [
   }
 ]
 
+const distinct = array => array.reduce((accumulator, current) => {
+  if (accumulator.includes(current)) {
+    return accumulator
+  }
+
+  return [...accumulator, current]
+}, [])
+
+const toggleCollapsed = (wheel: BusinessArc[]) : BusinessArc[] => {
+  const collapsed = wheel.find(w => w.collapsed)
+
+  if (!collapsed) {
+    return wheel
+  }
+
+  const fromStartToEnd = (toToggle, numberOfCollapsed) => [
+    ...toToggle.slice(0, -numberOfCollapsed),
+    ...toToggle.slice(-numberOfCollapsed).map(w => ({...w, collapsed: true}))
+  ]
+
+
+  const fromEndToStart = (toToggle, numberOfCollapsed) => [
+    ...toToggle.slice(0, numberOfCollapsed).map(w => ({...w, collapsed: true})),
+    ...toToggle.slice(-numberOfCollapsed - 1)
+  ]
+
+  const firstOfTheSameState = wheel.findIndex(w => w.state === collapsed.state)
+  const collapsedIndex = wheel.indexOf(collapsed)
+  const numberOfCollapsed = wheel.filter(w => w.collapsed).length
+
+  const toToggle = wheel.filter(w => w.state === collapsed.state).map(w => ({...w, collapsed: undefined}))
+  const toggled = collapsedIndex === firstOfTheSameState
+    ? fromStartToEnd(toToggle, numberOfCollapsed)
+    : fromEndToStart(toToggle, numberOfCollapsed)
+
+  return [
+    ...wheel.slice(0, firstOfTheSameState),
+    ...toggled,
+    ...wheel.slice(firstOfTheSameState + toggled.length)
+  ]
+}
+
 export namespace Dashboard {
   export interface Props extends RouteComponentProps<void> { }
 
@@ -137,11 +199,10 @@ export namespace Dashboard {
 }
 
 export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State> {
-
   constructor() {
     super()
     this.state = {
-      wheel: businessWheel,
+      wheel: debug(collapse(businessWheel)),
       animationPreset: 'noWobble',
       animationSetting: presets.noWobble,
       show: true,
@@ -236,6 +297,15 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
   }
 
   select = (id: string) => {
+    const toSelect = this.state.wheel.find(w => w.id === id)
+
+    if (toSelect.collapsed) {
+      this.setState(s => ({
+        wheel: toggleCollapsed(s.wheel)
+      }))
+      return
+    }
+
     this.setState(s => ({
       wheel: s.wheel.map(w => ({
         ...w,
