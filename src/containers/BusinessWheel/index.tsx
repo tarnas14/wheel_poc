@@ -93,7 +93,8 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[]): GestaltArc[] => {
     if (state === State.plus) {
       return {
         ...definitions.active,
-        fill: '',
+        fill: ColourPalette.activePlus,
+        opacity: 0,
         image: loadImages && Boolean(icon) && {
           ...getImage(icon),
           rotation: (arcRotation, arcAngle) => 90 + arcRotation + arcAngle / 2,
@@ -147,7 +148,7 @@ const goToCDStateOnSelect = (wheel: GestaltArc[]) : GestaltArc[] => wheel.map(w 
       ...w,
       angle: 380,
       rotation: -280,
-      fill: w.id === 'plus' ? ColourPalette.activePlus : w.fill,
+      opacity: 1,
       radius: {
         outer: cdRadius.outer,
         inner: cdRadius.inner
@@ -221,7 +222,7 @@ interface State {
 
 const getSchaboText = (businessWheel: BusinessArc[]) => <p><b style={{fontSize: '1.3em'}}>{businessWheel.reduce((accumulator, current) => accumulator + current.schabo, 0)} €</b> Schadensfreibonus</p>
 
-const firstShouldFillTheWheel = (wheel: GestaltArc[]): GestaltArc[] => {
+const firstElementShouldFillTheWheel = (wheel: GestaltArc[]): GestaltArc[] => {
   const originalAngle = wheel[0].angle
   const angleToFill = 360 - sumAngles(wheel.slice(1)) - wheel.length
   const rotationOffset = angleToFill - originalAngle
@@ -399,7 +400,7 @@ export default class extends React.Component<Props, State> {
       </div>
       <Stage ref={r => {this.stage = r}} scaleX={scale} scaleY={scale} width={wheelOrigin.x*2*scale} height={wheelOrigin.y*2*scale}>
         <Wheel
-          wheel={debug(goToCDStateOnSelect(firstShouldFillTheWheel(padSuggestions(toWheel(fromBusinessToMetal(wheel), -160), 10))))}
+          wheel={debug(goToCDStateOnSelect(firstElementShouldFillTheWheel(padSuggestions(toWheel(fromBusinessToMetal(wheel), -160), 10))))}
           animationPreset={animationPreset}
           arcClick={this.select}
           origin={wheelOrigin}
