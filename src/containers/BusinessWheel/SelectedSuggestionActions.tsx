@@ -57,6 +57,7 @@ export default ({
       onMouseOver={() => setCursor('pointer')}
       onMouseLeave={() => setCursor('default')}
       onClick={() => addExisting(suggestion.id)}
+      onTap={() => addExisting(suggestion.id)}
       cornerRadius={15}
       {...leftRect}
     />
@@ -75,6 +76,7 @@ export default ({
       onMouseOver={() => setCursor('pointer')}
       onMouseLeave={() => setCursor('default')}
       onClick={() => lockNew(suggestion.id)}
+      onTap={() => lockNew(suggestion.id)}
       cornerRadius={15}
       {...bottomRect}
     />

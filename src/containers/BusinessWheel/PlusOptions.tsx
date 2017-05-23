@@ -41,6 +41,7 @@ export default ({
       onMouseOver={() => setCursor('pointer')}
       onMouseLeave={() => setCursor('default')}
       onClick={addExistingInsurance}
+      onTap={addExistingInsurance}
       fill='white'
       padding={20}
       fontSize={28}
@@ -56,6 +57,7 @@ export default ({
       onMouseOver={() => setCursor('pointer')}
       onMouseLeave={() => setCursor('default')}
       onClick={checkRequirements}
+      onTap={checkRequirements}
       fill='white'
       padding={20}
       fontSize={28}
@@ -71,6 +73,7 @@ export default ({
       onMouseOver={() => setCursor('pointer')}
       onMouseLeave={() => setCursor('default')}
       onClick={lockNewInsurance}
+      onTap={lockNewInsurance}
       fill='white'
       padding={20}
       fontSize={28}
