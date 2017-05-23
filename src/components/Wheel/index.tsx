@@ -11,9 +11,7 @@ export namespace Wheel {
       x: number,
       y: number
     },
-    colourPalette: {
-      schaboHighlight: string
-    },
+    colourPalette: any,
   }
 
   export interface State {
