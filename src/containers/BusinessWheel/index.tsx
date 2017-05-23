@@ -1,10 +1,11 @@
 import * as React from 'react'
 import {Wheel} from '../../components/Wheel'
 import {find} from 'lodash'
-import {Text, Rect, Stage, Layer, Line} from 'react-konva'
+import {Group, Circle, Text, Rect, Stage, Layer, Line} from 'react-konva'
 import State from '../../constants/state'
 import ColourPalette from '../../constants/colourPalette'
-import ActionHome from 'material-ui/svg-icons/hardware/keyboard-arrow-left'
+import ArrowLeft from 'material-ui/svg-icons/hardware/keyboard-arrow-left'
+import ArrowRight from 'material-ui/svg-icons/hardware/keyboard-arrow-right'
 import * as style from './style.css'
 
 const focusedAngle = angle => angle + 10
@@ -210,13 +211,11 @@ interface Props {
   animationPreset: AnimationPreset,
   select: (id: string) => void,
   clearSelection: () => void,
-  plusSelected: boolean,
 }
 
 interface State {
   center: any,
   previous: any,
-  isPlusSelected: boolean,
   scale: number,
 }
 
@@ -235,6 +234,8 @@ const firstElementShouldFillTheWheel = (wheel: GestaltArc[]): GestaltArc[] => {
   ]
 }
 
+const plusSelected = (wheel: BusinessArc[]): boolean => Boolean(wheel.filter(w => w.state === State.plus && w.selected).length)
+
 export default class extends React.Component<Props, State> {
   stage: any
 
@@ -243,7 +244,6 @@ export default class extends React.Component<Props, State> {
     this.state = {
       previous: null,
       center: null,
-      isPlusSelected: false,
       scale: 1,
     }
   }
@@ -282,8 +282,8 @@ export default class extends React.Component<Props, State> {
   }
 
   showBackButton = (colour: string) => {
-    this.setCenter(<ActionHome
-      style={{height: 'auto', width: 'auto', color: colour}}
+    this.setCenter(<ArrowLeft
+      style={{height: 'auto', width: 'auto', color: colour, cursor: 'pointer'}}
       onClick={this.clearSelection}
     />)
   }
@@ -390,9 +390,50 @@ export default class extends React.Component<Props, State> {
     </Layer>
   }
 
+  renderNextButton (gestaltWheel: GestaltArc[]) {
+    const shouldHaveButton = (wheel: GestaltArc[]) => wheel.find(w => Boolean(w.state === State.active && w.selected && w.nextAction))
+    const selectedWithButton = shouldHaveButton(gestaltWheel)
+
+    if (!selectedWithButton) {
+      return null
+    }
+
+    const {scale} = this.state
+    const radius = scale * cdRadius.inner * 1.1
+    const x = scale * (wheelOrigin.x - radius + active.radius.outer * 0.35)
+    const y = scale * (wheelOrigin.y - radius + active.radius.outer * 0.35)
+
+    return <div style={{
+      cursor: 'pointer',
+      borderRadius: '50%',
+      position: 'absolute',
+      width: `${radius*2}px`,
+      height: `${radius*2}px`,
+      backgroundColor: ColourPalette.nextButton.background,
+      left: `${x}px`,
+      top: `${y}px`,
+    }}>
+      <ArrowRight
+        style={{height: 'auto', width: 'auto', color: ColourPalette.nextButton.icon}}
+        onClick={selectedWithButton.nextAction}
+      />
+    </div>
+
+    // return <Layer>
+      // <Circle
+        // x={wheelOrigin.x + active.radius.outer*0.35}
+        // y={wheelOrigin.y + active.radius.outer*0.35}
+        // radius={cdRadius.inner * 1.3}
+        // fill={ColourPalette.nextButton.background}
+      // />
+    // </Layer>
+  }
+
   render () {
-    const {plusSelected, wheel, animationPreset, select} = this.props
+    const {wheel, animationPreset, select} = this.props
     const {center, scale} = this.state
+
+    const gestaltWheel = debug(goToCDStateOnSelect(firstElementShouldFillTheWheel(padSuggestions(toWheel(fromBusinessToMetal(wheel), -160), 10))))
 
     return <div className={style.stageContainer} style={{position: 'relative', width: `${wheelOrigin.x*2*scale}px`, height: `${wheelOrigin.y*2*this.state.scale}px`}}>
       <div className={style.centerContainer}>
@@ -400,14 +441,15 @@ export default class extends React.Component<Props, State> {
       </div>
       <Stage ref={r => {this.stage = r}} scaleX={scale} scaleY={scale} width={wheelOrigin.x*2*scale} height={wheelOrigin.y*2*scale}>
         <Wheel
-          wheel={debug(goToCDStateOnSelect(firstElementShouldFillTheWheel(padSuggestions(toWheel(fromBusinessToMetal(wheel), -160), 10))))}
+          wheel={gestaltWheel}
           animationPreset={animationPreset}
           arcClick={this.select}
           origin={wheelOrigin}
           colourPalette={ColourPalette}
         />
-        {plusSelected && this.renderPlusOptions(false)}
+        {plusSelected(wheel) && this.renderPlusOptions(false)}
       </Stage>
+      {this.renderNextButton(gestaltWheel)}
     </div>
   }
 }

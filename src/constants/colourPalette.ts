@@ -5,4 +5,8 @@ export default {
   schaboHighlight: 'white',
   activePlus: '#ff4800',
   activePlus_backButton: 'white',
+  nextButton: {
+    background: 'white',
+    icon: '#69b8d4',
+  }
 }

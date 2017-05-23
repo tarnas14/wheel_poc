@@ -1,3 +1,7 @@
+.stageContainer {
+  position: relative;
+}
+
 .centerContainer {
   position: absolute;
   left: 39.2%;

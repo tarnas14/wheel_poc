@@ -57,6 +57,7 @@ declare interface BusinessArc {
   schabo: number,
   selected?: boolean,
   hidden?: boolean,
+  nextAction?: () => void,
 }
 
 declare interface GestaltArc extends MotionArc, BusinessArc {}

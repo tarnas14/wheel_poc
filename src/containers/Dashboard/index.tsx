@@ -45,6 +45,7 @@ const businessWheel: BusinessArc[] = [
     text: 'collapsed 0',
     state: State.active,
     schabo: 0,
+    nextAction: () => console.log('collapsed 0'),
   },
   {
     id: '1',
@@ -52,6 +53,7 @@ const businessWheel: BusinessArc[] = [
     text: 'Hausrat',
     state: State.active,
     schabo: 13,
+    nextAction: () => console.log('hausrat'),
   },
   {
     id: 'glass',
@@ -59,6 +61,7 @@ const businessWheel: BusinessArc[] = [
     text: 'Privat Haftpflicht',
     state: State.active,
     schabo: 0,
+    nextAction: () => console.log('privat haftpflicht'),
   },
   {
     id: '3',
@@ -66,6 +69,7 @@ const businessWheel: BusinessArc[] = [
     text: 'Tierhalterhaftpflicht',
     state: State.active,
     schabo: 10.75,
+    nextAction: () => console.log('tierhalterhaftpflicht'),
   },
   {
     id: '4',
@@ -131,8 +135,6 @@ export namespace Dashboard {
     slideFromLeft: boolean
   }
 }
-
-const plusSelected = (wheel: BusinessArc[]): boolean => Boolean(wheel.filter(w => w.state === State.plus && w.selected).length)
 
 export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State> {
 
@@ -283,7 +285,6 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
         animationPreset={this.state.animationSetting}
         select={this.select}
         clearSelection={this.clearSelection}
-        plusSelected={plusSelected(this.state.wheel)}
       />
       }
       <div>

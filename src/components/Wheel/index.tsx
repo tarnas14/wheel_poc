@@ -82,7 +82,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
               imageRotation: wheelPart.image ? spring(wheelPart.image.rotation(wheelPart.rotation, wheelPart.angle)) : 0,
               imageFontSize: 0,
             } : {
-              opacity: previousStyles[i - 1].opacity,
+              opacity: spring(wheelPart.opacity, preset),
               innerRadius: wheelPart.radius.inner,
               outerRadius: spring(wheelPart.radius.outer, preset),
               angle: spring(wheelPart.angle, preset),
