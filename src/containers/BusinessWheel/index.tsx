@@ -8,6 +8,8 @@ import ArrowLeft from 'material-ui/svg-icons/hardware/keyboard-arrow-left'
 import ArrowRight from 'material-ui/svg-icons/hardware/keyboard-arrow-right'
 import * as style from './style.css'
 
+import PlusOptions from './PlusOptions'
+
 const focusedAngle = angle => angle + 10
 const selectedAngle = angle => angle * 2 + 10
 const collapsedAngle = 3
@@ -313,83 +315,6 @@ export default class extends React.Component<Props, State> {
     this.stage.getStage().container().style.cursor = cursorStyle
   }
 
-  renderPlusOptions = (showStroke) => {
-    const upperRect = {
-      x: wheelOrigin.x - (active.radius.outer/2),
-      y: wheelOrigin.y - (active.radius.outer * Math.sqrt(3) / 2) + cdRadius.inner*0.7,
-      width: active.radius.outer,
-      height: (active.radius.outer*Math.sqrt(3)/2) - cdRadius.inner*2.2,
-    }
-
-    const bottomRect = {
-      x:wheelOrigin.x - (active.radius.outer/2),
-      y:wheelOrigin.y + cdRadius.inner*2.5,
-      width:active.radius.outer,
-      height:(active.radius.outer*Math.sqrt(3)/2) - cdRadius.inner*3,
-    }
-
-    const rightRect = {
-      x: wheelOrigin.x + cdRadius.inner * 1.2,
-      y: wheelOrigin.y - active.radius.outer / 6,
-      height:active.radius.outer/3,
-      width:(active.radius.outer*Math.sqrt(3)/2-cdRadius.inner/2),
-    }
-
-    return <Layer>
-      <Rect stroke={showStroke && 'white'} strokeWidth={2} listening={false}
-        {...upperRect}
-      />
-      <Text
-        onMouseOver={() => this.cursor('pointer')}
-        onMouseLeave={() => this.cursor('default')}
-        fill='white'
-        padding={20}
-        fontSize={28}
-        lineHeight={1.3}
-        text='Bestehende Versicherung hinzufugen'
-        align='center'
-        {...upperRect}
-      />
-      <Rect stroke={showStroke && 'white'} strokeWidth={2} listening={false}
-        {...bottomRect}
-      />
-      <Text
-        onMouseOver={() => this.cursor('pointer')}
-        onMouseLeave={() => this.cursor('default')}
-        fill='white'
-        padding={20}
-        fontSize={28}
-        lineHeight={1.3}
-        text='Versicherungsbedarf ermitteln'
-        align='center'
-        {...bottomRect}
-      />
-      <Rect stroke={showStroke && 'white'} strokeWidth={2} listening={false}
-        {...rightRect}
-      />
-      <Text
-        onMouseOver={() => this.cursor('pointer')}
-        onMouseLeave={() => this.cursor('default')}
-        onClick={() => console.log('clicked right')}
-        fill='white'
-        padding={20}
-        fontSize={28}
-        lineHeight={1.2}
-        text='Neue abschliesen'
-        align='center'
-        {...rightRect}
-      />
-      <Line stroke={ColourPalette.activePlus_backButton} lineCap='round' strokeWidth={5} points={
-        [wheelOrigin.x + cdRadius.inner + 10, wheelOrigin.y - cdRadius.inner - 10,
-         wheelOrigin.x + cdRadius.outer/1.7, wheelOrigin.y - cdRadius.outer/1.7]
-      }/>
-      <Line stroke={ColourPalette.activePlus_backButton} lineCap='round' strokeWidth={5} points={
-        [wheelOrigin.x + cdRadius.inner + 10, wheelOrigin.y + cdRadius.inner + 10,
-         wheelOrigin.x + cdRadius.outer/1.7, wheelOrigin.y + cdRadius.outer/1.7]
-      }/>
-    </Layer>
-  }
-
   renderNextButton (gestaltWheel: GestaltArc[]) {
     const shouldHaveButton = (wheel: GestaltArc[]) => wheel.find(w => Boolean(w.state === State.active && w.selected && w.nextAction))
     const selectedWithButton = shouldHaveButton(gestaltWheel)
@@ -418,15 +343,6 @@ export default class extends React.Component<Props, State> {
         onClick={selectedWithButton.nextAction}
       />
     </div>
-
-    // return <Layer>
-      // <Circle
-        // x={wheelOrigin.x + active.radius.outer*0.35}
-        // y={wheelOrigin.y + active.radius.outer*0.35}
-        // radius={cdRadius.inner * 1.3}
-        // fill={ColourPalette.nextButton.background}
-      // />
-    // </Layer>
   }
 
   render () {
@@ -447,7 +363,14 @@ export default class extends React.Component<Props, State> {
           origin={wheelOrigin}
           colourPalette={ColourPalette}
         />
-        {plusSelected(wheel) && this.renderPlusOptions(false)}
+        {plusSelected(wheel) && <PlusOptions
+          colourPalette={ColourPalette}
+          showStroke={false}
+          wheelOrigin={wheelOrigin}
+          activeRadius={active.radius}
+          cdRadius={cdRadius}
+          setCursor={this.cursor}
+        />}
       </Stage>
       {this.renderNextButton(gestaltWheel)}
     </div>

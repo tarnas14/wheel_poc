@@ -1,0 +1,79 @@
+import * as React from 'react'
+import {Group, Circle, Text, Rect, Layer, Line} from 'react-konva'
+
+export default ({colourPalette, showStroke, wheelOrigin, activeRadius, cdRadius, setCursor}) => {
+  const upperRect = {
+    x: wheelOrigin.x - (activeRadius.outer/2),
+    y: wheelOrigin.y - (activeRadius.outer * Math.sqrt(3) / 2) + cdRadius.inner*0.7,
+    width: activeRadius.outer,
+    height: (activeRadius.outer*Math.sqrt(3)/2) - cdRadius.inner*2.2,
+  }
+
+  const bottomRect = {
+    x:wheelOrigin.x - (activeRadius.outer/2),
+    y:wheelOrigin.y + cdRadius.inner*2.5,
+    width:activeRadius.outer,
+    height:(activeRadius.outer*Math.sqrt(3)/2) - cdRadius.inner*3,
+  }
+
+  const rightRect = {
+    x: wheelOrigin.x + cdRadius.inner * 1.2,
+    y: wheelOrigin.y - activeRadius.outer / 6,
+    height:activeRadius.outer/3,
+    width:(activeRadius.outer*Math.sqrt(3)/2-cdRadius.inner/2),
+  }
+
+  return <Layer>
+    <Rect stroke={showStroke && 'white'} strokeWidth={2} listening={false}
+      {...upperRect}
+    />
+    <Text
+      onMouseOver={() => setCursor('pointer')}
+      onMouseLeave={() => setCursor('default')}
+      fill='white'
+      padding={20}
+      fontSize={28}
+      lineHeight={1.3}
+      text='Bestehende Versicherung hinzufugen'
+      align='center'
+      {...upperRect}
+    />
+    <Rect stroke={showStroke && 'white'} strokeWidth={2} listening={false}
+      {...bottomRect}
+    />
+    <Text
+      onMouseOver={() => setCursor('pointer')}
+      onMouseLeave={() => setCursor('default')}
+      fill='white'
+      padding={20}
+      fontSize={28}
+      lineHeight={1.3}
+      text='Versicherungsbedarf ermitteln'
+      align='center'
+      {...bottomRect}
+    />
+    <Rect stroke={showStroke && 'white'} strokeWidth={2} listening={false}
+      {...rightRect}
+    />
+    <Text
+      onMouseOver={() => setCursor('pointer')}
+      onMouseLeave={() => setCursor('default')}
+      onClick={() => console.log('clicked right')}
+      fill='white'
+      padding={20}
+      fontSize={28}
+      lineHeight={1.2}
+      text='Neue abschliesen'
+      align='center'
+      {...rightRect}
+    />
+    <Line stroke={colourPalette.activePlus_backButton} lineCap='round' strokeWidth={5} points={
+      [wheelOrigin.x + cdRadius.inner + 10, wheelOrigin.y - cdRadius.inner - 10,
+       wheelOrigin.x + cdRadius.outer/1.7, wheelOrigin.y - cdRadius.outer/1.7]
+    }/>
+    <Line stroke={colourPalette.activePlus_backButton} lineCap='round' strokeWidth={5} points={
+      [wheelOrigin.x + cdRadius.inner + 10, wheelOrigin.y + cdRadius.inner + 10,
+       wheelOrigin.x + cdRadius.outer/1.7, wheelOrigin.y + cdRadius.outer/1.7]
+    }/>
+  </Layer>
+}
