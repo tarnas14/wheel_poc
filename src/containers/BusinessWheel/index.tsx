@@ -1,14 +1,14 @@
 import * as React from 'react'
 import {Wheel} from '../../components/Wheel'
 import {find} from 'lodash'
-import {Group, Circle, Text, Rect, Stage, Layer, Line} from 'react-konva'
+import {Group, Circle, Stage, Layer} from 'react-konva'
 import State from '../../constants/state'
 import ColourPalette from '../../constants/colourPalette'
 import ArrowLeft from 'material-ui/svg-icons/hardware/keyboard-arrow-left'
-import ArrowRight from 'material-ui/svg-icons/hardware/keyboard-arrow-right'
 import * as style from './style.css'
 
 import PlusOptions from './PlusOptions'
+import GoForwardButton from './GoForwardButton'
 
 const focusedAngle = angle => angle + 10
 const selectedAngle = angle => angle * 2 + 10
@@ -315,36 +315,6 @@ export default class extends React.Component<Props, State> {
     this.stage.getStage().container().style.cursor = cursorStyle
   }
 
-  renderNextButton (gestaltWheel: GestaltArc[]) {
-    const shouldHaveButton = (wheel: GestaltArc[]) => wheel.find(w => Boolean(w.state === State.active && w.selected && w.nextAction))
-    const selectedWithButton = shouldHaveButton(gestaltWheel)
-
-    if (!selectedWithButton) {
-      return null
-    }
-
-    const {scale} = this.state
-    const radius = scale * cdRadius.inner * 1.1
-    const x = scale * (wheelOrigin.x - radius + active.radius.outer * 0.35)
-    const y = scale * (wheelOrigin.y - radius + active.radius.outer * 0.35)
-
-    return <div style={{
-      cursor: 'pointer',
-      borderRadius: '50%',
-      position: 'absolute',
-      width: `${radius*2}px`,
-      height: `${radius*2}px`,
-      backgroundColor: ColourPalette.nextButton.background,
-      left: `${x}px`,
-      top: `${y}px`,
-    }}>
-      <ArrowRight
-        style={{height: 'auto', width: 'auto', color: ColourPalette.nextButton.icon}}
-        onClick={selectedWithButton.nextAction}
-      />
-    </div>
-  }
-
   render () {
     const {wheel, animationPreset, select} = this.props
     const {center, scale} = this.state
@@ -372,7 +342,14 @@ export default class extends React.Component<Props, State> {
           setCursor={this.cursor}
         />}
       </Stage>
-      {this.renderNextButton(gestaltWheel)}
+      <GoForwardButton
+        wheel={gestaltWheel}
+        wheelOrigin={wheelOrigin}
+        cdRadius={cdRadius}
+        activeRadius={active.radius}
+        colourPalette={ColourPalette}
+        scale={scale}
+      />
     </div>
   }
 }
