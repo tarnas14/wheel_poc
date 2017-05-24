@@ -145,29 +145,6 @@ const businessWheel: BusinessArc[] = [
   }
 ]
 
-const additionalInfos = [
-  {
-    key: '1',
-    text: `Now that we know who you are, I know who I am. I'm not a mistake! It all makes sense! In a comic, you know how you can tell who the arch-villain's going to be? He's the exact opposite of the hero. And most times they're friends, like you and me! I should've known way back when... You know why, David? Because of the kids. They called me Mr Glass.`
-  },
-  {
-    key: '2',
-    text: `Look, just because I don't be givin' no man a foot massage don't make it right for Marsellus to throw Antwone into a glass motherfuckin' house, fuckin' up the way the nigger talks. Motherfucker do that shit to me, he better paralyze my ass, 'cause I'll kill the motherfucker, know what I'm sayin'?`
-  },
-  {
-    key: '3',
-    text: `Now that there is the Tec-9, a crappy spray gun from South Miami. This gun is advertised as the most popular gun in American crime. Do you believe that shit? It actually says that in the little book that comes with it: the most popular gun in American crime. Like they're actually proud of that shit.`
-  }
-]
-
-const distinct = array => array.reduce((accumulator, current) => {
-  if (accumulator.includes(current)) {
-    return accumulator
-  }
-
-  return [...accumulator, current]
-}, [])
-
 const toggleCollapsed = (wheel: BusinessArc[], collapsed: BusinessArc) : BusinessArc[] => {
   const collapseEnd = (toToggle, numberOfCollapsed) => [
     ...toToggle.slice(0, -numberOfCollapsed),
@@ -203,8 +180,7 @@ export namespace Dashboard {
     wheel: BusinessArc[],
     animationPreset: string,
     animationSetting: AnimationPreset,
-    additionalInfo: {key: string, text: string}[],
-    slideFromLeft: boolean
+    wheelSettings: WheelSettings,
   }
 }
 
@@ -215,8 +191,17 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
       wheel: collapse(businessWheel, 2),
       animationPreset: 'noWobble',
       animationSetting: presets.noWobble,
-      additionalInfo: [additionalInfos[0]],
-      slideFromLeft: false
+      wheelSettings: {
+        centerArea: {
+          inner: 175/2,
+          outer: 175/2,
+        },
+        angle: 40,
+        activeRadius: 275,
+        pendingRadius: 225,
+        suggestionPadding: 5,
+        suggestionRadius: 175,
+      }
     }
   }
 
@@ -246,57 +231,6 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
         damping: val
       }
     }))
-  }
-
-  getDefaultStyles = () => {
-    return this.state.additionalInfo.map(i => ({
-      ...i,
-      data: i,
-      style: {
-        opacity: 1,
-        left: 0
-      }
-    }))
-  }
-
-  getStyles = () => {
-    return this.state.additionalInfo.map(i => ({
-      ...i,
-      data: i,
-      style: {
-        opacity: spring(1, this.state.animationSetting),
-        left: spring(0, this.state.animationSetting)
-      }
-    }))
-  }
-
-  willLeave = () => {
-    const {slideFromLeft} = this.state
-
-    return {
-      opacity: spring(0, this.state.animationSetting),
-      left: slideFromLeft ? spring(100, this.state.animationSetting) : spring(-100, this.state.animationSetting)
-    }
-  }
-
-  willEnter = () => {
-    const {slideFromLeft} = this.state
-
-    return {
-      opacity: 0,
-      left: slideFromLeft ? -100 : 100
-    }
-  }
-
-  changeAdditionalInfo = () => {
-    this.setState(s => {
-      const currentKey = Number(s.additionalInfo[0].key)
-      const nextKey = (currentKey === 3 ? 1 : currentKey + 1) - 1
-
-      return {
-        additionalInfo: [additionalInfos[nextKey]]
-      }
-    })
   }
 
   select = (id: string) => {
@@ -339,21 +273,28 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
         select={this.select}
         clearSelection={this.clearSelection}
       />
-      <h3>animation settings here</h3>
       <div>
-        <select onChange={this.setPreset.bind(this)} value={this.state.animationPreset}>
-          <option value="noWobble">noWobble</option>
-          <option value="wobbly">wobbly</option>
-          <option value="gentle">gentle</option>
-          <option value="stiff">stiff</option>
-        </select>
+        <div style={{display: 'inline-block'}}>
+          <h3>animation settings here</h3>
+          <div>
+            <select onChange={this.setPreset.bind(this)} value={this.state.animationPreset}>
+              <option value="noWobble">noWobble</option>
+              <option value="wobbly">wobbly</option>
+              <option value="gentle">gentle</option>
+              <option value="stiff">stiff</option>
+            </select>
+          </div>
+          <p>
+            stiffness: ({stiffness}) <br/> <input type="range" min="0" max="300" value={stiffness} onChange={this.changeStiffness.bind(this)}/>
+          </p>
+          <p>
+            damping: ({damping}) <br /> <input type="range" min="0" max="40" value={damping} onChange={this.changeDamping.bind(this)}/>
+          </p>
+        </div>
+        <div style={{display: 'inline-block'}}>
+          <h3>wheel settings here</h3>
+        </div>
       </div>
-      <p>
-        stiffness: ({stiffness}) <br/> <input type="range" min="0" max="300" value={stiffness} onChange={this.changeStiffness.bind(this)}/>
-      </p>
-      <p>
-        damping: ({damping}) <br /> <input type="range" min="0" max="40" value={damping} onChange={this.changeDamping.bind(this)}/>
-      </p>
     </div></MuiThemeProvider>
   }
 }

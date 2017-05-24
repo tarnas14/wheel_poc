@@ -62,3 +62,12 @@ declare interface BusinessArc {
 }
 
 declare interface GestaltArc extends MotionArc, BusinessArc {}
+
+declare interface WheelSettings {
+  centerArea: DonutRadius,
+  angle: number,
+  activeRadius: number,
+  pendingRadius: number,
+  suggestionPadding: number,
+  suggestionRadius: number
+}
