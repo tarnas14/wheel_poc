@@ -59,6 +59,7 @@ declare interface BusinessArc {
   collapsed?: boolean,
   hidden?: boolean,
   nextAction?: () => void,
+  dontDisplay?: boolean,
 }
 
 declare interface GestaltArc extends MotionArc, BusinessArc {}

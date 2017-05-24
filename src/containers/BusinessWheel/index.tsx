@@ -10,7 +10,8 @@ import PlusOptions from './PlusOptions'
 import GoForwardButton from './GoForwardButton'
 import SelectedSuggestionActions from './SelectedSuggestionActions'
 
-const sumAngles = arcs => arcs.reduce((angle, arc) => angle + arc.angle + arc.padding, 0)
+const displayedArcs = arcs => arcs.filter(a => !a.dontDisplay)
+const sumAngles = arcs => arcs.filter(a => !a.dontDisplay).reduce((angle, arc) => angle + arc.angle + arc.padding, 0)
 
 const loadImages = true
 
@@ -78,7 +79,7 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
     suggestion,
   }
 
-  const getTemplate = ({state, icon, collapsed}: {state: any, collapsed?: boolean, icon: string}) => {
+  const getTemplate = ({state, icon, collapsed, dontDisplay}: {dontDisplay?: boolean, state: any, collapsed?: boolean, icon: string}) => {
     if (state === State.plus) {
       return {
         ...definitions.active,
@@ -93,6 +94,13 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
     }
 
     if (state === State.active) {
+      if (dontDisplay) {
+        return {
+          ...definitions.active,
+          angle: 0
+        }
+      }
+
       if (collapsed) {
         return {
           ...definitions.active,
@@ -107,6 +115,13 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
     }
 
     if (state === State.pending) {
+      if (dontDisplay) {
+        return {
+          ...definitions.pending,
+          angle: 0
+        }
+      }
+
       if (collapsed) {
         return {
           ...definitions.pending,
@@ -117,6 +132,13 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
       return {
         ...definitions.pending,
         image: Boolean(icon) && getImage(icon),
+      }
+    }
+
+    if (dontDisplay) {
+      return {
+        ...definitions.suggestion,
+        angle: 0
       }
     }
 
@@ -142,8 +164,8 @@ const toWheel = (wheel: GestaltArc[], referenceElementIndex: number, startRotati
     angle: currentArc.angle,
     fill: currentArc.fill,
     rotation: currentIndex < referenceElementIndex
-      ? startRotation - sumAngles(wheel.slice(currentIndex, referenceElementIndex)) - wheel.slice(currentIndex, referenceElementIndex).length/2
-      : startRotation + sumAngles(wheel.slice(referenceElementIndex, currentIndex)) + wheel.slice(referenceElementIndex, currentIndex).length/2
+      ? startRotation - sumAngles(wheel.slice(currentIndex, referenceElementIndex)) - displayedArcs(wheel.slice(currentIndex, referenceElementIndex)).length/2
+      : startRotation + sumAngles(wheel.slice(referenceElementIndex, currentIndex)) + displayedArcs(wheel.slice(referenceElementIndex, currentIndex)).length/2
   }]
 }, []) : []
 
@@ -210,11 +232,11 @@ const padSuggestions = (wheel: GestaltArc[], suggestionPadding: number) : Gestal
 // const motionDebug = (wheel: MotionArc[]): MotionArc[] => wheel.map(w => console.log(w.collapsed) || w)
 const motionDebug = wheel => wheel
 
-const getSchaboText = (businessWheel: BusinessArc[]) => <p><b style={{fontSize: '1.3em'}}>{businessWheel.reduce((accumulator, current) => accumulator + current.schabo, 0)} €</b> Schadensfreibonus</p>
+const getSchaboText = (businessWheel: BusinessArc[]) => <span></span>// <p><b style={{fontSize: '1.3em'}}>{businessWheel.reduce((accumulator, current) => accumulator + current.schabo, 0)} €</b> Schadensfreibonus</p>
 
 const expandFirstElementTowardsTheLast = (wheel: GestaltArc[]): GestaltArc[] => {
   const originalAngle = wheel[0].angle
-  const angleToFill = 360 - sumAngles(wheel.slice(1)) - wheel.length
+  const angleToFill = 360 - sumAngles(wheel.slice(1)) - displayedArcs(wheel).length
   const rotationOffset = angleToFill - originalAngle
   return [
     {
