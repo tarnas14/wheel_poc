@@ -19,23 +19,27 @@ const icons = {
   plus: 'http://www.clker.com/cliparts/L/q/T/i/P/S/add-button-white-hi.png',
 }
 
-const debug = (wheel: BusinessArc[]) : BusinessArc[] => console.log(wheel.length) || wheel.map(w => console.log(w.collapsed) || w)
+const debug = (wheel: BusinessArc[]) : BusinessArc[] => console.log(wheel) || wheel.map(w => console.log(w.collapsed) || w)
 
 const collapse = (wheel: BusinessArc[]) : BusinessArc[] => {
-  const active = wheel.filter(w => w.state === State.active)
+  const collapseGroup = (wheel: BusinessArc[], groupPredicate: (w: BusinessArc) => Boolean): BusinessArc[] => {
+    const group = wheel.filter(groupPredicate)
+    if (group.length <= 4) {
+      return wheel
+    }
 
-  if (active.length <= 4) {
-    return wheel
+    const firstActive = wheel.indexOf(group[0])
+    const maxUncollapsedElements = 3
+    const toCollapse = group.length - maxUncollapsedElements
+
+    return [
+      ...wheel.slice(0, firstActive),
+      ...wheel.slice(firstActive, firstActive + toCollapse).map(w => ({...w, collapsed: true})),
+      ...wheel.slice(firstActive + toCollapse)
+    ]
   }
 
-  const firstActive = wheel.findIndex(w => w.state === State.active)
-  const toCollapse = active.length - 3
-
-  return [
-    ...wheel.slice(0, firstActive),
-    ...wheel.slice(firstActive, firstActive + toCollapse).map(w => ({...w, collapsed: true})),
-    ...wheel.slice(firstActive + toCollapse)
-  ]
+  return collapseGroup(collapseGroup(wheel, w => w.state === State.pending), w => w.state === State.active)
 }
 
 const businessWheel: BusinessArc[] = [
@@ -113,6 +117,20 @@ const businessWheel: BusinessArc[] = [
     schabo: 0,
   },
   {
+    id: '6.1',
+    icon: icons.injury,
+    text: '',
+    state: State.pending,
+    schabo: 0,
+  },
+  {
+    id: '6.2',
+    icon: icons.injury,
+    text: '',
+    state: State.pending,
+    schabo: 0,
+  },
+  {
     id: '7',
     icon: icons.wheel,
     text: '',
@@ -151,37 +169,31 @@ const distinct = array => array.reduce((accumulator, current) => {
   return [...accumulator, current]
 }, [])
 
-const toggleCollapsed = (wheel: BusinessArc[]) : BusinessArc[] => {
-  const collapsed = wheel.find(w => w.collapsed)
-
-  if (!collapsed) {
-    return wheel
-  }
-
+const toggleCollapsed = (wheel: BusinessArc[], collapsed: BusinessArc) : BusinessArc[] => {
   const fromStartToEnd = (toToggle, numberOfCollapsed) => [
     ...toToggle.slice(0, -numberOfCollapsed),
     ...toToggle.slice(-numberOfCollapsed).map(w => ({...w, collapsed: true}))
   ]
-
 
   const fromEndToStart = (toToggle, numberOfCollapsed) => [
     ...toToggle.slice(0, numberOfCollapsed).map(w => ({...w, collapsed: true})),
     ...toToggle.slice(-numberOfCollapsed - 1)
   ]
 
-  const firstOfTheSameState = wheel.findIndex(w => w.state === collapsed.state)
-  const collapsedIndex = wheel.indexOf(collapsed)
-  const numberOfCollapsed = wheel.filter(w => w.collapsed).length
+  const sameStateAsCollapsed = w => w.state === collapsed.state
+  const firstOfTheSameState = wheel.find(sameStateAsCollapsed)
+  const firstIndexOfTheSameState = wheel.indexOf(firstOfTheSameState)
+  const numberOfCollapsed = wheel.filter(w => w.collapsed && sameStateAsCollapsed(w)).length
 
-  const toToggle = wheel.filter(w => w.state === collapsed.state).map(w => ({...w, collapsed: undefined}))
-  const toggled = collapsedIndex === firstOfTheSameState
+  const toToggle = wheel.filter(sameStateAsCollapsed).map(w => ({...w, collapsed: undefined}))
+  const toggled = firstOfTheSameState.collapsed
     ? fromStartToEnd(toToggle, numberOfCollapsed)
     : fromEndToStart(toToggle, numberOfCollapsed)
 
   return [
-    ...wheel.slice(0, firstOfTheSameState),
+    ...wheel.slice(0, firstIndexOfTheSameState),
     ...toggled,
-    ...wheel.slice(firstOfTheSameState + toggled.length)
+    ...wheel.slice(firstIndexOfTheSameState + toggled.length)
   ]
 }
 
@@ -301,7 +313,7 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
 
     if (toSelect.collapsed) {
       this.setState(s => ({
-        wheel: toggleCollapsed(s.wheel)
+        wheel: toggleCollapsed(s.wheel, toSelect)
       }))
       return
     }

@@ -65,7 +65,7 @@ const definitions = {
 
 const sumAngles = arcs => arcs.reduce((angle, arc) => angle + arc.angle + arc.padding, 0)
 
-const loadImages = true
+const loadImages = false
 
 const getImage = (src: string): ImageWithPromise => {
   if (!loadImages) {
@@ -107,14 +107,14 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[]): GestaltArc[] => {
       }
     }
 
-    if (collapsed) {
-      return {
-        ...definitions.active,
-        angle: 5
-      }
-    }
-
     if (state === State.active) {
+      if (collapsed) {
+        return {
+          ...definitions.active,
+          angle: 5
+        }
+      }
+
       return {
         ...definitions.active,
         image: Boolean(icon) && getImage(icon),
@@ -122,6 +122,13 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[]): GestaltArc[] => {
     }
 
     if (state === State.pending) {
+      if (collapsed) {
+        return {
+          ...definitions.pending,
+          angle: 5
+        }
+      }
+
       return {
         ...definitions.pending,
         image: Boolean(icon) && getImage(icon),
