@@ -65,7 +65,7 @@ const definitions = {
 
 const sumAngles = arcs => arcs.reduce((angle, arc) => angle + arc.angle + arc.padding, 0)
 
-const loadImages = false
+const loadImages = true
 
 const getImage = (src: string): ImageWithPromise => {
   if (!loadImages) {
