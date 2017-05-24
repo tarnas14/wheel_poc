@@ -19,8 +19,8 @@ const wheelOrigin = {
 }
 
 const centerArea = {
-  inner: 85,
-  outer: 90
+  inner: 175/2,
+  outer: 175/2,
 }
 
 const pending = {
@@ -28,7 +28,7 @@ const pending = {
   angle: arcAngle,
   radius: {
     inner: centerArea.outer,
-    outer: centerArea.outer + centerArea.inner * 2 * 1.15,
+    outer: 450/2,
   },
 }
 
@@ -36,8 +36,8 @@ const active = {
   fill: ColourPalette.active,
   angle: arcAngle,
   radius: {
-    ...pending.radius,
-    outer: pending.radius.outer * 1.15,
+    inner: centerArea.outer,
+    outer: 550/2,
   },
 }
 
@@ -45,8 +45,8 @@ const suggestion = {
   fill: ColourPalette.suggestion,
   angle: arcAngle,
   radius: {
-    ...pending.radius,
-    outer: pending.radius.outer * 0.85
+    inner: centerArea.outer,
+    outer: 350/2,
   }
 }
 
@@ -322,7 +322,7 @@ export default class extends React.Component<Props, State> {
     const {wheel, animationPreset, select} = this.props
     const {scale} = this.state
 
-    const gestaltWheel = motionDebug(goToCDStateOnSelect(expandFirstElementTowardsTheLast(padSuggestions(toWheel(fromBusinessToMetal(wheel), 1, -80), 10))))
+    const gestaltWheel = motionDebug(goToCDStateOnSelect(expandFirstElementTowardsTheLast(padSuggestions(toWheel(fromBusinessToMetal(wheel), 1, -80), 5))))
 
     return <div className={style.stageContainer} style={{position: 'relative', width: `${wheelOrigin.x*2*scale}px`, height: `${wheelOrigin.y*2*this.state.scale}px`}}>
       <div className={style.centerContainer}>

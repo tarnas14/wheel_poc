@@ -213,7 +213,7 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
   constructor() {
     super()
     this.state = {
-      wheel: debug(collapse(businessWheel, 2)),
+      wheel: collapse(businessWheel, 2),
       animationPreset: 'noWobble',
       animationSetting: presets.noWobble,
       show: true,
