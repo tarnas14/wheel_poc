@@ -11,9 +11,7 @@ import PlusOptions from './PlusOptions'
 import GoForwardButton from './GoForwardButton'
 import SelectedSuggestionActions from './SelectedSuggestionActions'
 
-const focusedAngle = angle => angle + 10
-const selectedAngle = angle => angle * 2 + 10
-const collapsedAngle = 3
+const arcAngle = 40
 
 const wheelOrigin = {
   x: 360,
@@ -27,7 +25,7 @@ const centerArea = {
 
 const pending = {
   fill: ColourPalette.pending,
-  angle: 33,
+  angle: arcAngle,
   radius: {
     inner: centerArea.outer,
     outer: centerArea.outer + centerArea.inner * 2 * 1.15,
@@ -36,7 +34,7 @@ const pending = {
 
 const active = {
   fill: ColourPalette.active,
-  angle: 33,
+  angle: arcAngle,
   radius: {
     ...pending.radius,
     outer: pending.radius.outer * 1.15,
@@ -45,7 +43,7 @@ const active = {
 
 const suggestion = {
   fill: ColourPalette.suggestion,
-  angle: 33,
+  angle: arcAngle,
   radius: {
     ...pending.radius,
     outer: pending.radius.outer * 0.85
