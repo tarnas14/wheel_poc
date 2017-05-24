@@ -423,6 +423,38 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
         </div>
         <div className={style.settings}>
           <p>
+            active diameter: ({wheelSettings.activeRadius * 2})
+            <br />
+            <input type="range" min={wheelSettings.centerArea.outer} max={360} value={wheelSettings.activeRadius}
+              onChange={e => {
+                const value = Number(e.currentTarget.value)
+                this.setState(s => ({wheelSettings: {...s.wheelSettings, activeRadius: value}}))}
+              }
+            />
+          </p>
+          <p>
+            pending diameter: ({wheelSettings.pendingRadius * 2})
+            <br />
+            <input type="range" min={wheelSettings.centerArea.outer} max={360} value={wheelSettings.pendingRadius}
+              onChange={e => {
+                const value = Number(e.currentTarget.value)
+                this.setState(s => ({wheelSettings: {...s.wheelSettings, pendingRadius: value}}))}
+              }
+            />
+          </p>
+          <p>
+            suggestion diameter: ({wheelSettings.suggestionRadius * 2})
+            <br />
+            <input type="range" min={wheelSettings.centerArea.outer} max={360} value={wheelSettings.suggestionRadius}
+              onChange={e => {
+                const value = Number(e.currentTarget.value)
+                this.setState(s => ({wheelSettings: {...s.wheelSettings, suggestionRadius: value}}))}
+              }
+            />
+          </p>
+        </div>
+        <div className={style.settings}>
+          <p>
             <button onClick={() => this.addToWheel(State.active)} disabled={!Boolean(wheel.find(w => w.dontDisplay && w.state === State.active))}>+ active</button>
             <button onClick={() => this.removeFromWheel(State.active)} disabled={!Boolean(wheel.filter(w => !w.dontDisplay && w.state === State.active).length)}>- active</button>
           </p>

@@ -97,7 +97,8 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
       if (dontDisplay) {
         return {
           ...definitions.active,
-          angle: 0
+          angle: 0,
+          padding: 0,
         }
       }
 
@@ -118,7 +119,8 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
       if (dontDisplay) {
         return {
           ...definitions.pending,
-          angle: 0
+          angle: 0,
+          padding: 0,
         }
       }
 
@@ -138,7 +140,8 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
     if (dontDisplay) {
       return {
         ...definitions.suggestion,
-        angle: 0
+        angle: 0,
+        padding: 0,
       }
     }
 
@@ -351,7 +354,7 @@ export default class extends React.Component<Props, State> {
       )
     )
 
-    return <div className={style.stageContainer} style={{position: 'relative', width: `${wheelOrigin.x*2*scale}px`, height: `${wheelOrigin.y*2*this.state.scale}px`}}>
+    return <div className={style.stageContainer} style={{margin: '0 auto', position: 'relative', width: `${wheelOrigin.x*2*scale}px`, height: `${wheelOrigin.y*2*this.state.scale}px`}}>
       <div className={style.centerContainer}>
         {this.renderCenter()}
       </div>
