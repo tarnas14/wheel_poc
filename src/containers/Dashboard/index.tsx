@@ -203,7 +203,6 @@ export namespace Dashboard {
     wheel: BusinessArc[],
     animationPreset: string,
     animationSetting: AnimationPreset,
-    show: boolean,
     additionalInfo: {key: string, text: string}[],
     slideFromLeft: boolean
   }
@@ -216,7 +215,6 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
       wheel: collapse(businessWheel, 2),
       animationPreset: 'noWobble',
       animationSetting: presets.noWobble,
-      show: true,
       additionalInfo: [additionalInfos[0]],
       slideFromLeft: false
     }
@@ -247,12 +245,6 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
         ...s.animationSetting,
         damping: val
       }
-    }))
-  }
-
-  toggleShow = () => {
-    this.setState(s => ({
-      show: !s.show
     }))
   }
 
@@ -339,39 +331,14 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
   render () {
     const {animationSetting: {stiffness, damping}} = this.state
     return <MuiThemeProvider><div>
-      <TransitionMotion
-        styles={this.getStyles()}
-        willEnter={this.willEnter}
-        willLeave={this.willLeave}
-      >
-        {styles => <div className={style.additionalInfo}>
-          {styles.map(({key, style, data}) => <div
-            key={key}
-            style={{
-              opacity: style.opacity.toString(),
-              left: `${style.left}%`
-            }}
-          >
-            <h2>additional information here</h2>
-            <p>
-              {data.text}
-            </p>
-          </div>)}
-        </div>}
-      </TransitionMotion>
       <hr className={style.divider}/>
 
-      {this.state.show && <BusinessWheel
+      <BusinessWheel
         wheel={this.state.wheel}
         animationPreset={this.state.animationSetting}
         select={this.select}
         clearSelection={this.clearSelection}
       />
-      }
-      <div>
-        <h3>Choose enter animation then click "toggle" twice to hide and show the wheel</h3>
-      </div>
-      <button onClick={this.toggleShow.bind(this)}>toggle</button>
       <h3>animation settings here</h3>
       <div>
         <select onChange={this.setPreset.bind(this)} value={this.state.animationPreset}>
