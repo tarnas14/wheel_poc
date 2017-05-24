@@ -21,15 +21,14 @@ const icons = {
 
 const debug = (wheel: BusinessArc[]) : BusinessArc[] => console.log(wheel) || wheel.map(w => console.log(w.collapsed) || w)
 
-const collapse = (wheel: BusinessArc[]) : BusinessArc[] => {
+const collapse = (wheel: BusinessArc[], maxUncollapsedElements) : BusinessArc[] => {
   const collapseGroup = (wheel: BusinessArc[], groupPredicate: (w: BusinessArc) => Boolean): BusinessArc[] => {
     const group = wheel.filter(groupPredicate)
-    if (group.length <= 4) {
+    if (group.length <= maxUncollapsedElements) {
       return wheel
     }
 
     const firstGroupIndex = wheel.indexOf(group[0])
-    const maxUncollapsedElements = 3
     const toCollapse = group.length - maxUncollapsedElements
 
     return [
@@ -56,13 +55,13 @@ const businessWheel: BusinessArc[] = [
     state: State.plus,
     schabo: 0,
   },
-  {
-    id: '-1',
-    icon: icons.home,
-    text: 'collapsed -1',
-    state: State.active,
-    schabo: 0,
-  },
+  // {
+    // id: '-1',
+    // icon: icons.home,
+    // text: 'collapsed -1',
+    // state: State.active,
+    // schabo: 0,
+  // },
   {
     id: '0',
     icon: icons.glass,
@@ -116,13 +115,13 @@ const businessWheel: BusinessArc[] = [
     state: State.pending,
     schabo: 0,
   },
-  {
-    id: '6.1',
-    icon: icons.injury,
-    text: '',
-    state: State.pending,
-    schabo: 0,
-  },
+  // {
+    // id: '6.1',
+    // icon: icons.injury,
+    // text: '',
+    // state: State.pending,
+    // schabo: 0,
+  // },
   {
     id: '6.2',
     icon: icons.injury,
@@ -170,14 +169,14 @@ const distinct = array => array.reduce((accumulator, current) => {
 }, [])
 
 const toggleCollapsed = (wheel: BusinessArc[], collapsed: BusinessArc) : BusinessArc[] => {
-  const fromStartToEnd = (toToggle, numberOfCollapsed) => [
+  const collapseEnd = (toToggle, numberOfCollapsed) => [
     ...toToggle.slice(0, -numberOfCollapsed),
     ...toToggle.slice(-numberOfCollapsed).map(w => ({...w, collapsed: true}))
   ]
 
-  const fromEndToStart = (toToggle, numberOfCollapsed) => [
+  const collapseBeginning = (toToggle, numberOfCollapsed) => [
     ...toToggle.slice(0, numberOfCollapsed).map(w => ({...w, collapsed: true})),
-    ...toToggle.slice(-numberOfCollapsed - 1)
+    ...toToggle.slice(-numberOfCollapsed)
   ]
 
   const sameStateAsCollapsed = w => w.state === collapsed.state
@@ -187,8 +186,8 @@ const toggleCollapsed = (wheel: BusinessArc[], collapsed: BusinessArc) : Busines
 
   const toToggle = wheel.filter(sameStateAsCollapsed).map(w => ({...w, collapsed: undefined}))
   const toggled = firstOfTheSameState.collapsed
-    ? fromStartToEnd(toToggle, numberOfCollapsed)
-    : fromEndToStart(toToggle, numberOfCollapsed)
+    ? collapseEnd(toToggle, numberOfCollapsed)
+    : collapseBeginning(toToggle, numberOfCollapsed)
 
   return [
     ...wheel.slice(0, firstIndexOfTheSameState),
@@ -214,7 +213,7 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
   constructor() {
     super()
     this.state = {
-      wheel: debug(collapse(businessWheel)),
+      wheel: debug(collapse(businessWheel, 2)),
       animationPreset: 'noWobble',
       animationSetting: presets.noWobble,
       show: true,
