@@ -269,6 +269,8 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
 
       <BusinessWheel
         wheel={this.state.wheel}
+        wheelSettings={this.state.wheelSettings}
+        colourPalette={ColourPalette}
         animationPreset={this.state.animationSetting}
         select={this.select}
         clearSelection={this.clearSelection}

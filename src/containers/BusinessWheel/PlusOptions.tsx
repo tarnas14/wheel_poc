@@ -13,24 +13,24 @@ export default ({
   checkRequirements,
 }) => {
   const upperRect = {
-    x: wheelOrigin.x - (activeRadius.outer/2),
-    y: wheelOrigin.y - (activeRadius.outer * Math.sqrt(3) / 2) + cdRadius.inner*0.7,
-    width: activeRadius.outer,
-    height: (activeRadius.outer*Math.sqrt(3)/2) - cdRadius.inner*2.2,
+    x: wheelOrigin.x - (activeRadius/2),
+    y: wheelOrigin.y - (activeRadius * Math.sqrt(3) / 2) + cdRadius.inner*0.7,
+    width: activeRadius,
+    height: (activeRadius*Math.sqrt(3)/2) - cdRadius.inner*2.2,
   }
 
   const bottomRect = {
-    x:wheelOrigin.x - (activeRadius.outer/2),
+    x:wheelOrigin.x - (activeRadius/2),
     y:wheelOrigin.y + cdRadius.inner*2.5,
-    width:activeRadius.outer,
-    height:(activeRadius.outer*Math.sqrt(3)/2) - cdRadius.inner*3,
+    width:activeRadius,
+    height:(activeRadius*Math.sqrt(3)/2) - cdRadius.inner*3,
   }
 
   const rightRect = {
     x: wheelOrigin.x + cdRadius.inner * 1.2,
-    y: wheelOrigin.y - activeRadius.outer / 6,
-    height:activeRadius.outer/3,
-    width:(activeRadius.outer*Math.sqrt(3)/2-cdRadius.inner/2),
+    y: wheelOrigin.y - activeRadius / 6,
+    height:activeRadius/3,
+    width:(activeRadius*Math.sqrt(3)/2-cdRadius.inner/2),
   }
 
   return <Layer>

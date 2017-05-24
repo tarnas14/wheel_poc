@@ -3,7 +3,6 @@ import {Wheel} from '../../components/Wheel'
 import {find} from 'lodash'
 import {Group, Circle, Stage, Layer} from 'react-konva'
 import State from '../../constants/state'
-import ColourPalette from '../../constants/colourPalette'
 import ArrowLeft from 'material-ui/svg-icons/hardware/keyboard-arrow-left'
 import * as style from './style.css'
 
@@ -11,7 +10,9 @@ import PlusOptions from './PlusOptions'
 import GoForwardButton from './GoForwardButton'
 import SelectedSuggestionActions from './SelectedSuggestionActions'
 
-const arcAngle = 40
+const sumAngles = arcs => arcs.reduce((angle, arc) => angle + arc.angle + arc.padding, 0)
+
+const loadImages = true
 
 const wheelOrigin = {
   x: 360,
@@ -22,48 +23,6 @@ const centerArea = {
   inner: 175/2,
   outer: 175/2,
 }
-
-const pending = {
-  fill: ColourPalette.pending,
-  angle: arcAngle,
-  radius: {
-    inner: centerArea.outer,
-    outer: 450/2,
-  },
-}
-
-const active = {
-  fill: ColourPalette.active,
-  angle: arcAngle,
-  radius: {
-    inner: centerArea.outer,
-    outer: 550/2,
-  },
-}
-
-const suggestion = {
-  fill: ColourPalette.suggestion,
-  angle: arcAngle,
-  radius: {
-    inner: centerArea.outer,
-    outer: 350/2,
-  }
-}
-
-const cdRadius = {
-  inner: 50,
-  outer: active.radius.outer
-}
-
-const definitions = {
-  pending,
-  active,
-  suggestion,
-}
-
-const sumAngles = arcs => arcs.reduce((angle, arc) => angle + arc.angle + arc.padding, 0)
-
-const loadImages = true
 
 const getImage = (src: string): ImageWithPromise => {
   if (!loadImages) {
@@ -89,13 +48,46 @@ const getImage = (src: string): ImageWithPromise => {
   }
 }
 
+const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelSettings, colourPalette: any): GestaltArc[] => {
 
-const fromBusinessToMetal = (businessWheel: BusinessArc[]): GestaltArc[] => {
+  const pending = {
+    fill: colourPalette.pending,
+    angle: wheelSettings.angle,
+    radius: {
+      inner: centerArea.outer,
+      outer: wheelSettings.pendingRadius,
+    },
+  }
+
+  const active = {
+    fill: colourPalette.active,
+    angle: wheelSettings.angle,
+    radius: {
+      inner: centerArea.outer,
+      outer: wheelSettings.activeRadius,
+    },
+  }
+
+  const suggestion = {
+    fill: colourPalette.suggestion,
+    angle: wheelSettings.angle,
+    radius: {
+      inner: centerArea.outer,
+      outer: wheelSettings.suggestionRadius,
+    }
+  }
+
+  const definitions = {
+    pending,
+    active,
+    suggestion,
+  }
+
   const getTemplate = ({state, icon, collapsed}: {state: any, collapsed?: boolean, icon: string}) => {
     if (state === State.plus) {
       return {
         ...definitions.active,
-        fill: ColourPalette.activePlus,
+        fill: colourPalette.activePlus,
         opacity: 0,
         image: loadImages && Boolean(icon) && {
           ...getImage(icon),
@@ -160,7 +152,7 @@ const toWheel = (wheel: GestaltArc[], referenceElementIndex: number, startRotati
   }]
 }, []) : []
 
-const goToCDStateOnSelect = (wheel: GestaltArc[]) : GestaltArc[] => wheel.map(w => {
+const goToCDStateOnSelect = (wheel: GestaltArc[], cdRadius: DonutRadius, activeRadius: number) : GestaltArc[] => wheel.map(w => {
   if (w.selected) {
     return {
       ...w,
@@ -193,7 +185,7 @@ const goToCDStateOnSelect = (wheel: GestaltArc[]) : GestaltArc[] => wheel.map(w 
       rotation: -270,
       opacity: 0,
       radius: {
-        outer: active.radius.outer,
+        outer: activeRadius,
         inner: 50
       },
       image: w.image && {
@@ -223,18 +215,6 @@ const padSuggestions = (wheel: GestaltArc[], suggestionPadding: number) : Gestal
 // const motionDebug = (wheel: MotionArc[]): MotionArc[] => wheel.map(w => console.log(w.collapsed) || w)
 const motionDebug = wheel => wheel
 
-interface Props {
-  wheel: BusinessArc[],
-  animationPreset: AnimationPreset,
-  select: (id: string) => void,
-  clearSelection: () => void,
-}
-
-interface State {
-  previous: any,
-  scale: number,
-}
-
 const getSchaboText = (businessWheel: BusinessArc[]) => <p><b style={{fontSize: '1.3em'}}>{businessWheel.reduce((accumulator, current) => accumulator + current.schabo, 0)} €</b> Schadensfreibonus</p>
 
 const expandFirstElementTowardsTheLast = (wheel: GestaltArc[]): GestaltArc[] => {
@@ -252,6 +232,20 @@ const expandFirstElementTowardsTheLast = (wheel: GestaltArc[]): GestaltArc[] => 
 }
 
 const plusSelected = (wheel: BusinessArc[]): boolean => Boolean(wheel.filter(w => w.state === State.plus && w.selected).length)
+
+interface Props {
+  wheel: BusinessArc[],
+  wheelSettings: WheelSettings,
+  animationPreset: AnimationPreset,
+  select: (id: string) => void,
+  clearSelection: () => void,
+  colourPalette: any,
+}
+
+interface State {
+  previous: any,
+  scale: number,
+}
 
 export default class extends React.Component<Props, State> {
   stage: any
@@ -315,14 +309,30 @@ export default class extends React.Component<Props, State> {
       return getSchaboText(wheel)
     }
 
-    return this.renderBackButton(selected.id === 'plus' ? ColourPalette.activePlus_backButton : ColourPalette.active)
+    return this.renderBackButton(selected.id === 'plus' ? this.props.colourPalette.activePlus_backButton : this.props.colourPalette.active)
   }
 
   render () {
-    const {wheel, animationPreset, select} = this.props
+    const {colourPalette, wheel, animationPreset, select, wheelSettings} = this.props
     const {scale} = this.state
 
-    const gestaltWheel = motionDebug(goToCDStateOnSelect(expandFirstElementTowardsTheLast(padSuggestions(toWheel(fromBusinessToMetal(wheel), 1, -80), 5))))
+    const cdRadius = {
+      inner: 50,
+      outer: wheelSettings.activeRadius
+    }
+
+    const gestaltWheel = motionDebug(
+      goToCDStateOnSelect(
+        expandFirstElementTowardsTheLast(
+          padSuggestions(
+            toWheel(
+              fromBusinessToMetal(wheel, wheelSettings, colourPalette)
+            , 1, -80)
+          , 5)
+        )
+      , cdRadius, wheelSettings.activeRadius
+      )
+    )
 
     return <div className={style.stageContainer} style={{position: 'relative', width: `${wheelOrigin.x*2*scale}px`, height: `${wheelOrigin.y*2*this.state.scale}px`}}>
       <div className={style.centerContainer}>
@@ -334,13 +344,13 @@ export default class extends React.Component<Props, State> {
           animationPreset={animationPreset}
           arcClick={this.select}
           origin={wheelOrigin}
-          colourPalette={ColourPalette}
+          colourPalette={colourPalette}
         />
         {plusSelected(wheel) && <PlusOptions
-          colourPalette={ColourPalette}
+          colourPalette={colourPalette}
           showStroke={false}
           wheelOrigin={wheelOrigin}
-          activeRadius={active.radius}
+          activeRadius={wheelSettings.activeRadius}
           cdRadius={cdRadius}
           setCursor={this.cursor}
           addExistingInsurance={() => console.log('Bestehende Versicherung hinzufugen')}
@@ -352,18 +362,18 @@ export default class extends React.Component<Props, State> {
           setCursor={this.cursor}
           addExisting={id => console.log('adding existing to/with', id)}
           lockNew={id => console.log('doing something with new insurance', id)}
-          colourPalette={ColourPalette.suggestionActions}
+          colourPalette={colourPalette.suggestionActions}
           wheelOrigin={wheelOrigin}
           cdRadius={cdRadius}
-          activeRadius={active.radius}
+          activeRadius={wheelSettings.activeRadius}
         />
       </Stage>
       <GoForwardButton
         wheel={gestaltWheel}
         wheelOrigin={wheelOrigin}
         cdRadius={cdRadius}
-        activeRadius={active.radius}
-        colourPalette={ColourPalette}
+        activeRadius={wheelSettings.activeRadius}
+        colourPalette={colourPalette}
         scale={scale}
       />
     </div>

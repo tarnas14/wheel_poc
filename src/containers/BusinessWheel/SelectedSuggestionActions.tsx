@@ -14,7 +14,7 @@ interface Props {
   wheelOrigin: {x: number, y: number},
   colourPalette: any,
   cdRadius: DonutRadius,
-  activeRadius: DonutRadius,
+  activeRadius: number,
   addExisting: (id: string) => void,
   lockNew: (id: string) => void,
 }
@@ -34,17 +34,17 @@ export default ({
   }
 
   const leftRect = {
-    x: cdRadius.inner * 1.5,
-    y: wheelOrigin.y - activeRadius.outer*0.05,
-    height:activeRadius.outer * 0.29,
-    width:(activeRadius.outer*Math.sqrt(3)*0.5-cdRadius.inner*2),
+    x: wheelOrigin.x - activeRadius * 0.9,
+    y: wheelOrigin.y - activeRadius*0.05,
+    height:activeRadius * 0.29,
+    width:(activeRadius*Math.sqrt(3)*0.5-cdRadius.inner*2),
   }
 
   const bottomRect = {
-    x: wheelOrigin.x - (activeRadius.outer*0.3),
+    x: wheelOrigin.x - (activeRadius*0.3),
     y: wheelOrigin.y + cdRadius.inner*3,
-    width: activeRadius.outer*0.6,
-    height: activeRadius.outer * 0.29,
+    width: activeRadius*0.6,
+    height: activeRadius * 0.29,
   }
 
   const rightRect = {

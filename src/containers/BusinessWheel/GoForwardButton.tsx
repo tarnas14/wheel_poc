@@ -12,8 +12,8 @@ export default ({wheel, activeRadius, wheelOrigin, cdRadius, scale, colourPalett
     }
 
     const radius = scale * cdRadius.inner * 1.1
-    const x = scale * (wheelOrigin.x - radius + activeRadius.outer * 0.35)
-    const y = scale * (wheelOrigin.y - radius + activeRadius.outer * 0.35)
+    const x = scale * (wheelOrigin.x - radius + activeRadius * 0.35)
+    const y = scale * (wheelOrigin.y - radius + activeRadius * 0.35)
 
     return <div style={{
       cursor: 'pointer',
