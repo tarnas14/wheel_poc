@@ -151,12 +151,14 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[]): GestaltArc[] => {
   }))
 }
 
-const toWheel = (wheel: GestaltArc[], startRotation: number): GestaltArc[] => wheel ? wheel.reduce((allArcs, currentArc) => {
+const toWheel = (wheel: GestaltArc[], referenceElementIndex: number, startRotation: number): GestaltArc[] => wheel ? wheel.reduce((allArcs, currentArc, currentIndex) => {
   return [...allArcs, {
     ...currentArc,
     angle: currentArc.angle,
     fill: currentArc.fill,
-    rotation: startRotation + sumAngles(allArcs) + allArcs.length/2
+    rotation: currentIndex < referenceElementIndex
+      ? startRotation - sumAngles(wheel.slice(currentIndex, referenceElementIndex)) - wheel.slice(currentIndex, referenceElementIndex).length/2
+      : startRotation + sumAngles(wheel.slice(referenceElementIndex, currentIndex)) + wheel.slice(referenceElementIndex, currentIndex).length/2
   }]
 }, []) : []
 
@@ -237,16 +239,17 @@ interface State {
 
 const getSchaboText = (businessWheel: BusinessArc[]) => <p><b style={{fontSize: '1.3em'}}>{businessWheel.reduce((accumulator, current) => accumulator + current.schabo, 0)} €</b> Schadensfreibonus</p>
 
-const firstElementShouldFillTheWheel = (wheel: GestaltArc[]): GestaltArc[] => {
+const expandFirstElementTowardsTheLast = (wheel: GestaltArc[]): GestaltArc[] => {
   const originalAngle = wheel[0].angle
   const angleToFill = 360 - sumAngles(wheel.slice(1)) - wheel.length
   const rotationOffset = angleToFill - originalAngle
   return [
     {
       ...wheel[0],
-      angle: angleToFill
+      angle: angleToFill,
+      rotation: wheel[0].rotation - rotationOffset
     },
-    ...wheel.slice(1).map(w => ({...w, rotation: w.rotation + rotationOffset}))
+    ...wheel.slice(1)
   ]
 }
 
@@ -321,7 +324,7 @@ export default class extends React.Component<Props, State> {
     const {wheel, animationPreset, select} = this.props
     const {scale} = this.state
 
-    const gestaltWheel = motionDebug(goToCDStateOnSelect(firstElementShouldFillTheWheel(padSuggestions(toWheel(fromBusinessToMetal(wheel), -160), 10))))
+    const gestaltWheel = motionDebug(goToCDStateOnSelect(expandFirstElementTowardsTheLast(padSuggestions(toWheel(fromBusinessToMetal(wheel), 1, -80), 10))))
 
     return <div className={style.stageContainer} style={{position: 'relative', width: `${wheelOrigin.x*2*scale}px`, height: `${wheelOrigin.y*2*this.state.scale}px`}}>
       <div className={style.centerContainer}>
