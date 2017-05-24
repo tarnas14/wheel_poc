@@ -28,14 +28,14 @@ const collapse = (wheel: BusinessArc[]) : BusinessArc[] => {
       return wheel
     }
 
-    const firstActive = wheel.indexOf(group[0])
+    const firstGroupIndex = wheel.indexOf(group[0])
     const maxUncollapsedElements = 3
     const toCollapse = group.length - maxUncollapsedElements
 
     return [
-      ...wheel.slice(0, firstActive),
-      ...wheel.slice(firstActive, firstActive + toCollapse).map(w => ({...w, collapsed: true})),
-      ...wheel.slice(firstActive + toCollapse)
+      ...wheel.slice(0, firstGroupIndex + maxUncollapsedElements),
+      ...wheel.slice(firstGroupIndex + maxUncollapsedElements, firstGroupIndex + maxUncollapsedElements + toCollapse).map(w => ({...w, collapsed: true})),
+      ...wheel.slice(firstGroupIndex + maxUncollapsedElements + toCollapse)
     ]
   }
 
