@@ -19,11 +19,6 @@ const wheelOrigin = {
   y: 360
 }
 
-const centerArea = {
-  inner: 175/2,
-  outer: 175/2,
-}
-
 const getImage = (src: string): ImageWithPromise => {
   if (!loadImages) {
     return undefined
@@ -54,7 +49,7 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
     fill: colourPalette.pending,
     angle: wheelSettings.angle,
     radius: {
-      inner: centerArea.outer,
+      inner: wheelSettings.centerArea.outer,
       outer: wheelSettings.pendingRadius,
     },
   }
@@ -63,7 +58,7 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
     fill: colourPalette.active,
     angle: wheelSettings.angle,
     radius: {
-      inner: centerArea.outer,
+      inner: wheelSettings.centerArea.outer,
       outer: wheelSettings.activeRadius,
     },
   }
@@ -72,7 +67,7 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
     fill: colourPalette.suggestion,
     angle: wheelSettings.angle,
     radius: {
-      inner: centerArea.outer,
+      inner: wheelSettings.centerArea.outer,
       outer: wheelSettings.suggestionRadius,
     }
   }

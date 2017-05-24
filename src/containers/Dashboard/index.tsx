@@ -173,6 +173,10 @@ const toggleCollapsed = (wheel: BusinessArc[], collapsed: BusinessArc) : Busines
   ]
 }
 
+const onEnter = callback => e => e.keyCode === 13
+  ? callback(e)
+  : undefined
+
 export namespace Dashboard {
   export interface Props extends RouteComponentProps<void> { }
 
@@ -193,7 +197,7 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
       animationSetting: presets.noWobble,
       wheelSettings: {
         centerArea: {
-          inner: 175/2,
+          inner: 175/2, // not used
           outer: 175/2,
         },
         angle: 40,
@@ -263,13 +267,13 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
   }
 
   render () {
-    const {animationSetting: {stiffness, damping}} = this.state
+    const {animationSetting: {stiffness, damping}, wheelSettings} = this.state
     return <MuiThemeProvider><div>
       <hr className={style.divider}/>
 
       <BusinessWheel
         wheel={this.state.wheel}
-        wheelSettings={this.state.wheelSettings}
+        wheelSettings={wheelSettings}
         colourPalette={ColourPalette}
         animationPreset={this.state.animationSetting}
         select={this.select}
@@ -295,6 +299,34 @@ export class Dashboard extends React.Component<Dashboard.Props, Dashboard.State>
         </div>
         <div style={{display: 'inline-block'}}>
           <h3>wheel settings here</h3>
+          <p>
+            angle: ({wheelSettings.angle})
+            <br />
+            <input type="range" min="0" max="100" value={wheelSettings.angle}
+              onChange={e => {
+                const value = Number(e.currentTarget.value)
+                this.setState(s => ({wheelSettings: {...s.wheelSettings, angle: value}}))}
+              }
+            />
+          </p>
+          <p>
+            center diameter: ({wheelSettings.centerArea.outer * 2})
+            <br />
+            <input type="range" min="0" max="300" value={wheelSettings.centerArea.outer}
+              onChange={e => {
+                const value = Number(e.currentTarget.value)
+                this.setState(s => ({wheelSettings: {...s.wheelSettings, centerArea: {outer: value}}}))}
+              }
+            />
+          </p>
+          <p>
+            <input type="number" defaultValue={wheelSettings.centerArea.outer * 2}
+              onKeyDown={onEnter(e => {
+                const value = Number(e.currentTarget.value)/2
+                this.setState(s => ({wheelSettings: {...s.wheelSettings, centerArea: {outer: value}}}))
+              })}
+            />
+          </p>
         </div>
       </div>
     </div></MuiThemeProvider>
