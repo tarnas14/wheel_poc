@@ -256,11 +256,7 @@ interface State { }
 export default class extends React.Component<Props, State> {
   render () {
     const {wheelOrigin, colourPalette, wheel, disabled, animationPreset, select, wheelSettings} = this.props
-
-    const cdRadius = {
-      inner: 50,
-      outer: wheelSettings.activeRadius
-    }
+    const {cdRadius} = wheelSettings
 
     const gestaltWheel = goToCDStateOnSelect(
       expandFirstElementTowardsTheLast(

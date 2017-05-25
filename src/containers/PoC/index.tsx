@@ -269,6 +269,10 @@ export default class extends React.Component<Props, State> {
           outer: 175/2,
         },
         angle: 40,
+        cdRadius: {
+          inner: 50,
+          outer: 275,
+        },
         activeRadius: 275,
         pendingRadius: 225,
         suggestionPadding: 5,

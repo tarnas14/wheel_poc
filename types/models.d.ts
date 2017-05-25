@@ -71,5 +71,6 @@ declare interface WheelSettings {
   activeRadius: number,
   pendingRadius: number,
   suggestionPadding: number,
-  suggestionRadius: number
+  suggestionRadius: number,
+  cdRadius: DonutRadius,
 }

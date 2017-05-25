@@ -84,14 +84,10 @@ export default class extends React.Component<Props, State> {
 
   render () {
     const {wheel, wheelOrigin, settings, colourPalette, animationSetting, select, clearSelection} = this.props
+    const {cdRadius} = settings
     const {scale} = this.state
     const selectedSuggestion = wheel.find(w => Boolean(w. selected && w.state === State.suggestion))
     const selectedButton = selectedWithButton(wheel)
-
-    const cdRadius = {
-      inner: 50,
-      outer: settings.activeRadius
-    }
 
     return <div
       className={style.stageContainer}
