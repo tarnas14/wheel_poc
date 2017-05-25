@@ -2,15 +2,8 @@ import * as React from 'react'
 import State from '../../constants/state'
 import ArrowRight from 'material-ui/svg-icons/hardware/keyboard-arrow-right'
 
-const shouldHaveButton = (wheel: GestaltArc[]) => wheel.find(w => Boolean(w.state === State.active && w.selected && w.nextAction))
 
-export default ({wheel, activeRadius, wheelOrigin, cdRadius, scale, colourPalette}) => {
-    const selectedWithButton = shouldHaveButton(wheel)
-
-    if (!selectedWithButton) {
-      return null
-    }
-
+export default ({action, wheel, activeRadius, wheelOrigin, cdRadius, scale, colourPalette}) => {
     const radius = scale * cdRadius.inner * 1.1
     const x = scale * (wheelOrigin.x - radius + activeRadius * 0.35)
     const y = scale * (wheelOrigin.y - radius + activeRadius * 0.35)
@@ -27,7 +20,7 @@ export default ({wheel, activeRadius, wheelOrigin, cdRadius, scale, colourPalett
     }}>
       <ArrowRight
         style={{height: 'auto', width: 'auto', color: colourPalette.nextButton.icon}}
-        onClick={selectedWithButton.nextAction}
+        onClick={action}
       />
     </div>
 }

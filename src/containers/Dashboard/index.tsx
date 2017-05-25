@@ -1,17 +1,19 @@
 import * as React from 'react'
 import ArrowLeft from 'material-ui/svg-icons/hardware/keyboard-arrow-left'
 import {Group, Circle, Stage, Layer} from 'react-konva'
+
 import PlusOptions from './PlusOptions'
 import SelectedSuggestionActions from './SelectedSuggestionActions'
-
 import State from '../../constants/state'
 import BusinessWheel from '../BusinessWheel'
 import GoForwardButton from './GoForwardButton'
-import * as style from './style.css'
 import {displayed} from '../../util'
+
+import * as style from './style.css'
 
 const plusSelected = (wheel: BusinessArc[]): boolean => Boolean(wheel.filter(w => w.state === State.plus && w.selected).length)
 const onlySuggestionsInTheWheel = (wheel: BusinessArc[]) => !Boolean(displayed(wheel).filter(w => w.state === State.active || w.state === State.pending).length)
+const selectedWithButton = (wheel: GestaltArc[]) => wheel.find(w => Boolean(w.state === State.active && w.selected && w.nextAction))
 
 interface State {
   scale: number
@@ -82,6 +84,8 @@ export default class extends React.Component<Props, State> {
   render () {
     const {wheel, wheelOrigin, settings, colourPalette, animationSetting, select, clearSelection} = this.props
     const {scale} = this.state
+    const selectedSuggestion = wheel.find(w => Boolean(w. selected && w.state === State.suggestion))
+    const selectedButton = selectedWithButton(wheel)
 
     const cdRadius = {
       inner: 50,
@@ -117,8 +121,8 @@ export default class extends React.Component<Props, State> {
           lockNewInsurance={() => console.log('Neue abschliesen')}
           checkRequirements={() => console.log('Versicherungsbedarf ermitteln')}
         />}
-        <SelectedSuggestionActions
-          suggestion={wheel.find(w => Boolean(w.selected && w.state === State.suggestion))}
+        {selectedSuggestion && <SelectedSuggestionActions
+          suggestion={selectedSuggestion}
           setCursor={this.cursor}
           addExisting={id => console.log('adding existing to/with', id)}
           lockNew={id => console.log('doing something with new insurance', id)}
@@ -126,16 +130,17 @@ export default class extends React.Component<Props, State> {
           wheelOrigin={wheelOrigin}
           cdRadius={cdRadius}
           activeRadius={settings.activeRadius}
-        />
+        />}
       </Stage>
-      <GoForwardButton
+      {selectedButton && <GoForwardButton
+        action={selectedButton.nextAction}
         wheel={wheel}
         wheelOrigin={wheelOrigin}
         cdRadius={cdRadius}
         activeRadius={settings.activeRadius}
         colourPalette={colourPalette}
         scale={scale}
-      />
+      />}
     </div>
   }
 }

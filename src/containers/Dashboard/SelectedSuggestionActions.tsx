@@ -29,10 +29,6 @@ export default ({
   addExisting,
   lockNew,
 }: Props) => {
-  if (!Boolean(suggestion)) {
-    return <Layer listening={false}/>
-  }
-
   const leftRect = {
     x: wheelOrigin.x - activeRadius * 0.9,
     y: wheelOrigin.y - activeRadius*0.05,
@@ -45,10 +41,6 @@ export default ({
     y: wheelOrigin.y + cdRadius.inner*3,
     width: activeRadius*0.6,
     height: activeRadius * 0.29,
-  }
-
-  const rightRect = {
-
   }
 
   return <Layer>
