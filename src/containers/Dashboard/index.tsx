@@ -27,7 +27,6 @@ interface Props {
   select: (id: string) => void,
   clearSelection: () => void,
   colourPalette: any,
-  wheelOrigin: {x: number, y: number}
 }
 
 export default class extends React.Component<Props, State> {
@@ -41,7 +40,7 @@ export default class extends React.Component<Props, State> {
   }
 
   componentDidMount () {
-    const {wheelOrigin} = this.props
+    const {settings: {origin: wheelOrigin}} = this.props
     const updateScale = () => {
       const innerWidth = ((window.innerWidth > 0) ? window.innerWidth : screen.width)
       const containerWidth = innerWidth > wheelOrigin.x * 2 ? wheelOrigin.x * 2 : innerWidth
@@ -83,8 +82,8 @@ export default class extends React.Component<Props, State> {
   }
 
   render () {
-    const {wheel, wheelOrigin, settings, colourPalette, animationSetting, select, clearSelection} = this.props
-    const {cdRadius} = settings
+    const {wheel, settings, colourPalette, animationSetting, select, clearSelection} = this.props
+    const {cdRadius, origin: wheelOrigin} = settings
     const {scale} = this.state
     const selectedSuggestion = wheel.find(w => Boolean(w. selected && w.state === State.suggestion))
     const selectedButton = selectedWithButton(wheel)

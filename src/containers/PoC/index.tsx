@@ -264,6 +264,10 @@ export default class extends React.Component<Props, State> {
       animationSetting: presets.noWobble,
       collapse: true,
       wheelSettings: {
+        origin: {
+          x: 360,
+          y: 360,
+        },
         centerArea: {
           inner: 175/2, // not used
           outer: 175/2,
@@ -466,17 +470,11 @@ export default class extends React.Component<Props, State> {
     const {animationSetting, wheelSettings, wheel} = this.state
     const {stiffness, damping} = animationSetting
 
-    const wheelOrigin = {
-      x: 360,
-      y: 360
-    }
-
     return <MuiThemeProvider><div>
       <hr className={style.divider}/>
 
       <Dashboard
         wheel={wheel}
-        wheelOrigin={wheelOrigin}
         settings={wheelSettings}
         animationSetting={animationSetting}
         select={this.select}
