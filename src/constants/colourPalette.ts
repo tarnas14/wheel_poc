@@ -4,6 +4,10 @@ export default {
   suggestion: '#34495e',
   schaboHighlight: 'white',
   activePlus: '#ff4800',
+  callToAction: {
+    background: '#ff4800',
+    font: 'white'
+  },
   activePlus_backButton: 'white',
   nextButton: {
     background: 'white',
