@@ -283,7 +283,7 @@ export default class extends React.Component<Props, State> {
 
     const gestaltWheel = goToCDStateOnSelect(
       expandFirstElementTowardsTheLast(
-      firstElementShouldNotBeSmallerThan(40, 1, -80,
+      firstElementShouldNotBeSmallerThan(wheelSettings.plusMinSize, 1, -80,
         padSuggestions(5,
           toWheel(1, -80,
             fromBusinessToMetal(wheel, wheelSettings, colourPalette)

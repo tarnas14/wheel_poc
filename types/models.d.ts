@@ -71,6 +71,7 @@ declare interface Coords {
 }
 
 declare interface WheelSettings {
+  plusMinSize: number,
   origin: Coords,
   centerArea: DonutRadius,
   angle: number,
