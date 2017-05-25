@@ -8,9 +8,10 @@ import State from '../../constants/state'
 import BusinessWheel from '../BusinessWheel'
 import GoForwardButton from './GoForwardButton'
 import * as style from './style.css'
+import {displayed} from '../../util'
 
 const plusSelected = (wheel: BusinessArc[]): boolean => Boolean(wheel.filter(w => w.state === State.plus && w.selected).length)
-const onlySuggestionsInTheWheel = (wheel: BusinessArc[]) => Boolean(wheel.filter(w => w.state === State.active || w.state === State.pending).length)
+const onlySuggestionsInTheWheel = (wheel: BusinessArc[]) => !Boolean(displayed(wheel).filter(w => w.state === State.active || w.state === State.pending).length)
 
 interface State {
   scale: number

@@ -4,6 +4,7 @@ import {StaggeredMotion, spring} from 'react-motion'
 
 export namespace Wheel {
   export interface Props {
+    disabled: boolean,
     wheel: MotionArc[],
     animationPreset: AnimationPreset,
     arcClick: (id: string) => void,
@@ -29,7 +30,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
   }
 
   render() {
-    const {animationPreset: preset, origin} = this.props
+    const {animationPreset: preset, origin, disabled} = this.props
     return (
        <StaggeredMotion
           defaultStyles={this.props.wheel.map((_, i) => {
@@ -94,7 +95,10 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
           })}
         >
           {styles =>
-            <Layer>
+            <Layer
+              listening={!disabled}
+              opacity={disabled ? 0.7 : 1}
+            >
               {styles.map((style, i) => {
                 const wheelPart = this.props.wheel[i]
                 return <Group key={wheelPart.id}>

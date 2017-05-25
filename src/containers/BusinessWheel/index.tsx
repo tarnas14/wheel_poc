@@ -3,8 +3,9 @@ import {Wheel} from '../../components/Wheel'
 import {find} from 'lodash'
 import State from '../../constants/state'
 
-const displayedArcs = arcs => arcs.filter(a => !a.dontDisplay)
-const sumAngles = arcs => arcs.filter(a => !a.dontDisplay).reduce((angle, arc) => angle + arc.angle + arc.padding, 0)
+import {displayed} from '../../util'
+
+const sumAngles = arcs => displayed(arcs).reduce((angle, arc) => angle + arc.angle + arc.padding, 0)
 
 const loadImages = true
 
@@ -160,8 +161,8 @@ const toWheel = (wheel: GestaltArc[], referenceElementIndex: number, startRotati
     angle: currentArc.angle,
     fill: currentArc.fill,
     rotation: currentIndex < referenceElementIndex
-      ? startRotation - sumAngles(wheel.slice(currentIndex, referenceElementIndex)) - displayedArcs(wheel.slice(currentIndex, referenceElementIndex)).length/2
-      : startRotation + sumAngles(wheel.slice(referenceElementIndex, currentIndex)) + displayedArcs(wheel.slice(referenceElementIndex, currentIndex)).length/2
+      ? startRotation - sumAngles(wheel.slice(currentIndex, referenceElementIndex)) - displayed(wheel.slice(currentIndex, referenceElementIndex)).length/2
+      : startRotation + sumAngles(wheel.slice(referenceElementIndex, currentIndex)) + displayed(wheel.slice(referenceElementIndex, currentIndex)).length/2
   }]
 }, []) : []
 
@@ -227,7 +228,7 @@ const padSuggestions = (wheel: GestaltArc[], suggestionPadding: number) : Gestal
 
 const expandFirstElementTowardsTheLast = (wheel: GestaltArc[]): GestaltArc[] => {
   const originalAngle = wheel[0].angle
-  const angleToFill = 360 - sumAngles(wheel.slice(1)) - displayedArcs(wheel).length
+  const angleToFill = 360 - sumAngles(wheel.slice(1)) - displayed(wheel).length
   const rotationOffset = angleToFill - originalAngle
   return [
     {
@@ -273,6 +274,7 @@ export default class extends React.Component<Props, State> {
     )
 
     return <Wheel
+      disabled={disabled}
       wheel={gestaltWheel}
       animationPreset={animationPreset}
       arcClick={select}
