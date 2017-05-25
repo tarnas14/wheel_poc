@@ -5,7 +5,13 @@ import State from '../../constants/state'
 
 import {displayed} from '../../util'
 
-const sumAngles = arcs => displayed(arcs).reduce((angle, arc) => angle + arc.angle + arc.padding, 0)
+const sumAngles = arcs => displayed(arcs).reduce((angle, arc) => angle + arc.angle, 0)
+const spaceTaken = arcs => displayed(arcs).length
+  ? displayed(arcs).reduce((accumulator, arc) => ({
+    sum: accumulator.sum + (arc.rotation - accumulator.lastFinish) + arc.angle + arc.padding,
+    lastFinish: arc.rotation + arc.angle + arc.padding,
+  }), {sum: 0, lastFinish: arcs[0].rotation}).sum
+  : 0
 
 const loadImages = true
 
@@ -155,7 +161,7 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
   }))
 }
 
-const toWheel = (wheel: GestaltArc[], referenceElementIndex: number, startRotation: number): GestaltArc[] => wheel ? wheel.reduce((allArcs, currentArc, currentIndex) => {
+const toWheel = (referenceElementIndex: number, startRotation: number, wheel: GestaltArc[]): GestaltArc[] => wheel ? wheel.reduce((allArcs, currentArc, currentIndex) => {
   return [...allArcs, {
     ...currentArc,
     angle: currentArc.angle,
@@ -217,7 +223,7 @@ const goToCDStateOnSelect = (wheel: GestaltArc[], cdRadius: DonutRadius, activeR
   return w
 })
 
-const padSuggestions = (wheel: GestaltArc[], suggestionPadding: number) : GestaltArc[] => [
+const padSuggestions = (suggestionPadding: number, wheel: GestaltArc[]) : GestaltArc[] => [
   ...wheel.slice(0, wheel.findIndex(w => w.state === State.suggestion)),
   {
     ...wheel.find(w => w.state === State.suggestion),
@@ -228,7 +234,7 @@ const padSuggestions = (wheel: GestaltArc[], suggestionPadding: number) : Gestal
 
 const expandFirstElementTowardsTheLast = (wheel: GestaltArc[]): GestaltArc[] => {
   const originalAngle = wheel[0].angle
-  const angleToFill = 360 - sumAngles(wheel.slice(1)) - displayed(wheel).length
+  const angleToFill = 360 - spaceTaken(wheel.slice(1)) - 1
   const rotationOffset = angleToFill - originalAngle
   return [
     {
@@ -238,6 +244,23 @@ const expandFirstElementTowardsTheLast = (wheel: GestaltArc[]): GestaltArc[] => 
     },
     ...wheel.slice(1)
   ]
+}
+
+const firstElementShouldNotBeSmallerThan = (minAngle: number, wheelReferenceIndex: number, startRotation: number, wheel: GestaltArc[]) : GestaltArc[] => {
+  const takenSpace = spaceTaken(wheel.slice(1))
+  const anglesOnly = sumAngles(wheel.slice(1))
+  const spaceLeftInWheel = 360 - takenSpace
+  if (spaceLeftInWheel >= minAngle) {
+    return wheel
+  }
+
+  const missingAngle = minAngle - spaceLeftInWheel
+  const angleScale = 1 - missingAngle/anglesOnly
+
+  return toWheel(wheelReferenceIndex, startRotation, [
+    {...wheel[0], angle: minAngle},
+    ...wheel.slice(1).map(w => ({...w, angle: angleScale * w.angle}))
+  ])
 }
 
 interface Props {
@@ -260,12 +283,13 @@ export default class extends React.Component<Props, State> {
 
     const gestaltWheel = goToCDStateOnSelect(
       expandFirstElementTowardsTheLast(
-        padSuggestions(
-          toWheel(
+      firstElementShouldNotBeSmallerThan(40, 1, -80,
+        padSuggestions(5,
+          toWheel(1, -80,
             fromBusinessToMetal(wheel, wheelSettings, colourPalette)
-          , 1, -80)
-        , 5)
-      )
+          )
+        )
+      ))
     , cdRadius, wheelSettings.activeRadius
     )
 
