@@ -128,7 +128,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                     key={`image_${wheelPart.id}`}
                     x={origin.x}
                     y={origin.y}
-                    offsetY={style.imageOffsetScale * (style.outerRadius - style.imageHeight / 2)}
+                    offsetY={style.imageOffsetScale * (style.outerRadius - style.imageHeight / 2 - wheelPart.image.offsetFromOutside)}
                     rotation={style.imageRotation}
                     listening={false}
                   >

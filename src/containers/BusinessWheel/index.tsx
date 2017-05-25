@@ -20,7 +20,7 @@ const wheelOrigin = {
   y: 360
 }
 
-const getImage = (src: string): ImageWithPromise => {
+const getImage = (src: string, overrides: any = {}): ImageWithPromise => {
   if (!loadImages) {
     return undefined
   }
@@ -38,9 +38,11 @@ const getImage = (src: string): ImageWithPromise => {
       height: 40
     },
     loaded: loaded,
-    rotation: (arcRotation, arcAngle) => 90 + arcRotation + arcAngle / 4,
-    offsetScale: 0.96,
+    rotation: (arcRotation, arcAngle) => 90 + arcRotation + arcAngle / 2,
+    offsetScale: 1,
+    offsetFromOutside: 20,
     textFontSize: 0,
+    ...overrides,
   }
 }
 
@@ -80,16 +82,19 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
   }
 
   const getTemplate = ({state, icon, collapsed, dontDisplay}: {dontDisplay?: boolean, state: any, collapsed?: boolean, icon: string}) => {
+    const bigIconSize = {width: 60, height: 60}
+    const smallIconSize = {width: 42, height: 42}
+
     if (state === State.plus) {
       return {
         ...definitions.active,
         fill: colourPalette.activePlus,
         opacity: 0,
-        image: loadImages && Boolean(icon) && {
-          ...getImage(icon),
+        image: loadImages && Boolean(icon) && getImage(icon, {
+          size: bigIconSize,
           rotation: (arcRotation, arcAngle) => 90 + arcRotation + arcAngle / 2,
           offsetScale: 0.65,
-        },
+        }),
       }
     }
 
@@ -111,7 +116,7 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
 
       return {
         ...definitions.active,
-        image: Boolean(icon) && getImage(icon),
+        image: Boolean(icon) && getImage(icon, {size: bigIconSize}),
       }
     }
 
@@ -133,7 +138,7 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
 
       return {
         ...definitions.pending,
-        image: Boolean(icon) && getImage(icon),
+        image: Boolean(icon) && getImage(icon, {size: bigIconSize}),
       }
     }
 
@@ -147,7 +152,7 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
 
     return {
       ...definitions.suggestion,
-      image: Boolean(icon) && getImage(icon),
+      image: Boolean(icon) && getImage(icon, {size: smallIconSize}),
     }
   }
 

@@ -20,6 +20,7 @@ declare interface ImageWithPromise {
   loaded: Promise<void>,
   rotation: (rotation: number, angle: number) => number,
   offsetScale: number,
+  offsetFromOutside: number,
   textFontSize: number,
 }
 
