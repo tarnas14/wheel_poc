@@ -161,7 +161,7 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
   }))
 }
 
-const toWheel = (referenceElementIndex: number, startRotation: number, wheel: GestaltArc[]): GestaltArc[] => wheel ? wheel.reduce((allArcs, currentArc, currentIndex) => {
+const toWheel = ({referenceElementIndex, startRotation} : {referenceElementIndex: number, startRotation: number}, wheel: GestaltArc[]): GestaltArc[] => wheel ? wheel.reduce((allArcs, currentArc, currentIndex) => {
   return [...allArcs, {
     ...currentArc,
     angle: currentArc.angle,
@@ -246,7 +246,7 @@ const expandFirstElementTowardsTheLast = (wheel: GestaltArc[]): GestaltArc[] => 
   ]
 }
 
-const firstElementShouldNotBeSmallerThan = (minAngle: number, wheelReferenceIndex: number, startRotation: number, wheel: GestaltArc[]) : GestaltArc[] => {
+const firstElementShouldNotBeSmallerThan = (minAngle: number, wheelStart: {referenceElementIndex: number, startRotation: number}, wheel: GestaltArc[]) : GestaltArc[] => {
   const takenSpace = spaceTaken(wheel.slice(1))
   const anglesOnly = sumAngles(wheel.slice(1))
   const spaceLeftInWheel = 360 - takenSpace
@@ -257,7 +257,7 @@ const firstElementShouldNotBeSmallerThan = (minAngle: number, wheelReferenceInde
   const missingAngle = minAngle - spaceLeftInWheel
   const angleScale = 1 - missingAngle/anglesOnly
 
-  return toWheel(wheelReferenceIndex, startRotation, [
+  return toWheel(wheelStart, [
     {...wheel[0], angle: minAngle},
     ...wheel.slice(1).map(w => ({...w, angle: angleScale * w.angle}))
   ])
@@ -283,9 +283,9 @@ export default class extends React.Component<Props, State> {
 
     const gestaltWheel = goToCDStateOnSelect(
       expandFirstElementTowardsTheLast(
-      firstElementShouldNotBeSmallerThan(wheelSettings.plusMinSize, 1, -80,
+      firstElementShouldNotBeSmallerThan(wheelSettings.plusMinSize, wheelSettings.start,
         padSuggestions(5,
-          toWheel(1, -80,
+          toWheel(wheelSettings.start,
             fromBusinessToMetal(wheel, wheelSettings, colourPalette)
           )
         )

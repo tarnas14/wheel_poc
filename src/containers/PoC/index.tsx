@@ -296,6 +296,10 @@ export default class extends React.Component<Props, State> {
       animationSetting: presets.noWobble,
       collapse: true,
       wheelSettings: {
+        start: {
+          referenceElementIndex: 1,
+          startRotation: -80,
+        },
         plusMinSize: 40,
         origin: {
           x: 360,

@@ -71,6 +71,10 @@ declare interface Coords {
 }
 
 declare interface WheelSettings {
+  start: {
+    referenceElementIndex: number,
+    startRotation: number,
+  },
   plusMinSize: number,
   origin: Coords,
   centerArea: DonutRadius,
