@@ -1,24 +1,12 @@
 import * as React from 'react'
 import {Wheel} from '../../components/Wheel'
 import {find} from 'lodash'
-import {Group, Circle, Stage, Layer} from 'react-konva'
 import State from '../../constants/state'
-import ArrowLeft from 'material-ui/svg-icons/hardware/keyboard-arrow-left'
-import * as style from './style.css'
-
-import PlusOptions from './PlusOptions'
-import GoForwardButton from './GoForwardButton'
-import SelectedSuggestionActions from './SelectedSuggestionActions'
 
 const displayedArcs = arcs => arcs.filter(a => !a.dontDisplay)
 const sumAngles = arcs => arcs.filter(a => !a.dontDisplay).reduce((angle, arc) => angle + arc.angle + arc.padding, 0)
 
 const loadImages = true
-
-const wheelOrigin = {
-  x: 360,
-  y: 360
-}
 
 const getImage = (src: string, overrides: any = {}): ImageWithPromise => {
   if (!loadImages) {
@@ -237,11 +225,6 @@ const padSuggestions = (wheel: GestaltArc[], suggestionPadding: number) : Gestal
   ...wheel.slice(wheel.findIndex(w => w.state === State.suggestion) + 1)
 ].map(w => w.state === State.suggestion ? {...w, rotation: w.rotation + suggestionPadding} : w)
 
-// const motionDebug = (wheel: MotionArc[]): MotionArc[] => wheel.map(w => console.log(w.collapsed) || w)
-const motionDebug = wheel => wheel
-
-const getSchaboText = (businessWheel: BusinessArc[]) => <span></span>// <p><b style={{fontSize: '1.3em'}}>{businessWheel.reduce((accumulator, current) => accumulator + current.schabo, 0)} €</b> Schadensfreibonus</p>
-
 const expandFirstElementTowardsTheLast = (wheel: GestaltArc[]): GestaltArc[] => {
   const originalAngle = wheel[0].angle
   const angleToFill = 360 - sumAngles(wheel.slice(1)) - displayedArcs(wheel).length
@@ -256,9 +239,9 @@ const expandFirstElementTowardsTheLast = (wheel: GestaltArc[]): GestaltArc[] => 
   ]
 }
 
-const plusSelected = (wheel: BusinessArc[]): boolean => Boolean(wheel.filter(w => w.state === State.plus && w.selected).length)
-
 interface Props {
+  wheelOrigin: {x: number, y: number},
+  disabled: boolean,
   wheel: BusinessArc[],
   wheelSettings: WheelSettings,
   animationPreset: AnimationPreset,
@@ -267,140 +250,34 @@ interface Props {
   colourPalette: any,
 }
 
-interface State {
-  previous: any,
-  scale: number,
-}
+interface State { }
 
 export default class extends React.Component<Props, State> {
-  stage: any
-
-  constructor() {
-    super()
-    this.state = {
-      previous: null,
-      scale: 1,
-    }
-  }
-
-  componentDidMount () {
-    const updateScale = () => {
-      const innerWidth = ((window.innerWidth > 0) ? window.innerWidth : screen.width)
-      const containerWidth = innerWidth > wheelOrigin.x * 2 ? wheelOrigin.x * 2 : innerWidth
-      const widthScale = containerWidth / (wheelOrigin.x * 2)
-
-      const innerHeight = (screen.height)
-      const containerHeight = innerHeight > wheelOrigin.y * 2 ? wheelOrigin.y * 2 : innerHeight
-      const heightScale = containerHeight / (wheelOrigin.y * 2)
-
-      const scale = Math.min(widthScale, heightScale)
-
-      this.setState({scale})
-    }
-
-    updateScale()
-    window.onresize = updateScale
-  }
-
-  preventMultiple = (id: string) => {
-    const {selected} = this.props.wheel.find(w => w.id === id)
-
-    if (!selected) {
-      this.props.select(id)
-    }
-  }
-
-  renderBackButton = (colour: string) => {
-    return <ArrowLeft
-      style={{height: 'auto', width: 'auto', color: colour, cursor: 'pointer'}}
-      onClick={this.clearSelection}
-    />
-  }
-
-  select = (id: string) => this.preventMultiple(id)
-
-  clearSelection = () => {
-    this.props.clearSelection()
-  }
-
-  cursor = cursorStyle => {
-    this.stage.getStage().container().style.cursor = cursorStyle
-  }
-
-  renderCenter () {
-    const {wheel} = this.props
-    const selected = wheel.find(w => w.selected)
-    if (!selected) {
-      return getSchaboText(wheel)
-    }
-
-    return this.renderBackButton(selected.id === 'plus' ? this.props.colourPalette.activePlus_backButton : this.props.colourPalette.active)
-  }
-
   render () {
-    const {colourPalette, wheel, animationPreset, select, wheelSettings} = this.props
-    const {scale} = this.state
+    const {wheelOrigin, colourPalette, wheel, disabled, animationPreset, select, wheelSettings} = this.props
 
     const cdRadius = {
       inner: 50,
       outer: wheelSettings.activeRadius
     }
 
-    const gestaltWheel = motionDebug(
-      goToCDStateOnSelect(
-        expandFirstElementTowardsTheLast(
-          padSuggestions(
-            toWheel(
-              fromBusinessToMetal(wheel, wheelSettings, colourPalette)
-            , 1, -80)
-          , 5)
-        )
-      , cdRadius, wheelSettings.activeRadius
+    const gestaltWheel = goToCDStateOnSelect(
+      expandFirstElementTowardsTheLast(
+        padSuggestions(
+          toWheel(
+            fromBusinessToMetal(wheel, wheelSettings, colourPalette)
+          , 1, -80)
+        , 5)
       )
+    , cdRadius, wheelSettings.activeRadius
     )
 
-    return <div className={style.stageContainer} style={{margin: '0 auto', position: 'relative', width: `${wheelOrigin.x*2*scale}px`, height: `${wheelOrigin.y*2*this.state.scale}px`}}>
-      <div className={style.centerContainer}>
-        {this.renderCenter()}
-      </div>
-      <Stage ref={r => {this.stage = r}} scaleX={scale} scaleY={scale} width={wheelOrigin.x*2*scale} height={wheelOrigin.y*2*scale}>
-        <Wheel
-          wheel={gestaltWheel}
-          animationPreset={animationPreset}
-          arcClick={this.select}
-          origin={wheelOrigin}
-          colourPalette={colourPalette}
-        />
-        {plusSelected(wheel) && <PlusOptions
-          colourPalette={colourPalette}
-          showStroke={false}
-          wheelOrigin={wheelOrigin}
-          activeRadius={wheelSettings.activeRadius}
-          cdRadius={cdRadius}
-          setCursor={this.cursor}
-          addExistingInsurance={() => console.log('Bestehende Versicherung hinzufugen')}
-          lockNewInsurance={() => console.log('Neue abschliesen')}
-          checkRequirements={() => console.log('Versicherungsbedarf ermitteln')}
-        />}
-        <SelectedSuggestionActions
-          suggestion={wheel.find(w => Boolean(w.selected && w.state === State.suggestion))}
-          setCursor={this.cursor}
-          addExisting={id => console.log('adding existing to/with', id)}
-          lockNew={id => console.log('doing something with new insurance', id)}
-          colourPalette={colourPalette.suggestionActions}
-          wheelOrigin={wheelOrigin}
-          cdRadius={cdRadius}
-          activeRadius={wheelSettings.activeRadius}
-        />
-      </Stage>
-      <GoForwardButton
-        wheel={gestaltWheel}
-        wheelOrigin={wheelOrigin}
-        cdRadius={cdRadius}
-        activeRadius={wheelSettings.activeRadius}
-        colourPalette={colourPalette}
-        scale={scale}
-      />
-    </div>
+    return <Wheel
+      wheel={gestaltWheel}
+      animationPreset={animationPreset}
+      arcClick={select}
+      origin={wheelOrigin}
+      colourPalette={colourPalette}
+    />
   }
 }
