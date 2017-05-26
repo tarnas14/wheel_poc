@@ -161,6 +161,16 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
   }))
 }
 
+const makeWheel = startRotation => wheel => wheel.length
+  ? wheel.reduce((accumulator, currentArc) => [
+    ...accumulator,
+    {
+      ...currentArc,
+      rotation: startRotation + sumAngles(accumulator) + displayed(accumulator).length/2
+    }
+  ], [])
+  : []
+
 const toWheel = ({referenceElementIndex, startRotation} : {referenceElementIndex: number, startRotation: number}) => (wheel: GestaltArc[]): GestaltArc[] => wheel ? wheel.reduce((allArcs, currentArc, currentIndex) => {
   return [...allArcs, {
     ...currentArc,
@@ -263,6 +273,73 @@ const scaleElementsDownToReserveSpaceForFirst = (minAngle: number, wheelStart: {
 
 const chain = initialValue => transformations => transformations.reduceRight((accumulator, currentTransform) => currentTransform(accumulator), initialValue)
 
+const skipFirst = transformation => wheel => [
+  wheel[0],
+  ...transformation(wheel.slice(1))
+]
+
+const collapse = w => ({...w, collapsed: true, angle: 5})
+
+const collapseFromEnd = toCollapse => wheel => {
+  const firstCollapsedIndex = wheel.findIndex(w => w.collapsed)
+  if (firstCollapsedIndex === -1) {
+    return [
+      ...wheel.slice(0, -toCollapse),
+      ...wheel.slice(-toCollapse).map(collapse),
+    ]
+  }
+
+  return [
+    ...wheel.slice(0, firstCollapsedIndex - toCollapse),
+    ...wheel.slice(firstCollapsedIndex - toCollapse, toCollapse).map(collapse),
+    ...wheel.slice(firstCollapsedIndex + toCollapse),
+  ]
+}
+
+const limitAngleByCollapsing = (maxAngle, minUncollapsedElements, groupCollapsePredicate) => wheel => {
+  const currentAngle = spaceTaken(wheel)
+
+  if (currentAngle <= maxAngle) {
+    return wheel
+  }
+
+  const groupToCollapse = wheel.filter(groupCollapsePredicate)
+  const notCollapsed = displayed(groupToCollapse).filter(w => !w.collapsed).length
+
+  if (notCollapsed <= minUncollapsedElements) {
+    return wheel
+  }
+
+  const notCollapsedAngle = displayed(wheel).find(w => groupCollapsePredicate(w) && !w.collapsed).angle
+  const collapsedAngle = 5
+  const shouldCollapseCount = Math.min(
+    Math.ceil((currentAngle - maxAngle) / (notCollapsedAngle - collapsedAngle)),
+    displayed(groupToCollapse).length - minUncollapsedElements
+  )
+  const firstGroupIndex = wheel.indexOf(groupToCollapse[0])
+
+  return makeWheel(-80)([
+    ...wheel.slice(0, firstGroupIndex),
+    ...collapseFromEnd(shouldCollapseCount)(groupToCollapse),
+    ...wheel.slice(firstGroupIndex + groupToCollapse.length),
+  ])
+}
+
+const maxUncollapsedGroup = (wheelStart, maxUncollapsed, groupPredicate) => wheel => {
+  const group = displayed(wheel.filter(groupPredicate))
+  if (group.length <= maxUncollapsed) {
+    return wheel
+  }
+  const firstGroupIndex = wheel.indexOf(group[0])
+  const toCollapse = group.length - maxUncollapsed
+
+  return toWheel(wheelStart)([
+    ...wheel.slice(0, firstGroupIndex + maxUncollapsed),
+    ...wheel.slice(firstGroupIndex + maxUncollapsed, firstGroupIndex + maxUncollapsed + toCollapse).map(w => ({...w, collapsed: true, angle: 5})),
+    ...wheel.slice(firstGroupIndex + maxUncollapsed + toCollapse)
+  ])
+}
+
 interface Props {
   wheelOrigin: {x: number, y: number},
   disabled: boolean,
@@ -285,6 +362,8 @@ export default class extends React.Component<Props, State> {
       goToCDStateOnSelect(cdRadius, wheelSettings.activeRadius),
       expandFirstElementTowardsTheLast,
       scaleElementsDownToReserveSpaceForFirst(wheelSettings.plusMinSize, wheelSettings.start),
+      skipFirst(limitAngleByCollapsing(320, 3, w => w.state === State.pending)),
+      skipFirst(limitAngleByCollapsing(320, 4, w => w.state === State.active)),
       padSuggestions(5),
       toWheel(wheelSettings.start),
     ]
