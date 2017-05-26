@@ -278,7 +278,7 @@ const skipFirst = transformation => wheel => [
   ...transformation(wheel.slice(1))
 ]
 
-const collapse = w => ({...w, collapsed: true, angle: 5})
+const collapse = w => ({...w, collapsed: true, angle: 5, image: undefined})
 
 const collapseFromEnd = toCollapse => wheel => {
   const firstCollapsedIndex = wheel.findIndex(w => w.collapsed)
@@ -358,12 +358,15 @@ export default class extends React.Component<Props, State> {
     const {wheelOrigin, colourPalette, wheel, disabled, animationPreset, select, wheelSettings} = this.props
     const {cdRadius} = wheelSettings
 
+    const showAngles = () => wheel => console.log(spaceTaken(wheel.slice(1))) || wheel
+
     const transformations = [
       goToCDStateOnSelect(cdRadius, wheelSettings.activeRadius),
       expandFirstElementTowardsTheLast,
+      showAngles(),
       scaleElementsDownToReserveSpaceForFirst(wheelSettings.plusMinSize, wheelSettings.start),
-      skipFirst(limitAngleByCollapsing(320, 3, w => w.state === State.pending)),
       skipFirst(limitAngleByCollapsing(320, 4, w => w.state === State.active)),
+      skipFirst(limitAngleByCollapsing(320, 3, w => w.state === State.pending)),
       padSuggestions(5),
       toWheel(wheelSettings.start),
     ]
