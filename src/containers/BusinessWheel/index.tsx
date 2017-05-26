@@ -161,18 +161,16 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
   }))
 }
 
-const toWheel = ({referenceElementIndex, startRotation} : {referenceElementIndex: number, startRotation: number}, wheel: GestaltArc[]): GestaltArc[] => wheel ? wheel.reduce((allArcs, currentArc, currentIndex) => {
+const toWheel = ({referenceElementIndex, startRotation} : {referenceElementIndex: number, startRotation: number}) => (wheel: GestaltArc[]): GestaltArc[] => wheel ? wheel.reduce((allArcs, currentArc, currentIndex) => {
   return [...allArcs, {
     ...currentArc,
-    angle: currentArc.angle,
-    fill: currentArc.fill,
     rotation: currentIndex < referenceElementIndex
       ? startRotation - sumAngles(wheel.slice(currentIndex, referenceElementIndex)) - displayed(wheel.slice(currentIndex, referenceElementIndex)).length/2
       : startRotation + sumAngles(wheel.slice(referenceElementIndex, currentIndex)) + displayed(wheel.slice(referenceElementIndex, currentIndex)).length/2
   }]
 }, []) : []
 
-const goToCDStateOnSelect = (wheel: GestaltArc[], cdRadius: DonutRadius, activeRadius: number) : GestaltArc[] => wheel.map(w => {
+const goToCDStateOnSelect = (cdRadius: DonutRadius, activeRadius: number) => (wheel: GestaltArc[]) : GestaltArc[] => wheel.map(w => {
   if (w.selected) {
     return {
       ...w,
@@ -223,7 +221,7 @@ const goToCDStateOnSelect = (wheel: GestaltArc[], cdRadius: DonutRadius, activeR
   return w
 })
 
-const padSuggestions = (suggestionPadding: number, wheel: GestaltArc[]) : GestaltArc[] => [
+const padSuggestions = (suggestionPadding: number) => (wheel: GestaltArc[]) : GestaltArc[] => [
   ...wheel.slice(0, wheel.findIndex(w => w.state === State.suggestion)),
   {
     ...wheel.find(w => w.state === State.suggestion),
@@ -246,7 +244,7 @@ const expandFirstElementTowardsTheLast = (wheel: GestaltArc[]): GestaltArc[] => 
   ]
 }
 
-const firstElementShouldNotBeSmallerThan = (minAngle: number, wheelStart: {referenceElementIndex: number, startRotation: number}, wheel: GestaltArc[]) : GestaltArc[] => {
+const scaleElementsDownToReserveSpaceForFirst = (minAngle: number, wheelStart: {referenceElementIndex: number, startRotation: number}) => (wheel: GestaltArc[]) : GestaltArc[] => {
   const takenSpace = spaceTaken(wheel.slice(1))
   const anglesOnly = sumAngles(wheel.slice(1))
   const spaceLeftInWheel = 360 - takenSpace
@@ -257,11 +255,13 @@ const firstElementShouldNotBeSmallerThan = (minAngle: number, wheelStart: {refer
   const missingAngle = minAngle - spaceLeftInWheel
   const angleScale = 1 - missingAngle/anglesOnly
 
-  return toWheel(wheelStart, [
+  return toWheel(wheelStart)([
     {...wheel[0], angle: minAngle},
     ...wheel.slice(1).map(w => ({...w, angle: angleScale * w.angle}))
   ])
 }
+
+const chain = initialValue => transformations => transformations.reduceRight((accumulator, currentTransform) => currentTransform(accumulator), initialValue)
 
 interface Props {
   wheelOrigin: {x: number, y: number},
@@ -281,17 +281,15 @@ export default class extends React.Component<Props, State> {
     const {wheelOrigin, colourPalette, wheel, disabled, animationPreset, select, wheelSettings} = this.props
     const {cdRadius} = wheelSettings
 
-    const gestaltWheel = goToCDStateOnSelect(
-      expandFirstElementTowardsTheLast(
-      firstElementShouldNotBeSmallerThan(wheelSettings.plusMinSize, wheelSettings.start,
-        padSuggestions(5,
-          toWheel(wheelSettings.start,
-            fromBusinessToMetal(wheel, wheelSettings, colourPalette)
-          )
-        )
-      ))
-    , cdRadius, wheelSettings.activeRadius
-    )
+    const transformations = [
+      goToCDStateOnSelect(cdRadius, wheelSettings.activeRadius),
+      expandFirstElementTowardsTheLast,
+      scaleElementsDownToReserveSpaceForFirst(wheelSettings.plusMinSize, wheelSettings.start),
+      padSuggestions(5),
+      toWheel(wheelSettings.start),
+    ]
+
+    const gestaltWheel = chain(fromBusinessToMetal(wheel, wheelSettings, colourPalette))(transformations)
 
     return <Wheel
       disabled={disabled}
