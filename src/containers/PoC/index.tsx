@@ -22,26 +22,6 @@ const icons = {
 // const debug = (wheel: BusinessArc[]) : BusinessArc[] => console.log(wheel) || wheel.map(w => console.log(w && w.collapsed) || w)
 const debug = w => w
 
-const collapse = (wheel: BusinessArc[], maxUncollapsedElements) : BusinessArc[] => {
-  const collapseGroup = (wheel: BusinessArc[], groupPredicate: (w: BusinessArc) => Boolean): BusinessArc[] => {
-    const group = wheel.filter(groupPredicate)
-    if (group.length <= maxUncollapsedElements) {
-      return wheel
-    }
-
-    const firstGroupIndex = wheel.indexOf(group[0])
-    const toCollapse = group.length - maxUncollapsedElements
-
-    return [
-      ...wheel.slice(0, firstGroupIndex + maxUncollapsedElements),
-      ...wheel.slice(firstGroupIndex + maxUncollapsedElements, firstGroupIndex + maxUncollapsedElements + toCollapse).map(w => ({...w, collapsed: true})),
-      ...wheel.slice(firstGroupIndex + maxUncollapsedElements + toCollapse)
-    ]
-  }
-
-  return collapseGroup(collapseGroup(wheel, w => w.state === State.pending), w => w.state === State.active)
-}
-
 const businessWheel: BusinessArc[] = [
   {
     id: 'plus',
@@ -245,34 +225,6 @@ const businessWheel: BusinessArc[] = [
   }
 ]
 
-const toggleCollapsed = (wheel: BusinessArc[], collapsed: BusinessArc) : BusinessArc[] => {
-  const collapseEnd = (toToggle, numberOfCollapsed) => [
-    ...toToggle.slice(0, -numberOfCollapsed),
-    ...toToggle.slice(-numberOfCollapsed).map(w => ({...w, collapsed: true}))
-  ]
-
-  const collapseBeginning = (toToggle, numberOfCollapsed) => [
-    ...toToggle.slice(0, numberOfCollapsed).map(w => ({...w, collapsed: true})),
-    ...toToggle.slice(-numberOfCollapsed)
-  ]
-
-  const sameStateAsCollapsed = w => w.state === collapsed.state
-  const firstOfTheSameState = wheel.find(sameStateAsCollapsed)
-  const firstIndexOfTheSameState = wheel.indexOf(firstOfTheSameState)
-  const numberOfCollapsed = wheel.filter(w => w.collapsed && sameStateAsCollapsed(w)).length
-
-  const toToggle = wheel.filter(sameStateAsCollapsed).map(w => ({...w, collapsed: undefined}))
-  const toggled = firstOfTheSameState.collapsed
-    ? collapseEnd(toToggle, numberOfCollapsed)
-    : collapseBeginning(toToggle, numberOfCollapsed)
-
-  return [
-    ...wheel.slice(0, firstIndexOfTheSameState),
-    ...toggled,
-    ...wheel.slice(firstIndexOfTheSameState + toggled.length)
-  ]
-}
-
 const onEnter = callback => e => e.keyCode === 13
   ? callback(e)
   : undefined
@@ -284,7 +236,6 @@ interface State {
   animationPreset: string,
   animationSetting: AnimationPreset,
   wheelSettings: WheelSettings,
-  collapse: boolean,
 }
 
 export default class extends React.Component<Props, State> {
@@ -294,7 +245,6 @@ export default class extends React.Component<Props, State> {
       wheel: businessWheel,
       animationPreset: 'noWobble',
       animationSetting: presets.noWobble,
-      collapse: true,
       wheelSettings: {
         start: {
           referenceElementIndex: 1,
@@ -351,15 +301,6 @@ export default class extends React.Component<Props, State> {
   }
 
   select = (id: string) => {
-    const toSelect = this.state.wheel.find(w => w.id === id)
-
-    if (toSelect.collapsed) {
-      this.setState(s => ({
-        wheel: toggleCollapsed(s.wheel, toSelect)
-      }))
-      return
-    }
-
     this.setState(s => ({
       wheel: s.wheel.map(w => ({
         ...w,

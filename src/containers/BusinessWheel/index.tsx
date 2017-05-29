@@ -280,23 +280,27 @@ const skipFirst = transformation => wheel => [
 
 const collapse = w => ({...w, collapsed: true, angle: 5, image: undefined})
 
-const collapseFromEnd = toCollapse => wheel => {
-  const firstCollapsedIndex = wheel.findIndex(w => w.collapsed)
-  if (firstCollapsedIndex === -1) {
-    return [
-      ...wheel.slice(0, -toCollapse),
-      ...wheel.slice(-toCollapse).map(collapse),
-    ]
+const collapseFromEnd = toCollapse => wheel => [
+  ...wheel.slice(0, -toCollapse),
+  ...wheel.slice(-toCollapse).map(collapse),
+]
+
+const collapseFromStart = toCollapse => wheel => wheel.reduce((accumulator, current) => {
+  if (current.dontDisplay || accumulator.counter >= toCollapse) {
+    return {
+      ...accumulator,
+      collapsed: [...accumulator.collapsed, current],
+    }
   }
 
-  return [
-    ...wheel.slice(0, firstCollapsedIndex - toCollapse),
-    ...wheel.slice(firstCollapsedIndex - toCollapse, toCollapse).map(collapse),
-    ...wheel.slice(firstCollapsedIndex + toCollapse),
-  ]
-}
+  return {
+    collapsed: [...accumulator.collapsed, collapse(current)],
+    counter: accumulator.counter + 1,
+  }
+}, {collapsed: [], counter: 0}).collapsed
 
-const limitAngleByCollapsing = (maxAngle, minUncollapsedElements, groupCollapsePredicate) => wheel => {
+const limitAngleByCollapsing = (collapseState, maxAngle, minUncollapsedElements, state) => wheel => {
+  const groupCollapsePredicate = w => w.state === state
   const currentAngle = spaceTaken(wheel)
 
   if (currentAngle <= maxAngle) {
@@ -304,7 +308,7 @@ const limitAngleByCollapsing = (maxAngle, minUncollapsedElements, groupCollapseP
   }
 
   const groupToCollapse = wheel.filter(groupCollapsePredicate)
-  const notCollapsed = displayed(groupToCollapse).filter(w => !w.collapsed).length
+  const notCollapsed = displayed(groupToCollapse).length
 
   if (notCollapsed <= minUncollapsedElements) {
     return wheel
@@ -317,26 +321,12 @@ const limitAngleByCollapsing = (maxAngle, minUncollapsedElements, groupCollapseP
     displayed(groupToCollapse).length - minUncollapsedElements
   )
   const firstGroupIndex = wheel.indexOf(groupToCollapse[0])
+  const collapseFunc = collapseState[state] ? collapseFromStart(shouldCollapseCount) : collapseFromEnd(shouldCollapseCount)
 
   return makeWheel(-80)([
     ...wheel.slice(0, firstGroupIndex),
-    ...collapseFromEnd(shouldCollapseCount)(groupToCollapse),
+    ...collapseFunc(groupToCollapse),
     ...wheel.slice(firstGroupIndex + groupToCollapse.length),
-  ])
-}
-
-const maxUncollapsedGroup = (wheelStart, maxUncollapsed, groupPredicate) => wheel => {
-  const group = displayed(wheel.filter(groupPredicate))
-  if (group.length <= maxUncollapsed) {
-    return wheel
-  }
-  const firstGroupIndex = wheel.indexOf(group[0])
-  const toCollapse = group.length - maxUncollapsed
-
-  return toWheel(wheelStart)([
-    ...wheel.slice(0, firstGroupIndex + maxUncollapsed),
-    ...wheel.slice(firstGroupIndex + maxUncollapsed, firstGroupIndex + maxUncollapsed + toCollapse).map(w => ({...w, collapsed: true, angle: 5})),
-    ...wheel.slice(firstGroupIndex + maxUncollapsed + toCollapse)
   ])
 }
 
@@ -351,22 +341,47 @@ interface Props {
   colourPalette: any,
 }
 
-interface State { }
+interface State {
+  collapse: any
+}
 
 export default class extends React.Component<Props, State> {
-  render () {
-    const {wheelOrigin, colourPalette, wheel, disabled, animationPreset, select, wheelSettings} = this.props
-    const {cdRadius} = wheelSettings
+  constructor () {
+    super()
+    this.state = {
+      collapse: {}
+    }
+  }
 
-    const showAngles = () => wheel => console.log(spaceTaken(wheel.slice(1))) || wheel
+  handleClick = (id, collapsed) => {
+    if (!collapsed) {
+      this.props.select(id)
+      return
+    }
+
+    const state = this.props.wheel.find(w => w.id === id).state
+    this.setState(s => ({
+      collapse: {
+        ...s.collapse,
+        [state]: !Boolean(s.collapse[state])
+      }
+    }))
+  }
+
+  render () {
+    const {wheelOrigin, colourPalette, wheel, disabled, animationPreset, wheelSettings} = this.props
+    const {cdRadius} = wheelSettings
+    const {collapse} = this.state
+
+    const showAngles = () => wheel => wheel// console.log(spaceTaken(wheel.slice(1))) || wheel
 
     const transformations = [
       goToCDStateOnSelect(cdRadius, wheelSettings.activeRadius),
       expandFirstElementTowardsTheLast,
       showAngles(),
       scaleElementsDownToReserveSpaceForFirst(wheelSettings.plusMinSize, wheelSettings.start),
-      skipFirst(limitAngleByCollapsing(320, 4, w => w.state === State.active)),
-      skipFirst(limitAngleByCollapsing(320, 3, w => w.state === State.pending)),
+      skipFirst(limitAngleByCollapsing(collapse, 320, 4, State.active)),
+      skipFirst(limitAngleByCollapsing(collapse, 320, 3, State.pending)),
       padSuggestions(5),
       toWheel(wheelSettings.start),
     ]
@@ -377,7 +392,7 @@ export default class extends React.Component<Props, State> {
       disabled={disabled}
       wheel={gestaltWheel}
       animationPreset={animationPreset}
-      arcClick={select}
+      arcClick={this.handleClick}
       origin={wheelOrigin}
       colourPalette={colourPalette}
     />

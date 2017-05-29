@@ -7,7 +7,7 @@ export namespace Wheel {
     disabled: boolean,
     wheel: MotionArc[],
     animationPreset: AnimationPreset,
-    arcClick: (id: string) => void,
+    arcClick: (id: string, collapsed: boolean) => void,
     origin: {
       x: number,
       y: number
@@ -114,8 +114,8 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                       fill={this.props.wheel[i].fill}
 
                       onMouseOver={this.touched.bind(undefined, () => {})}
-                      onClick={this.touched.bind(undefined, this.props.arcClick.bind(undefined, wheelPart.id))}
-                      onTap={this.touched.bind(undefined, this.props.arcClick.bind(undefined, wheelPart.id))}
+                      onClick={this.touched.bind(undefined, this.props.arcClick.bind(undefined, wheelPart.id, wheelPart.collapsed))}
+                      onTap={this.touched.bind(undefined, this.props.arcClick.bind(undefined, wheelPart.id, wheelPart.collapsed))}
                   />
                   {wheelPart.raised && <Arc
                       opacity={style.opacity}

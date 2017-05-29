@@ -43,6 +43,7 @@ declare interface MotionArc extends Arc {
   padding: number,
   raised: boolean,
   text: string,
+  collapsed?: boolean,
 }
 
 declare interface AnimationPreset {
@@ -57,7 +58,6 @@ declare interface BusinessArc {
   state: State,
   schabo: number,
   selected?: boolean,
-  collapsed?: boolean,
   hidden?: boolean,
   nextAction?: () => void,
   dontDisplay?: boolean,
