@@ -8,6 +8,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 // import ColourPalette from '../../constants/colourPalette'
 import ColourPalette from '../../constants/dbColourPalette'
 import Dashboard from '../Dashboard'
+import plusPath from '../../glyphs/paths/plus'
 
 const icons = {
   home: 'https://api.icons8.com/download/4662d6548b0042ab2fa5afe9429d21d7309b1559/windows10/PNG/256/Very_Basic/home-256.png',
@@ -26,7 +27,7 @@ const debug = w => w
 const businessWheel: BusinessArc[] = [
   {
     id: 'plus',
-    icon: icons.plus,
+    icon: plusPath,
     text: '',
     state: State.plus,
     schabo: 0,

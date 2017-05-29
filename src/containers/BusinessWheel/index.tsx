@@ -19,6 +19,7 @@ const getImage = (src: string, overrides: any = {}): ImageWithPromise => {
   if (!loadImages) {
     return undefined
   }
+
   const img = new Image()
   img.src = src
 
@@ -85,11 +86,16 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
         ...definitions.active,
         fill: colourPalette.activePlus,
         opacity: 0,
-        image: loadImages && Boolean(icon) && getImage(icon, {
+        svg: {
+          path: icon,
+          fill: colourPalette.activePlus
+        },
+        image: {
           size: bigIconSize,
           rotation: (arcRotation, arcAngle) => 90 + arcRotation + arcAngle / 2,
+          offsetFromOutside: 20,
           offsetScale: 0.65,
-        }),
+        },
       }
     }
 

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Text, Image as KonvaImage, Group, Layer, Stage, Arc} from 'react-konva'
+import {Path, Text, Image as KonvaImage, Group, Layer, Stage, Arc} from 'react-konva'
 import {StaggeredMotion, spring} from 'react-motion'
 
 export namespace Wheel {
@@ -128,7 +128,23 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                       outerRadius={style.innerRadius}
                       fill={this.props.colourPalette.schaboHighlight}
                   />}
-                  {wheelPart.image && <Group
+                  {wheelPart.svg && <Group
+                    key={`image_${wheelPart.id}`}
+                    x={origin.x}
+                    y={origin.y}
+                    offsetY={style.imageOffsetScale * (style.outerRadius - style.imageHeight / 2 - wheelPart.image.offsetFromOutside)}
+                    rotation={style.imageRotation}
+                    listening={false}
+                  >
+                    <Path
+                      data={wheelPart.svg.path}
+                      fill={wheelPart.svg.fill}
+                      rotation={-style.imageRotation}
+                      offsetX={style.imageWidth / 2}
+                      offsetY={style.imageHeight / 2}
+                    />
+                  </Group>}
+                  {!wheelPart.svg && wheelPart.image && <Group
                     key={`image_${wheelPart.id}`}
                     x={origin.x}
                     y={origin.y}

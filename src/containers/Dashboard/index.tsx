@@ -1,6 +1,6 @@
 import * as React from 'react'
 import ArrowLeft from 'material-ui/svg-icons/hardware/keyboard-arrow-left'
-import {Group, Circle, Stage, Layer} from 'react-konva'
+import {Path, Group, Circle, Stage, Layer} from 'react-konva'
 
 import PlusOptions from './PlusOptions'
 import SelectedSuggestionActions from './SelectedSuggestionActions'

@@ -44,6 +44,7 @@ declare interface MotionArc extends Arc {
   raised: boolean,
   text: string,
   collapsed?: boolean,
+  svg?: any,
 }
 
 declare interface AnimationPreset {
