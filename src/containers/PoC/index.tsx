@@ -5,7 +5,8 @@ import {TransitionMotion, Motion, spring, presets} from 'react-motion'
 import * as style from './style.css'
 import State from '../../constants/state'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-import ColourPalette from '../../constants/colourPalette'
+// import ColourPalette from '../../constants/colourPalette'
+import ColourPalette from '../../constants/dbColourPalette'
 import Dashboard from '../Dashboard'
 
 const icons = {
@@ -261,7 +262,7 @@ export default class extends React.Component<Props, State> {
         },
         angle: 40,
         cdRadius: {
-          inner: 50,
+          inner: 100/2,
           outer: 275,
         },
         activeRadius: 275,
