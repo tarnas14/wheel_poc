@@ -47,6 +47,8 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
               imageOffsetScale: 0,
               imageRotation: 0,
               imageFontSize: 0,
+              imageScaleX: 0.01,
+              imageScaleY: 0.01,
             }
           })}
           styles={previousStyles => previousStyles.map((_, i) => {
@@ -65,6 +67,8 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                 imageOffsetScale: wheelPart.svg ? spring(wheelPart.svg.offsetScale) : 0,
                 imageRotation: wheelPart.svg ? spring(wheelPart.svg.rotation(wheelPart.rotation, wheelPart.angle)) : 0,
                 imageFontSize: wheelPart.svg ? spring(wheelPart.svg.textFontSize) : 0,
+                imageScaleX: wheelPart.svg ? spring(wheelPart.svg.scale.x) : 0.01,
+                imageScaleY: wheelPart.svg ? spring(wheelPart.svg.scale.y) : 0.01,
               }
             }
 
@@ -80,6 +84,8 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
               imageOffsetScale: wheelPart.svg ? spring(wheelPart.svg.offsetScale) : 0,
               imageRotation: wheelPart.svg ? spring(wheelPart.svg.rotation(wheelPart.rotation, wheelPart.angle)) : 0,
               imageFontSize: 0,
+              imageScaleX: wheelPart.svg ? spring(wheelPart.svg.scale.x) : 0.01,
+              imageScaleY: wheelPart.svg ? spring(wheelPart.svg.scale.y) : 0.01,
             } : {
               opacity: spring(wheelPart.opacity, preset),
               innerRadius: wheelPart.radius.inner,
@@ -91,6 +97,8 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
               imageOffsetScale: wheelPart.svg ? spring(wheelPart.svg.offsetScale) : 0,
               imageRotation: wheelPart.svg ? wheelPart.svg.rotation(previousStyles[i - 1].rotation + previousStyles[i - 1].angle + 0.5 + wheelPart.padding, wheelPart.angle) : 0,
               imageFontSize: 0,
+              imageScaleX: wheelPart.svg ? spring(wheelPart.svg.scale.x) : 0.01,
+              imageScaleY: wheelPart.svg ? spring(wheelPart.svg.scale.y) : 0.01,
             }
           })}
         >
@@ -140,10 +148,10 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                       opacity={wheelPart.svg.opacity}
                       data={wheelPart.svg.path}
                       fill={wheelPart.svg.fill}
-                      scale={wheelPart.svg.scale}
+                      scale={{x: style.imageScaleX, y: style.imageScaleY}}
                       rotation={-style.imageRotation}
-                      offsetX={style.imageWidth / wheelPart.svg.scale.x / 2}
-                      offsetY={style.imageHeight / wheelPart.svg.scale.y / 2}
+                      offsetX={style.imageWidth / style.imageScaleX / 2}
+                      offsetY={style.imageHeight / style.imageScaleY / 2}
                     />
                   </Group>}
                 </Group>
