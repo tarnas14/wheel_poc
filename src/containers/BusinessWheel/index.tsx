@@ -60,7 +60,7 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
   }
 
   const getTemplate = ({state, icon, collapsed, dontDisplay}: {dontDisplay?: boolean, state: any, collapsed?: boolean, icon: string}) => {
-    const bigIconSize = {width: 60, height: 60}
+    const bigIconSize = {width: 90, height: 90}
     const smallIconSize = {width: 42, height: 42}
 
     if (state === State.plus) {
@@ -183,15 +183,15 @@ const goToCDStateOnSelect = (cdRadius: DonutRadius, activeRadius: number) => (wh
         scale: w.id === 'plus'
           ? {x: 0.01, y: 0.01}
           : {
-            x: w.svg.scale.x * 2,
-            y: w.svg.scale.y * 2,
+            x: w.svg.scale.x * 1.5,
+            y: w.svg.scale.y * 1.5,
           },
         rotation: w.id === 'plus'
           ? (arcRotation, arcAngle) => -90
           : (arcRotation, arcAngle) => -0,
         size: {
-          height: 2 * w.svg.size.height,
-          width: 2 * w.svg.size.width
+          height: 1.5 * w.svg.size.height,
+          width: 1.5 * w.svg.size.width
         },
         offsetScale: 0.65,
       }
