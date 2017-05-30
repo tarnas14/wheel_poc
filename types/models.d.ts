@@ -14,16 +14,6 @@ declare type TodoStoreState = TodoItemData[]
 
 declare type State = 'active' | 'pending' | 'suggestion' | 'plus'
 
-declare interface ImageWithPromise {
-  image: any,
-  size: {height: number, width: number},
-  loaded: Promise<void>,
-  rotation: (rotation: number, angle: number) => number,
-  offsetScale: number,
-  offsetFromOutside: number,
-  textFontSize: number,
-}
-
 declare interface DonutRadius {
   inner: number,
   outer: number,
@@ -35,7 +25,6 @@ declare interface Arc {
   radius: DonutRadius,
   id: string,
   opacity: number,
-  image?: any,
 }
 
 declare interface MotionArc extends Arc {

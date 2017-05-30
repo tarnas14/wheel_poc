@@ -13,17 +13,16 @@ const spaceTaken = arcs => displayed(arcs).length
   }), {sum: 0, lastFinish: arcs[0].rotation}).sum
   : 0
 
-const loadImages = true
-
-const getImage = (src: string, overrides: any = {}): ImageWithPromise => {
-  return {
-    rotation: (arcRotation, arcAngle) => 90 + arcRotation + arcAngle / 2,
-    offsetScale: 1,
-    offsetFromOutside: 20,
-    textFontSize: 0,
-    ...overrides,
-  }
-}
+const getImage = (icon: string, overrides: any = {size: {x: 0, y: 0}}) => ({
+  path: icon,
+  fill: 'white',
+  scale: {x: overrides.size.width/210, y: overrides.size.height/210},
+  rotation: (arcRotation, arcAngle) => 90 + arcRotation + arcAngle / 2,
+  offsetFromOutside: 20,
+  offsetScale: 1,
+  textFontSize: 0,
+  ...overrides,
+})
 
 const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelSettings, colourPalette: any): GestaltArc[] => {
 
@@ -73,8 +72,6 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
           path: icon,
           fill: colourPalette.activePlus,
           scale: {x: 1, y: 1},
-        },
-        image: {
           size: bigIconSize,
           rotation: (arcRotation, arcAngle) => 90 + arcRotation + arcAngle / 2,
           offsetFromOutside: 20,
@@ -101,12 +98,7 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
 
       return {
         ...definitions.active,
-        svg: {
-          path: icon,
-          fill: 'white',
-          scale: {x: bigIconSize.width/210, y: bigIconSize.height/210},
-        },
-        image: getImage(icon, {size: bigIconSize}),
+        svg: getImage(icon, {size: bigIconSize}),
       }
     }
 
@@ -128,12 +120,7 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
 
       return {
         ...definitions.pending,
-        svg: {
-          path: icon,
-          fill: 'white',
-          scale: {x: bigIconSize.width/210, y: bigIconSize.height/210},
-        },
-        image: getImage(icon, {size: bigIconSize}),
+        svg: getImage(icon, {size: bigIconSize}),
       }
     }
 
@@ -147,12 +134,7 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
 
     return {
       ...definitions.suggestion,
-      svg: {
-        path: icon,
-        fill: 'white',
-        scale: {x: smallIconSize.width/210, y: smallIconSize.height/210},
-      },
-      image: getImage(icon, {size: smallIconSize}),
+      svg: getImage(icon, {size: smallIconSize}),
     }
   }
 
@@ -196,23 +178,20 @@ const goToCDStateOnSelect = (cdRadius: DonutRadius, activeRadius: number) => (wh
         outer: cdRadius.outer,
         inner: cdRadius.inner
       },
-      svg: {
+      svg: w.svg && {
         ...w.svg,
         scale: w.id === 'plus'
           ? {x: 0.01, y: 0.01}
           : {
             x: w.svg.scale.x * 2,
             y: w.svg.scale.y * 2,
-          }
-      },
-      image: w.image && {
-        ...w.image,
+          },
         rotation: w.id === 'plus'
           ? (arcRotation, arcAngle) => -90
           : (arcRotation, arcAngle) => -0,
         size: {
-          height: 2 * w.image.size.height,
-          width: 2 * w.image.size.width
+          height: 2 * w.svg.size.height,
+          width: 2 * w.svg.size.width
         },
         offsetScale: 0.65,
       }
@@ -229,15 +208,12 @@ const goToCDStateOnSelect = (cdRadius: DonutRadius, activeRadius: number) => (wh
         outer: activeRadius,
         inner: 50
       },
-      svg: {
+      svg: w.svg && {
         ...w.svg,
         scale: {
           x: 0.01,
           y: 0.01,
-        }
-      },
-      image: w.image && {
-        ...w.image,
+        },
         size: {
           height: 1,
           width: 1,
@@ -297,7 +273,7 @@ const skipFirst = transformation => wheel => [
   ...transformation(wheel.slice(1))
 ]
 
-const collapse = w => ({...w, collapsed: true, angle: 5, image: undefined})
+const collapse = w => ({...w, collapsed: true, angle: 5, svg: undefined})
 
 const collapseFromEnd = toCollapse => wheel => [
   ...wheel.slice(0, -toCollapse),
