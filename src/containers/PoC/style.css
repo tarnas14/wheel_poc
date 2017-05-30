@@ -50,38 +50,3 @@ button {
 .stageContainer {
   margin: 0 auto;
 }
-
-.additionalInfo {
-  position: relative;
-  opacity: 1;
-  height: 200px;
-}
-
-.additionalInfo > div {
-  height: 200px;
-  width: 100%;
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  overflow: hidden;
-}
-
-.divider {
-  width: 70%
-}
-
-.additionalInfo h2 {
-  width: 100%;
-  text-transform: uppercase;
-  text-align: center;
-}
-
-.additionalInfo p {
-  width: 60%;
-  margin: 2em auto;
-  text-align: center;
-  line-height: 1.4;
-  font-size: 1.1em;
-}

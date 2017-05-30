@@ -71,11 +71,11 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
         svg: {
           path: icon,
           fill: colourPalette.activePlus,
-          scale: {x: 1, y: 1},
+          scale: {x: bigIconSize.width/68, y: bigIconSize.height/68},
           size: bigIconSize,
           rotation: (arcRotation, arcAngle) => 90 + arcRotation + arcAngle / 2,
           offsetFromOutside: 20,
-          offsetScale: 0.65,
+          offsetScale: 0.8,
         },
       }
     }

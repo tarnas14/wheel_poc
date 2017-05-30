@@ -459,8 +459,6 @@ export default class extends React.Component<Props, State> {
     const {stiffness, damping} = animationSetting
 
     return <MuiThemeProvider><div>
-      <hr className={style.divider}/>
-
       <Dashboard
         wheel={wheel}
         settings={wheelSettings}
