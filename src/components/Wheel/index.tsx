@@ -128,7 +128,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                       outerRadius={style.innerRadius}
                       fill={this.props.colourPalette.schaboHighlight}
                   />}
-                  {wheelPart.svg && <Group
+                  {wheelPart.svg && wheelPart.image && <Group
                     key={`image_${wheelPart.id}`}
                     x={origin.x}
                     y={origin.y}
@@ -137,38 +137,13 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                     listening={false}
                   >
                     <Path
+                      opacity={wheelPart.image.opacity}
                       data={wheelPart.svg.path}
                       fill={wheelPart.svg.fill}
+                      scale={wheelPart.svg.scale}
                       rotation={-style.imageRotation}
-                      offsetX={style.imageWidth / 2}
-                      offsetY={style.imageHeight / 2}
-                    />
-                  </Group>}
-                  {!wheelPart.svg && wheelPart.image && <Group
-                    key={`image_${wheelPart.id}`}
-                    x={origin.x}
-                    y={origin.y}
-                    offsetY={style.imageOffsetScale * (style.outerRadius - style.imageHeight / 2 - wheelPart.image.offsetFromOutside)}
-                    rotation={style.imageRotation}
-                    listening={false}
-                  >
-                    <KonvaImage
-                      image={wheelPart.image.image}
-                      height={style.imageHeight}
-                      width={style.imageWidth}
-                      opacity={wheelPart.image.opacity || 1}
-                      rotation={-style.imageRotation}
-                      offsetX={style.imageWidth / 2}
-                      offsetY={style.imageHeight / 2}
-                    />
-                    <Text
-                      rotation={-style.imageRotation}
-                      text={wheelPart.text}
-                      width={origin.x}
-                      align='center'
-                      offsetX={origin.x/2}
-                      offsetY={-style.imageHeight}
-                      fontSize={style.imageFontSize}
+                      offsetX={style.imageWidth / wheelPart.svg.scale.x / 2}
+                      offsetY={style.imageHeight / wheelPart.svg.scale.y / 2}
                     />
                   </Group>}
                 </Group>

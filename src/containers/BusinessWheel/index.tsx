@@ -16,24 +16,7 @@ const spaceTaken = arcs => displayed(arcs).length
 const loadImages = true
 
 const getImage = (src: string, overrides: any = {}): ImageWithPromise => {
-  if (!loadImages) {
-    return undefined
-  }
-
-  const img = new Image()
-  img.src = src
-
-  const loaded = new Promise<void>(resolve => {
-    img.onload = () => resolve()
-  })
-
   return {
-    image: img,
-    size: {
-      width: 40,
-      height: 40
-    },
-    loaded: loaded,
     rotation: (arcRotation, arcAngle) => 90 + arcRotation + arcAngle / 2,
     offsetScale: 1,
     offsetFromOutside: 20,
@@ -88,7 +71,8 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
         opacity: 0,
         svg: {
           path: icon,
-          fill: colourPalette.activePlus
+          fill: colourPalette.activePlus,
+          scale: {x: 1, y: 1},
         },
         image: {
           size: bigIconSize,
@@ -117,7 +101,12 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
 
       return {
         ...definitions.active,
-        image: Boolean(icon) && getImage(icon, {size: bigIconSize}),
+        svg: {
+          path: icon,
+          fill: 'white',
+          scale: {x: bigIconSize.width/210, y: bigIconSize.height/210},
+        },
+        image: getImage(icon, {size: bigIconSize}),
       }
     }
 
@@ -139,7 +128,12 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
 
       return {
         ...definitions.pending,
-        image: Boolean(icon) && getImage(icon, {size: bigIconSize}),
+        svg: {
+          path: icon,
+          fill: 'white',
+          scale: {x: bigIconSize.width/210, y: bigIconSize.height/210},
+        },
+        image: getImage(icon, {size: bigIconSize}),
       }
     }
 
@@ -153,7 +147,12 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
 
     return {
       ...definitions.suggestion,
-      image: Boolean(icon) && getImage(icon, {size: smallIconSize}),
+      svg: {
+        path: icon,
+        fill: 'white',
+        scale: {x: smallIconSize.width/210, y: smallIconSize.height/210},
+      },
+      image: getImage(icon, {size: smallIconSize}),
     }
   }
 
@@ -197,17 +196,25 @@ const goToCDStateOnSelect = (cdRadius: DonutRadius, activeRadius: number) => (wh
         outer: cdRadius.outer,
         inner: cdRadius.inner
       },
+      svg: {
+        ...w.svg,
+        scale: w.id === 'plus'
+          ? {x: 0.01, y: 0.01}
+          : {
+            x: w.svg.scale.x * 2,
+            y: w.svg.scale.y * 2,
+          }
+      },
       image: w.image && {
         ...w.image,
         rotation: w.id === 'plus'
           ? (arcRotation, arcAngle) => -90
           : (arcRotation, arcAngle) => -0,
         size: {
-          height: 1.5 * w.image.size.height,
-          width: 1.5 * w.image.size.width
+          height: 2 * w.image.size.height,
+          width: 2 * w.image.size.width
         },
         offsetScale: 0.65,
-        textFontSize: 35,
       }
     }
   }
@@ -222,6 +229,13 @@ const goToCDStateOnSelect = (cdRadius: DonutRadius, activeRadius: number) => (wh
         outer: activeRadius,
         inner: 50
       },
+      svg: {
+        ...w.svg,
+        scale: {
+          x: 0.01,
+          y: 0.01,
+        }
+      },
       image: w.image && {
         ...w.image,
         size: {
@@ -229,7 +243,6 @@ const goToCDStateOnSelect = (cdRadius: DonutRadius, activeRadius: number) => (wh
           width: 1,
         },
         opacity: 0,
-        textFontSize: 0,
       }
     }
   }

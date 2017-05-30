@@ -8,17 +8,25 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 // import ColourPalette from '../../constants/colourPalette'
 import ColourPalette from '../../constants/dbColourPalette'
 import Dashboard from '../Dashboard'
+
 import plusPath from '../../glyphs/paths/plus'
+import homePath from '../../glyphs/paths/hausrat'
+import glassPath from '../../glyphs/paths/glas'
+import petPath from '../../glyphs/paths/tierhalterhaftpflicht'
+import phonePath from '../../glyphs/paths/handy'
+import scalesPath from '../../glyphs/paths/rechtsschutz'
+import kfzPath from '../../glyphs/paths/kfz'
+import injuryPath from '../../glyphs/paths/unfall'
 
 const icons = {
-  home: 'https://api.icons8.com/download/4662d6548b0042ab2fa5afe9429d21d7309b1559/windows10/PNG/256/Very_Basic/home-256.png',
-  glass: 'https://d30y9cdsu7xlg0.cloudfront.net/png/86210-200.png',
-  paw: 'http://cdn.mysitemyway.com/etc-mysitemyway/icons/legacy-previews/icons-256/magic-marker-icons-animals/114688-magic-marker-icon-animals-animal-cat-print.png',
-  phone: 'https://img.clipartfest.com/7a81181007424edbd234a5cefaf90e90_cell-phone-clipart-with-transparent-background-clipartfest-cell-phone-clipart-transparent_512-512.png',
-  scales: 'https://d30y9cdsu7xlg0.cloudfront.net/png/331-200.png',
-  wheel: 'http://www.tireworksmb.com/wp-content/uploads/2015/10/tire-icon.png',
-  injury: 'https://d30y9cdsu7xlg0.cloudfront.net/png/191712-200.png',
-  plus: 'http://www.clker.com/cliparts/L/q/T/i/P/S/add-button-white-hi.png',
+  home: homePath,
+  glass: glassPath,
+  paw: petPath,
+  phone: phonePath,
+  scales: scalesPath,
+  wheel: kfzPath,
+  injury: injuryPath,
+  plus: plusPath,
 }
 
 // const debug = (wheel: BusinessArc[]) : BusinessArc[] => console.log(wheel) || wheel.map(w => console.log(w && w.collapsed) || w)
@@ -27,7 +35,7 @@ const debug = w => w
 const businessWheel: BusinessArc[] = [
   {
     id: 'plus',
-    icon: plusPath,
+    icon: icons.plus,
     text: '',
     state: State.plus,
     schabo: 0,
