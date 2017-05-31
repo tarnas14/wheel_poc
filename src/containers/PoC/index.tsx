@@ -271,7 +271,7 @@ export default class extends React.Component<Props, State> {
       wheel: businessWheel,
       animationPreset: 'noWobble',
       animationSetting: presets.noWobble,
-      colourPalette: palettes[1],
+      colourPalette: palettes[2],
       wheelSettings: {
         start: {
           referenceElementIndex: 1,
