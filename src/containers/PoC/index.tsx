@@ -4,8 +4,9 @@ import {Image as KonvaImage, Group, Layer, Stage, Arc} from 'react-konva'
 import {TransitionMotion, Motion, spring, presets} from 'react-motion'
 import * as style from './style.css'
 import State from '../../constants/state'
-// import ColourPalette from '../../constants/colourPalette'
-import ColourPalette from '../../constants/dbColourPalette'
+import OriginalColourPalette from '../../constants/colourPalette'
+import DbColourPalette from '../../constants/dbColourPalette'
+import NewDbColourPalette from '../../constants/newDbColourPalette'
 import Dashboard from '../Dashboard'
 
 import plusPath from '../../glyphs/paths/plus'
@@ -27,6 +28,21 @@ const icons = {
   injury: injuryPath,
   plus: plusPath,
 }
+
+const palettes = [
+  {
+    name: 'original',
+    palette: OriginalColourPalette,
+  },
+  {
+    name: 'db',
+    palette: DbColourPalette,
+  },
+  {
+    name: 'new db',
+    palette: NewDbColourPalette,
+  },
+]
 
 // const debug = (wheel: BusinessArc[]) : BusinessArc[] => console.log(wheel) || wheel.map(w => console.log(w && w.collapsed) || w)
 const debug = w => w
@@ -245,6 +261,7 @@ interface State {
   animationPreset: string,
   animationSetting: AnimationPreset,
   wheelSettings: WheelSettings,
+  colourPalette: any
 }
 
 export default class extends React.Component<Props, State> {
@@ -254,6 +271,7 @@ export default class extends React.Component<Props, State> {
       wheel: businessWheel,
       animationPreset: 'noWobble',
       animationSetting: presets.noWobble,
+      colourPalette: palettes[1],
       wheelSettings: {
         start: {
           referenceElementIndex: 1,
@@ -450,22 +468,36 @@ export default class extends React.Component<Props, State> {
           <button onClick={() => this.removeFromWheel(State.suggestion)} disabled={!Boolean(wheel.filter(w => !w.dontDisplay && w.state === State.suggestion).length)}>- suggestion</button>
         </p>
       </div>
+      <div className={style.settings}>
+        <p>
+          <label>colour palette
+            <select value={this.state.colourPalette.name} onChange={e => {
+              const selected = e.currentTarget.value
+              this.setState({
+                colourPalette: palettes.find(p => p.name === selected)
+              })
+            }}>
+              {palettes.map(({name}) => <option key={name} value={name}>{name}</option>)}
+            </select>
+          </label>
+        </p>
+      </div>
     </div>
   }
 
   render () {
-    const {animationSetting, wheelSettings, wheel} = this.state
+    const {animationSetting, wheelSettings, wheel, colourPalette} = this.state
     const {stiffness, damping} = animationSetting
 
     return <div className={style.everything}>
-      <div className={style.dashboardContainer}>
+      <div className={style.dashboardContainer} style={{backgroundColor: colourPalette.palette.background}}>
         <Dashboard
           wheel={wheel}
           settings={wheelSettings}
           animationSetting={animationSetting}
           select={this.select}
           clearSelection={this.clearSelection}
-          colourPalette={ColourPalette}
+          colourPalette={colourPalette.palette}
         />
       </div>
 

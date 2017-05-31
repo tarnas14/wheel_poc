@@ -82,11 +82,11 @@ export default ({
       align='center'
       {...rightRect}
     />
-    <Line stroke={colourPalette.activePlus_backButton} lineCap='round' strokeWidth={5} points={
+    <Line stroke={colourPalette.icons} lineCap='round' strokeWidth={5} points={
       [wheelOrigin.x + cdRadius.inner + 10, wheelOrigin.y - cdRadius.inner - 10,
        wheelOrigin.x + cdRadius.outer/1.7, wheelOrigin.y - cdRadius.outer/1.7]
     }/>
-    <Line stroke={colourPalette.activePlus_backButton} lineCap='round' strokeWidth={5} points={
+    <Line stroke={colourPalette.icons} lineCap='round' strokeWidth={5} points={
       [wheelOrigin.x + cdRadius.inner + 10, wheelOrigin.y + cdRadius.inner + 10,
        wheelOrigin.x + cdRadius.outer/1.7, wheelOrigin.y + cdRadius.outer/1.7]
     }/>

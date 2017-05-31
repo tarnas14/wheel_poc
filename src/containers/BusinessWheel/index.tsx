@@ -66,11 +66,11 @@ const fromBusinessToMetal = (businessWheel: BusinessArc[], wheelSettings: WheelS
     if (state === State.plus) {
       return {
         ...definitions.active,
-        fill: colourPalette.activePlus,
+        fill: colourPalette.raised,
         opacity: 0,
         svg: {
           path: icon,
-          fill: colourPalette.activePlus,
+          fill: colourPalette.raised,
           scale: {x: bigIconSize.width/68, y: bigIconSize.height/68},
           size: bigIconSize,
           rotation: (arcRotation, arcAngle) => 90 + arcRotation + arcAngle / 2,

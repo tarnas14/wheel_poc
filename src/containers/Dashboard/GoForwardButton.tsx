@@ -12,7 +12,7 @@ export default ({action, wheel, activeRadius, wheelOrigin, cdRadius, scale, colo
       position: 'absolute',
       width: `${radius*2}px`,
       height: `${radius*2}px`,
-      backgroundColor: colourPalette.nextButton.background,
+      backgroundColor: colourPalette.icons,
       left: `${x}px`,
       top: `${y}px`,
     }}/>

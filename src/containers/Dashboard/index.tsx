@@ -83,7 +83,7 @@ export default class extends React.Component<Props, State> {
       return null
     }
 
-    return this.renderBackButton(selected.id === 'plus' ? this.props.colourPalette.activePlus_backButton : this.props.colourPalette.active)
+    return this.renderBackButton(this.props.colourPalette.active)
   }
 
   render () {
@@ -112,7 +112,7 @@ export default class extends React.Component<Props, State> {
         {onlySuggestionsInTheWheel(wheel) && <OnlySuggestionsCallToAction
           setCursor={this.cursor}
           wheelOrigin={wheelOrigin}
-          colourPalette={colourPalette.callToAction}
+          colourPalette={{background: colourPalette.cta, font: colourPalette.icons}}
           activeRadius={settings.activeRadius}
         />}
         {plusSelected(wheel) && <PlusOptions
@@ -131,7 +131,13 @@ export default class extends React.Component<Props, State> {
           setCursor={this.cursor}
           addExisting={id => console.log('adding existing to/with', id)}
           lockNew={id => console.log('doing something with new insurance', id)}
-          colourPalette={colourPalette.suggestionActions}
+          colourPalette={{
+            divider: colourPalette.pending,
+            action: {
+              background: colourPalette.cta,
+              font: colourPalette.icons,
+            }
+          }}
           wheelOrigin={wheelOrigin}
           cdRadius={cdRadius}
           activeRadius={settings.activeRadius}
