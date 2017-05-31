@@ -4,7 +4,6 @@ import {Image as KonvaImage, Group, Layer, Stage, Arc} from 'react-konva'
 import {TransitionMotion, Motion, spring, presets} from 'react-motion'
 import * as style from './style.css'
 import State from '../../constants/state'
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 // import ColourPalette from '../../constants/colourPalette'
 import ColourPalette from '../../constants/dbColourPalette'
 import Dashboard from '../Dashboard'
@@ -458,15 +457,17 @@ export default class extends React.Component<Props, State> {
     const {animationSetting, wheelSettings, wheel} = this.state
     const {stiffness, damping} = animationSetting
 
-    return <div>
-      <Dashboard
-        wheel={wheel}
-        settings={wheelSettings}
-        animationSetting={animationSetting}
-        select={this.select}
-        clearSelection={this.clearSelection}
-        colourPalette={ColourPalette}
-      />
+    return <div className={style.everything}>
+      <div className={style.dashboardContainer}>
+        <Dashboard
+          wheel={wheel}
+          settings={wheelSettings}
+          animationSetting={animationSetting}
+          select={this.select}
+          clearSelection={this.clearSelection}
+          colourPalette={ColourPalette}
+        />
+      </div>
 
       {this.renderSettings()}
 
