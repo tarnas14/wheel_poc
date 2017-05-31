@@ -1,7 +1,5 @@
 import * as React from 'react'
 import State from '../../constants/state'
-import ArrowRight from 'material-ui/svg-icons/hardware/keyboard-arrow-right'
-
 
 export default ({action, wheel, activeRadius, wheelOrigin, cdRadius, scale, colourPalette}) => {
     const radius = scale * cdRadius.inner * 1.1
@@ -17,10 +15,5 @@ export default ({action, wheel, activeRadius, wheelOrigin, cdRadius, scale, colo
       backgroundColor: colourPalette.nextButton.background,
       left: `${x}px`,
       top: `${y}px`,
-    }}>
-      <ArrowRight
-        style={{height: 'auto', width: 'auto', color: colourPalette.nextButton.icon}}
-        onClick={action}
-      />
-    </div>
+    }}/>
 }

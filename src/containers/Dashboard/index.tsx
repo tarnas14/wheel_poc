@@ -9,6 +9,8 @@ import BusinessWheel from '../BusinessWheel'
 import GoForwardButton from './GoForwardButton'
 import OnlySuggestionsCallToAction from './OnlySuggestionsCallToAction'
 import {displayed} from '../../util'
+import SvgIcon from '../../components/SvgIcon'
+import arrowPath from '../../glyphs/paths/arrowLeft'
 
 import * as style from './style.css'
 
@@ -64,10 +66,14 @@ export default class extends React.Component<Props, State> {
   }
 
   renderBackButton = (colour: string) => {
-    return <div className={style.centerContainer}><ArrowLeft
-      style={{height: 'auto', width: 'auto', color: colour, cursor: 'pointer'}}
-      onClick={this.props.clearSelection}
-    /></div>
+    return <div className={style.backButtonContainer}>
+      <SvgIcon
+        path={arrowPath}
+        fill={colour}
+        viewBox="0 0 50 50"
+        onClick={this.props.clearSelection}
+      />
+    </div>
   }
 
   renderCenter () {

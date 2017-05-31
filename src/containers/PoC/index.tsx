@@ -458,7 +458,7 @@ export default class extends React.Component<Props, State> {
     const {animationSetting, wheelSettings, wheel} = this.state
     const {stiffness, damping} = animationSetting
 
-    return <MuiThemeProvider><div>
+    return <div>
       <Dashboard
         wheel={wheel}
         settings={wheelSettings}
@@ -470,6 +470,6 @@ export default class extends React.Component<Props, State> {
 
       {this.renderSettings()}
 
-    </div></MuiThemeProvider>
+    </div>
   }
 }
