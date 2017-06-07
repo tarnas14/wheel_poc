@@ -1,5 +1,6 @@
 import * as React from 'react'
-import { RouteComponentProps } from 'react-router'
+import {Route, Switch} from 'react-router'
+import {Link} from 'react-router-dom'
 import {Image as KonvaImage, Group, Layer, Stage, Arc} from 'react-konva'
 import {TransitionMotion, Motion, spring, presets} from 'react-motion'
 import * as style from './style.css'
@@ -283,7 +284,7 @@ const businessWheel: BusinessArc[] = [
   }
 ]
 
-interface Props extends RouteComponentProps<void> { }
+interface Props { }
 
 interface State {
   wheel: BusinessArc[],
@@ -419,7 +420,7 @@ export default class extends React.Component<Props, State> {
     const {animationPreset, animationSetting, wheelSettings, wheel, colourPalette} = this.state
     const {stiffness, damping} = animationSetting
 
-    return <div className={style.everything}>
+    return <div>
       <div className={style.dashboardContainer} style={{backgroundColor: colourPalette.palette.background}}>
         <Dashboard
           wheel={wheel}
@@ -430,27 +431,32 @@ export default class extends React.Component<Props, State> {
           colourPalette={colourPalette.palette}
         />
       </div>
-
-      <Settings
-        animationPreset={animationPreset}
-        animationSetting={animationSetting}
-        wheelSettings={wheelSettings}
-        wheel={wheel}
-        setAngle={this.setAngle}
-        setPalette={this.setPalette}
-        palettes={palettes}
-        selectedPalette={colourPalette.name}
-        changeStiffness={this.changeStiffness}
-        changeDamping={this.changeDamping}
-        setPreset={this.setPreset}
-        setCenterRadius={this.setCenterRadius}
-        setActiveRadius={this.setActiveRadius}
-        setPendingRadius={this.setPendingRadius}
-        setSuggestionRadius={this.setSuggestionRadius}
-        addToWheel={this.addToWheel}
-        removeFromWheel={this.removeFromWheel}
-      />
-
+      <Switch>
+        <Route path="/controls" children={() => <Link to='/'>hide controls</Link>}/>
+        <Route path="/" children={() => <Link to='/controls'>show controls</Link>}/>
+      </Switch>
+      <Switch><Route path="/controls" children={() => <div>
+        <Settings
+          animationPreset={animationPreset}
+          animationSetting={animationSetting}
+          wheelSettings={wheelSettings}
+          wheel={wheel}
+          setAngle={this.setAngle}
+          setPalette={this.setPalette}
+          palettes={palettes}
+          selectedPalette={colourPalette.name}
+          changeStiffness={this.changeStiffness}
+          changeDamping={this.changeDamping}
+          setPreset={this.setPreset}
+          setCenterRadius={this.setCenterRadius}
+          setActiveRadius={this.setActiveRadius}
+          setPendingRadius={this.setPendingRadius}
+          setSuggestionRadius={this.setSuggestionRadius}
+          addToWheel={this.addToWheel}
+          removeFromWheel={this.removeFromWheel}
+        />
+      </div>
+      }/></Switch>
     </div>
   }
 }
