@@ -8,6 +8,7 @@ import OriginalColourPalette from '../../constants/colourPalette'
 import DbColourPalette from '../../constants/dbColourPalette'
 import NewDbColourPalette from '../../constants/newDbColourPalette'
 import Dashboard from '../Dashboard'
+import Settings from './Settings'
 
 import plusPath from '../../glyphs/paths/plus'
 import homePath from '../../glyphs/paths/hausrat'
@@ -282,10 +283,6 @@ const businessWheel: BusinessArc[] = [
   }
 ]
 
-const onEnter = callback => e => e.keyCode === 13
-  ? callback(e)
-  : undefined
-
 interface Props extends RouteComponentProps<void> { }
 
 interface State {
@@ -402,123 +399,24 @@ export default class extends React.Component<Props, State> {
     }))
   }
 
-  renderSettings = () => {
-    const {animationSetting, wheelSettings, wheel} = this.state
-    const {stiffness, damping} = animationSetting
-    return <div>
-      <div className={style.settings}>
-        <h3>animation settings here</h3>
-        <div>
-          <select onChange={this.setPreset.bind(this)} value={this.state.animationPreset}>
-            <option value="noWobble">noWobble</option>
-            <option value="wobbly">wobbly</option>
-            <option value="gentle">gentle</option>
-            <option value="stiff">stiff</option>
-          </select>
-        </div>
-        <p>
-          stiffness: ({stiffness}) <br/> <input type="range" min="0" max="300" value={stiffness} onChange={this.changeStiffness.bind(this)}/>
-        </p>
-        <p>
-          damping: ({damping}) <br /> <input type="range" min="0" max="40" value={damping} onChange={this.changeDamping.bind(this)}/>
-        </p>
-      </div>
-      <div className={style.settings}>
-        <h3>wheel settings here</h3>
-        <p>
-          angle: ({wheelSettings.angle})
-          <br />
-          <input type="range" min="0" max="100" value={wheelSettings.angle}
-            onChange={e => {
-              const value = Number(e.currentTarget.value)
-              this.setState(s => ({wheelSettings: {...s.wheelSettings, angle: value}}))}
-            }
-          />
-        </p>
-        <p>
-          center diameter: ({wheelSettings.centerArea.outer * 2})
-          <br />
-          <input type="range" min="0" max="300" value={wheelSettings.centerArea.outer}
-            onChange={e => {
-              const value = Number(e.currentTarget.value)
-              this.setState(s => ({wheelSettings: {...s.wheelSettings, centerArea: {outer: value}}}))}
-            }
-          />
-        </p>
-        <p>
-          <input type="number" defaultValue={`${wheelSettings.centerArea.outer * 2}`}
-            onKeyDown={onEnter(e => {
-              const value = Number(e.currentTarget.value)/2
-              this.setState(s => ({wheelSettings: {...s.wheelSettings, centerArea: {outer: value}}}))
-            })}
-          />
-        </p>
-      </div>
-      <div className={style.settings}>
-        <p>
-          active diameter: ({wheelSettings.activeRadius * 2})
-          <br />
-          <input type="range" min={wheelSettings.centerArea.outer} max={360} value={wheelSettings.activeRadius}
-            onChange={e => {
-              const value = Number(e.currentTarget.value)
-              this.setState(s => ({wheelSettings: {...s.wheelSettings, activeRadius: value}}))}
-            }
-          />
-        </p>
-        <p>
-          pending diameter: ({wheelSettings.pendingRadius * 2})
-          <br />
-          <input type="range" min={wheelSettings.centerArea.outer} max={360} value={wheelSettings.pendingRadius}
-            onChange={e => {
-              const value = Number(e.currentTarget.value)
-              this.setState(s => ({wheelSettings: {...s.wheelSettings, pendingRadius: value}}))}
-            }
-          />
-        </p>
-        <p>
-          suggestion diameter: ({wheelSettings.suggestionRadius * 2})
-          <br />
-          <input type="range" min={wheelSettings.centerArea.outer} max={360} value={wheelSettings.suggestionRadius}
-            onChange={e => {
-              const value = Number(e.currentTarget.value)
-              this.setState(s => ({wheelSettings: {...s.wheelSettings, suggestionRadius: value}}))}
-            }
-          />
-        </p>
-      </div>
-      <div className={style.settings}>
-        <p>
-          <button onClick={() => this.addToWheel(State.active)} disabled={!Boolean(wheel.find(w => w.dontDisplay && w.state === State.active))}>+ active</button>
-          <button onClick={() => this.removeFromWheel(State.active)} disabled={!Boolean(wheel.filter(w => !w.dontDisplay && w.state === State.active).length)}>- active</button>
-        </p>
-        <p>
-          <button onClick={() => this.addToWheel(State.pending)} disabled={!Boolean(wheel.find(w => w.dontDisplay && w.state === State.pending))}>+ pending</button>
-          <button onClick={() => this.removeFromWheel(State.pending)} disabled={!Boolean(wheel.filter(w => !w.dontDisplay && w.state === State.pending).length)}>- pending</button>
-        </p>
-        <p>
-          <button onClick={() => this.addToWheel(State.suggestion)} disabled={!Boolean(wheel.find(w => w.dontDisplay && w.state === State.suggestion))}>+ suggestion</button>
-          <button onClick={() => this.removeFromWheel(State.suggestion)} disabled={!Boolean(wheel.filter(w => !w.dontDisplay && w.state === State.suggestion).length)}>- suggestion</button>
-        </p>
-      </div>
-      <div className={style.settings}>
-        <p>
-          <label>colour palette
-            <select value={this.state.colourPalette.name} onChange={e => {
-              const selected = e.currentTarget.value
-              this.setState({
-                colourPalette: palettes.find(p => p.name === selected)
-              })
-            }}>
-              {palettes.map(({name}) => <option key={name} value={name}>{name}</option>)}
-            </select>
-          </label>
-        </p>
-      </div>
-    </div>
+  setAngle = angle => {
+    this.setState(s => ({wheelSettings: {...s.wheelSettings, angle}}))
   }
 
+  setPalette = selected => this.setState({
+    colourPalette: palettes.find(p => p.name === selected)
+  })
+
+  setCenterRadius = d => this.setState(s => ({wheelSettings: {...s.wheelSettings, centerArea: {outer: d}}}))
+
+  setActiveRadius = d => this.setState(s => ({wheelSettings: {...s.wheelSettings, activeRadius: d}}))
+
+  setPendingRadius = r => this.setState(s => ({wheelSettings: {...s.wheelSettings, pendingRadius: r}}))
+
+  setSuggestionRadius = r => this.setState(s => ({wheelSettings: {...s.wheelSettings, suggestionRadius: r}}))
+
   render () {
-    const {animationSetting, wheelSettings, wheel, colourPalette} = this.state
+    const {animationPreset, animationSetting, wheelSettings, wheel, colourPalette} = this.state
     const {stiffness, damping} = animationSetting
 
     return <div className={style.everything}>
@@ -533,7 +431,25 @@ export default class extends React.Component<Props, State> {
         />
       </div>
 
-      {this.renderSettings()}
+      <Settings
+        animationPreset={animationPreset}
+        animationSetting={animationSetting}
+        wheelSettings={wheelSettings}
+        wheel={wheel}
+        setAngle={this.setAngle}
+        setPalette={this.setPalette}
+        palettes={palettes}
+        selectedPalette={colourPalette.name}
+        changeStiffness={this.changeStiffness}
+        changeDamping={this.changeDamping}
+        setPreset={this.setPreset}
+        setCenterRadius={this.setCenterRadius}
+        setActiveRadius={this.setActiveRadius}
+        setPendingRadius={this.setPendingRadius}
+        setSuggestionRadius={this.setSuggestionRadius}
+        addToWheel={this.addToWheel}
+        removeFromWheel={this.removeFromWheel}
+      />
 
     </div>
   }
