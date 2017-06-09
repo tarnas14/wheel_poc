@@ -3,7 +3,7 @@ export default {
   pending: '#1981c3',
   suggestion: '#b2b2b2',
   icons: 'white',
-  raised: '#e10134',
-  cta: '#e10134',
+  raised: '#d05542',
+  cta: '#d05542',
   background: 'white',
 }

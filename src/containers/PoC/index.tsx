@@ -37,7 +37,7 @@ const wheelSettings = {
   },
   angle: 40,
   cdRadius: {
-    inner: 100/2,
+    inner: 0,
     outer: 275,
   },
   activeRadius: 275,
