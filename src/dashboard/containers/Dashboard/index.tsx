@@ -72,7 +72,7 @@ export default class extends React.Component<Props, State> {
       <SvgIcon
         path={arrowPath}
         fill={colour}
-        viewBox='0 0 50 50'
+        viewBox='45 45 65 65'
         onClick={this.props.clearSelection}
       />
     </div>
