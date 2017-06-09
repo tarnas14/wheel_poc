@@ -126,7 +126,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '-1',
     icon: icons.home,
-    category: 'collapsed -1',
+    category: 'Glas',
     state: State.active,
     schabo: 0,
     dontDisplay: true,
@@ -134,7 +134,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '0',
     icon: icons.glass,
-    category: 'collapsed 0',
+    category: 'Sonstige Krankenzusatzversicherung',
     state: State.active,
     schabo: 0,
     nextAction: () => console.log('collapsed 0'),
@@ -152,7 +152,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: 'glass',
     icon: icons.glass,
-    category: 'Privat Haftpflicht',
+    category: 'Tierhalterhaftpflicht',
     state: State.active,
     schabo: 0,
     nextAction: () => console.log('privat haftpflicht'),
@@ -179,7 +179,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: 'alwkejral',
     icon: icons.glass,
-    category: 'Privat Haftpflicht',
+    category: 'Haushaftpflicht',
     state: State.active,
     schabo: 0,
     nextAction: () => console.log('privat haftpflicht'),
@@ -187,7 +187,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '4wzpdi',
     icon: icons.scales,
-    category: 'Hausratversicherung',
+    category: 'Risikoleben',
     state: State.pending,
     dontDisplay: true,
     schabo: 0,
@@ -195,7 +195,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '4zlxckvj',
     icon: icons.scales,
-    category: 'Hausratversicherung',
+    category: 'Sterbegeld',
     state: State.pending,
     dontDisplay: true,
     schabo: 0,
@@ -203,7 +203,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '4ouowai',
     icon: icons.scales,
-    category: 'Hausratversicherung',
+    category: 'Schwere Krankheiten',
     state: State.pending,
     dontDisplay: true,
     schabo: 0,
@@ -235,7 +235,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '6lajer',
     icon: icons.injury,
-    category: '',
+    category: 'Handy',
     state: State.pending,
     dontDisplay: true,
     schabo: 0,
@@ -243,7 +243,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '6',
     icon: icons.injury,
-    category: '',
+    category: 'Rechtsschutz',
     state: State.pending,
     dontDisplay: true,
     schabo: 0,
@@ -251,7 +251,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '6.1',
     icon: icons.injury,
-    category: '',
+    category: 'Unfall',
     state: State.pending,
     dontDisplay: true,
     schabo: 0,
@@ -259,7 +259,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '6.2',
     icon: icons.injury,
-    category: '',
+    category: 'Altervorsorge',
     state: State.pending,
     dontDisplay: true,
     schabo: 0,
@@ -267,7 +267,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '6.3',
     icon: icons.injury,
-    category: '',
+    category: 'priv. Krankenversicherung',
     state: State.pending,
     dontDisplay: true,
     schabo: 0,
@@ -275,7 +275,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '6.4',
     icon: icons.injury,
-    category: '',
+    category: 'Berufsunfahigkeit',
     state: State.pending,
     dontDisplay: true,
     schabo: 0,
@@ -283,7 +283,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '7i',
     icon: icons.wheel,
-    category: '',
+    category: 'Zahnzusatz',
     state: State.suggestion,
     dontDisplay: true,
     schabo: 0,
@@ -291,7 +291,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: 'iolaiwer0',
     icon: icons.wheel,
-    category: '',
+    category: 'Glas',
     state: State.suggestion,
     dontDisplay: true,
     schabo: 0,
@@ -299,7 +299,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '7ilakjwer',
     icon: icons.wheel,
-    category: '',
+    category: 'Handy',
     state: State.suggestion,
     dontDisplay: true,
     schabo: 0,
@@ -307,7 +307,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '8i',
     icon: icons.injury,
-    category: 'dummy',
+    category: 'Tierhalterhaftpflicht',
     state: State.suggestion,
     dontDisplay: true,
     schabo: 0,
@@ -315,28 +315,28 @@ const businessWheel: BusinessArc[] = [
   {
     id: '7',
     icon: icons.wheel,
-    category: '',
+    category: 'Risikoleben',
     state: State.suggestion,
     schabo: 0,
   },
   {
     id: 'olaiwer0',
     icon: icons.wheel,
-    category: '',
+    category: 'Sterbegeld',
     state: State.suggestion,
     schabo: 0,
   },
   {
     id: '7lakjwer',
     icon: icons.wheel,
-    category: '',
+    category: 'Hnady',
     state: State.suggestion,
     schabo: 0,
   },
   {
     id: '8',
     icon: icons.injury,
-    category: 'dummy',
+    category: 'Krankenversicherung',
     state: State.suggestion,
     schabo: 0,
   }
