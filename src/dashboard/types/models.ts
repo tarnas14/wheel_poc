@@ -24,7 +24,6 @@ declare interface MotionArc {
   rotation: number,
   padding: number,
   raised: boolean,
-  text: string,
   collapsed?: boolean,
   svg?: any
 }
@@ -37,7 +36,7 @@ declare interface AnimationPreset {
 declare interface BusinessArc {
   id: string,
   icon: Icon,
-  text: string,
+  category: string,
   state: ArcState,
   schabo: number,
   selected?: boolean,

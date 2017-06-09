@@ -1,24 +1,23 @@
 import * as React from 'react'
 import {Path, Group, Circle, Stage, Layer} from 'react-konva'
 
+import Details from './Details'
 import PlusOptions from './PlusOptions'
 import SelectedSuggestionActions from './SelectedSuggestionActions'
 import State from '../../constants/state'
 import BusinessWheel from '../BusinessWheel'
-import GoForwardButton from './GoForwardButton'
 import OnlySuggestionsCallToAction from './OnlySuggestionsCallToAction'
 import {displayed} from '../../util'
-import SvgIcon from '../../components/SvgIcon'
 import arrowPath from '../../glyphs/paths/arrowLeft'
 import '../../types/models.ts'
-import {find} from 'lodash'
+import {find, includes} from 'lodash'
 
 import './style.sass'
 
 const plusSelected = (wheel: BusinessArc[]): boolean => Boolean(wheel.filter(w => w.state === State.plus && w.selected).length)
 const onlySuggestionsInTheWheel = (wheel: BusinessArc[]) =>
     !Boolean(displayed(wheel).filter((w: BusinessArc) => w.state === State.active || w.state === State.pending).length)
-const selectedWithButton = (wheel: BusinessArc[]) => find(wheel, w => Boolean(w.state === State.active && w.selected && w.nextAction))
+const activeOrPendingSelected = (wheel: BusinessArc[]) => find(wheel, w => Boolean(includes([State.active, State.pending], w.state) && w.selected))
 
 interface State {
   scale: number
@@ -67,40 +66,17 @@ export default class extends React.Component<Props, State> {
     this.stage.getStage().container().style.cursor = cursorStyle
   }
 
-  renderBackButton = (colour: string) => {
-    return <div className='backButtonContainer'>
-      <SvgIcon
-        path={arrowPath}
-        fill={colour}
-        viewBox='45 45 65 65'
-        onClick={this.props.clearSelection}
-      />
-    </div>
-  }
-
-  renderCenter () {
-    const {wheel} = this.props
-    const selected = find(wheel, w => w.selected)
-
-    if (!selected) {
-      return undefined
-    }
-
-    return this.renderBackButton(this.props.colourPalette.active)
-  }
-
   render () {
     const {wheel, settings, colourPalette, animationSetting, select, clearSelection} = this.props
     const {cdRadius, origin: wheelOrigin} = settings
     const {scale} = this.state
     const selectedSuggestion = find(wheel, w => Boolean(w. selected && w.state === State.suggestion))
-    const selectedButton = selectedWithButton(wheel)
+    const userInsuranceSelected = activeOrPendingSelected(wheel)
 
     return <div
       className='stageContainer'
       style={{width: `${wheelOrigin.x * 2 * scale}px`, height: `${wheelOrigin.y * 2 * scale}px`}}
     >
-      {this.renderCenter()}
       <Stage ref={(r: any) => {this.stage = r}} scaleX={scale} scaleY={scale} width={wheelOrigin.x * 2 * scale} height={wheelOrigin.y * 2 * scale}>
         <BusinessWheel
           wheelOrigin={wheelOrigin}
@@ -159,12 +135,26 @@ export default class extends React.Component<Props, State> {
           activeRadius={settings.activeRadius}
         />}
       </Stage>
-      {selectedButton && <GoForwardButton
-        wheelOrigin={wheelOrigin}
-        cdRadius={cdRadius}
-        activeRadius={settings.activeRadius}
-        colourPalette={colourPalette}
-        scale={scale}
+      {userInsuranceSelected && <Details
+          userInsurance={userInsuranceSelected}
+          back={{
+            handler: this.props.clearSelection,
+            palette: {
+              fill: colourPalette.cta,
+              background: colourPalette.icons
+            }
+          }}
+          action={{
+            handler: () => console.log('details'),
+            label: 'Details ansehen',
+            palette: {
+              background: colourPalette.cta,
+              color: colourPalette.icons
+            }
+          }}
+          palette={{
+            logo: colourPalette.icons
+          }}
       />}
     </div>
   }

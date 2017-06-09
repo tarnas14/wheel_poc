@@ -27,6 +27,15 @@ body {
   color: white;
 }
 
+body * {
+  box-sizing: border-box;
+}
+@media (min-width: 769px) {
+  p {
+    line-height: 1.5;
+  }
+}
+
 a, a:visited {
   color: white
 }

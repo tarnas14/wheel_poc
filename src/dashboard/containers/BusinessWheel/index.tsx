@@ -192,15 +192,8 @@ const goToCDStateOnSelect = (cdRadius: DonutRadius, activeRadius: number) => (wh
               },
               svg: w.svg && {
                 ...w.svg,
-                scale: w.id === 'plus'
-                  ? {x: 0.01, y: 0.01}
-                  : {
-                    x: w.svg.scale.x * 1.5,
-                    y: w.svg.scale.y * 1.5
-                  },
-                rotation: w.id === 'plus'
-                  ? () => -90
-                  : () => -0,
+                scale: {x: 0.001, y: 0.001},
+                rotation: () => -90,
                 size: {
                   height: 1.5 * w.svg.size.height,
                   width: 1.5 * w.svg.size.width

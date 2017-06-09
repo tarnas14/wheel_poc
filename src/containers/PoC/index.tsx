@@ -111,14 +111,14 @@ const businessWheel: BusinessArc[] = [
   {
     id: 'plus',
     icon: icons.plus,
-    text: '',
+    category: 'PrivatHaftpflicht',
     state: State.plus,
     schabo: 0,
   },
   {
     id: '-2',
     icon: icons.home,
-    text: 'collapsed -2',
+    category: 'Kfz',
     state: State.active,
     schabo: 0,
     dontDisplay: true,
@@ -126,7 +126,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '-1',
     icon: icons.home,
-    text: 'collapsed -1',
+    category: 'collapsed -1',
     state: State.active,
     schabo: 0,
     dontDisplay: true,
@@ -134,7 +134,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '0',
     icon: icons.glass,
-    text: 'collapsed 0',
+    category: 'collapsed 0',
     state: State.active,
     schabo: 0,
     nextAction: () => console.log('collapsed 0'),
@@ -143,7 +143,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '1',
     icon: icons.home,
-    text: 'Hausrat',
+    category: 'Hausrat',
     state: State.active,
     schabo: 0,
     nextAction: () => console.log('hausrat'),
@@ -152,7 +152,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: 'glass',
     icon: icons.glass,
-    text: 'Privat Haftpflicht',
+    category: 'Privat Haftpflicht',
     state: State.active,
     schabo: 0,
     nextAction: () => console.log('privat haftpflicht'),
@@ -161,7 +161,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '3',
     icon: icons.paw,
-    text: 'Tierhalterhaftpflicht',
+    category: 'Tierhalterhaftpflicht',
     state: State.active,
     schabo: 0,
     nextAction: () => console.log('tierhalterhaftpflicht'),
@@ -170,7 +170,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: 'aljer',
     icon: icons.glass,
-    text: 'Privat Haftpflicht',
+    category: 'Privat Haftpflicht',
     state: State.active,
     schabo: 0,
     nextAction: () => console.log('privat haftpflicht'),
@@ -179,7 +179,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: 'alwkejral',
     icon: icons.glass,
-    text: 'Privat Haftpflicht',
+    category: 'Privat Haftpflicht',
     state: State.active,
     schabo: 0,
     nextAction: () => console.log('privat haftpflicht'),
@@ -187,7 +187,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '4wzpdi',
     icon: icons.scales,
-    text: 'Hausratversicherung',
+    category: 'Hausratversicherung',
     state: State.pending,
     dontDisplay: true,
     schabo: 0,
@@ -195,7 +195,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '4zlxckvj',
     icon: icons.scales,
-    text: 'Hausratversicherung',
+    category: 'Hausratversicherung',
     state: State.pending,
     dontDisplay: true,
     schabo: 0,
@@ -203,7 +203,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '4ouowai',
     icon: icons.scales,
-    text: 'Hausratversicherung',
+    category: 'Hausratversicherung',
     state: State.pending,
     dontDisplay: true,
     schabo: 0,
@@ -211,7 +211,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '4awe',
     icon: icons.scales,
-    text: 'Hausratversicherung',
+    category: 'Hausratversicherung',
     state: State.pending,
     dontDisplay: true,
     schabo: 0,
@@ -219,7 +219,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '4',
     icon: icons.scales,
-    text: 'Hausratversicherung',
+    category: 'Hausratversicherung',
     state: State.pending,
     dontDisplay: true,
     schabo: 0,
@@ -227,7 +227,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '5',
     icon: icons.phone,
-    text: 'Handyversicherung',
+    category: 'Handyversicherung',
     state: State.pending,
     dontDisplay: true,
     schabo: 0,
@@ -235,7 +235,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '6lajer',
     icon: icons.injury,
-    text: '',
+    category: '',
     state: State.pending,
     dontDisplay: true,
     schabo: 0,
@@ -243,7 +243,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '6',
     icon: icons.injury,
-    text: '',
+    category: '',
     state: State.pending,
     dontDisplay: true,
     schabo: 0,
@@ -251,7 +251,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '6.1',
     icon: icons.injury,
-    text: '',
+    category: '',
     state: State.pending,
     dontDisplay: true,
     schabo: 0,
@@ -259,7 +259,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '6.2',
     icon: icons.injury,
-    text: '',
+    category: '',
     state: State.pending,
     dontDisplay: true,
     schabo: 0,
@@ -267,7 +267,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '6.3',
     icon: icons.injury,
-    text: '',
+    category: '',
     state: State.pending,
     dontDisplay: true,
     schabo: 0,
@@ -275,7 +275,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '6.4',
     icon: icons.injury,
-    text: '',
+    category: '',
     state: State.pending,
     dontDisplay: true,
     schabo: 0,
@@ -283,7 +283,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '7i',
     icon: icons.wheel,
-    text: '',
+    category: '',
     state: State.suggestion,
     dontDisplay: true,
     schabo: 0,
@@ -291,7 +291,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: 'iolaiwer0',
     icon: icons.wheel,
-    text: '',
+    category: '',
     state: State.suggestion,
     dontDisplay: true,
     schabo: 0,
@@ -299,7 +299,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '7ilakjwer',
     icon: icons.wheel,
-    text: '',
+    category: '',
     state: State.suggestion,
     dontDisplay: true,
     schabo: 0,
@@ -307,7 +307,7 @@ const businessWheel: BusinessArc[] = [
   {
     id: '8i',
     icon: icons.injury,
-    text: 'dummy',
+    category: 'dummy',
     state: State.suggestion,
     dontDisplay: true,
     schabo: 0,
@@ -315,28 +315,28 @@ const businessWheel: BusinessArc[] = [
   {
     id: '7',
     icon: icons.wheel,
-    text: '',
+    category: '',
     state: State.suggestion,
     schabo: 0,
   },
   {
     id: 'olaiwer0',
     icon: icons.wheel,
-    text: '',
+    category: '',
     state: State.suggestion,
     schabo: 0,
   },
   {
     id: '7lakjwer',
     icon: icons.wheel,
-    text: '',
+    category: '',
     state: State.suggestion,
     schabo: 0,
   },
   {
     id: '8',
     icon: icons.injury,
-    text: 'dummy',
+    category: 'dummy',
     state: State.suggestion,
     schabo: 0,
   }
