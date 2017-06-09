@@ -2,8 +2,7 @@ import * as React from 'react'
 import {Path, Group, Circle, Stage, Layer} from 'react-konva'
 
 import Details from './Details'
-import PlusOptions from './PlusOptions'
-import SelectedSuggestionActions from './SelectedSuggestionActions'
+import UserActions from './UserActions'
 import State from '../../constants/state'
 import BusinessWheel from '../BusinessWheel'
 import OnlySuggestionsCallToAction from './OnlySuggestionsCallToAction'
@@ -11,6 +10,9 @@ import {displayed} from '../../util'
 import arrowPath from '../../glyphs/paths/arrowLeft'
 import '../../types/models.ts'
 import {find, includes} from 'lodash'
+import circledPlus from '../../glyphs/paths/circledPlus'
+import magnifyingGlass from '../../glyphs/paths/magnifyingGlass'
+import quesionmark from '../../glyphs/paths/questionmark'
 
 import './style.sass'
 
@@ -95,45 +97,6 @@ export default class extends React.Component<Props, State> {
           activeRadius={settings.activeRadius}
           text={'Versicherung hinzufügen'}
         />}
-        {plusSelected(wheel) && <PlusOptions
-          colourPalette={colourPalette}
-          showStroke={false}
-          wheelOrigin={wheelOrigin}
-          activeRadius={settings.activeRadius}
-          cdRadius={cdRadius}
-          setCursor={this.cursor}
-          interactions={{
-            bottom: {
-              action: () => {},
-              text: 'Bestehende Versicherung erganzen'
-            },
-            right: {
-              action: () => {},
-              text: 'Versicherungsbedarf ermitteln'
-            },
-            upper: {
-              action: () => {},
-              text: 'Neue Versicherung finden'
-            }
-          }}
-          addCtaText='Hinzufugen'
-        />}
-        {selectedSuggestion && <SelectedSuggestionActions
-          suggestion={selectedSuggestion}
-          setCursor={this.cursor}
-          addExisting={id => console.log('adding existing to/with', id)}
-          lockNew={id => console.log('doing something with new insurance', id)}
-          colourPalette={{
-            divider: colourPalette.pending,
-            action: {
-              background: colourPalette.cta,
-              font: colourPalette.icons
-            }
-          }}
-          wheelOrigin={wheelOrigin}
-          cdRadius={cdRadius}
-          activeRadius={settings.activeRadius}
-        />}
       </Stage>
       {userInsuranceSelected && <Details
           userInsurance={userInsuranceSelected}
@@ -156,6 +119,54 @@ export default class extends React.Component<Props, State> {
             logo: colourPalette.icons
           }}
       />}
+        {plusSelected(wheel) && <UserActions
+          back={{
+            handler: this.props.clearSelection,
+            palette: {
+              fill: colourPalette.cta,
+              background: colourPalette.icons
+            }
+          }}
+          options={[
+            {
+                label: 'Neue Versicherung finden',
+                icon: magnifyingGlass,
+                action: () => console.log('new')
+            },
+            {
+                label: 'Bestehende Versicherung erganzen',
+                icon: circledPlus,
+                action: () => console.log('erganzen')
+            },
+            {
+                label: 'Versicherungsbedarf ermitteln',
+                icon: quesionmark,
+                action: () => console.log('ermitteln')
+            }
+          ]}
+        />}
+        {selectedSuggestion && <UserActions
+          title={selectedSuggestion.category}
+          back={{
+            handler: this.props.clearSelection,
+            palette: {
+              fill: colourPalette.cta,
+              background: colourPalette.icons
+            }
+          }}
+          options={[
+            {
+                label: 'Neue Versicherung finden',
+                icon: magnifyingGlass,
+                action: () => console.log('new')
+            },
+            {
+                label: 'Bestehende Versicherung hinzufugen',
+                icon: circledPlus,
+                action: () => console.log('erganzen')
+            }
+          ]}
+        />}
     </div>
   }
 }
