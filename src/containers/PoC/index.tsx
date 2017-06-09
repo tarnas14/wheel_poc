@@ -8,8 +8,9 @@ import State from '../../constants/state'
 import OriginalColourPalette from '../../constants/colourPalette'
 import DbColourPalette from '../../constants/dbColourPalette'
 import NewDbColourPalette from '../../constants/newDbColourPalette'
-import Dashboard from '../Dashboard'
+import Dashboard from '../../dashboard/containers/Dashboard'
 import Settings from './Settings'
+import '../../dashboard/types/models'
 
 import plusPath from '../../glyphs/paths/plus'
 import homePath from '../../glyphs/paths/hausrat'
@@ -20,15 +21,72 @@ import scalesPath from '../../glyphs/paths/rechtsschutz'
 import kfzPath from '../../glyphs/paths/kfz'
 import injuryPath from '../../glyphs/paths/unfall'
 
+const wheelSettings = {
+  start: {
+    referenceElementIndex: 1,
+    startRotation: -80,
+  },
+  plusMinSize: 40,
+  origin: {
+    x: 360,
+    y: 360,
+  },
+  centerArea: {
+    inner: 175/2, // not used
+    outer: 175/2,
+  },
+  angle: 40,
+  cdRadius: {
+    inner: 100/2,
+    outer: 275,
+  },
+  activeRadius: 275,
+  pendingRadius: 225,
+  suggestionPadding: 5,
+  suggestionRadius: 175,
+    standardIconDimensions: {
+      width: 210,
+      height: 210
+  },
+  iconSizes: {
+    big: {width: 90, height: 90},
+    small: {width: 42, height: 42}
+  }
+}
+
 const icons = {
-  home: homePath,
-  glass: glassPath,
-  paw: petPath,
-  phone: phonePath,
-  scales: scalesPath,
-  wheel: kfzPath,
-  injury: injuryPath,
-  plus: plusPath,
+  home: {
+      path: homePath,
+      svgDimensions: wheelSettings.standardIconDimensions
+  },
+  glass: {
+      path: glassPath,
+      svgDimensions: wheelSettings.standardIconDimensions
+  },
+  paw: {
+      path: petPath,
+      svgDimensions: wheelSettings.standardIconDimensions
+  },
+  phone: {
+      path: phonePath,
+      svgDimensions: wheelSettings.standardIconDimensions
+  },
+  scales: {
+      path: scalesPath,
+      svgDimensions: wheelSettings.standardIconDimensions
+  },
+  wheel: {
+      path: kfzPath,
+      svgDimensions: wheelSettings.standardIconDimensions
+  },
+  injury: {
+      path: injuryPath,
+      svgDimensions: wheelSettings.standardIconDimensions
+  },
+  plus: {
+    path: plusPath,
+    svgDimensions: {width: 68, height: 68}
+  }
 }
 
 const palettes = [
@@ -302,30 +360,7 @@ export default class extends React.Component<Props, State> {
       animationPreset: 'noWobble',
       animationSetting: presets.noWobble,
       colourPalette: palettes[2],
-      wheelSettings: {
-        start: {
-          referenceElementIndex: 1,
-          startRotation: -80,
-        },
-        plusMinSize: 40,
-        origin: {
-          x: 360,
-          y: 360,
-        },
-        centerArea: {
-          inner: 175/2, // not used
-          outer: 175/2,
-        },
-        angle: 40,
-        cdRadius: {
-          inner: 100/2,
-          outer: 275,
-        },
-        activeRadius: 275,
-        pendingRadius: 225,
-        suggestionPadding: 5,
-        suggestionRadius: 175,
-      }
+      wheelSettings: wheelSettings
     }
   }
 

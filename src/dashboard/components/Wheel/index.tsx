@@ -12,22 +12,20 @@ export namespace Wheel {
       x: number,
       y: number
     },
-    colourPalette: any,
+    colourPalette: any
   }
 
   export interface State {
-    touched: boolean,
+    touched: boolean
   }
 }
 
 export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
   state = {
-    touched: false,
+    touched: false
   }
 
-  touched = f => {
-    this.setState({touched: true}, f)
-  }
+  touched = (callback: () => void) => this.setState({touched: true}, callback)
 
   render() {
     const {animationPreset: preset, origin, disabled} = this.props
@@ -46,9 +44,8 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
               imageHeight: 0,
               imageOffsetScale: 0,
               imageRotation: 0,
-              imageFontSize: 0,
               imageScaleX: 0.01,
-              imageScaleY: 0.01,
+              imageScaleY: 0.01
             }
           })}
           styles={previousStyles => previousStyles.map((_, i) => {
@@ -66,9 +63,8 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                 imageHeight: wheelPart.svg ? spring(wheelPart.svg.size.height) : 0,
                 imageOffsetScale: wheelPart.svg ? spring(wheelPart.svg.offsetScale) : 0,
                 imageRotation: wheelPart.svg ? spring(wheelPart.svg.rotation(wheelPart.rotation, wheelPart.angle)) : 0,
-                imageFontSize: wheelPart.svg ? spring(wheelPart.svg.textFontSize) : 0,
                 imageScaleX: wheelPart.svg ? spring(wheelPart.svg.scale.x) : 0.01,
-                imageScaleY: wheelPart.svg ? spring(wheelPart.svg.scale.y) : 0.01,
+                imageScaleY: wheelPart.svg ? spring(wheelPart.svg.scale.y) : 0.01
               }
             }
 
@@ -83,9 +79,8 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
               imageHeight: wheelPart.svg ? spring(wheelPart.svg.size.height) : 0,
               imageOffsetScale: wheelPart.svg ? spring(wheelPart.svg.offsetScale) : 0,
               imageRotation: wheelPart.svg ? spring(wheelPart.svg.rotation(wheelPart.rotation, wheelPart.angle)) : 0,
-              imageFontSize: 0,
               imageScaleX: wheelPart.svg ? spring(wheelPart.svg.scale.x) : 0.01,
-              imageScaleY: wheelPart.svg ? spring(wheelPart.svg.scale.y) : 0.01,
+              imageScaleY: wheelPart.svg ? spring(wheelPart.svg.scale.y) : 0.01
             } : {
               opacity: spring(wheelPart.opacity, preset),
               innerRadius: wheelPart.radius.inner,
@@ -95,14 +90,15 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
               imageWidth: wheelPart.svg ? spring(wheelPart.svg.size.width) : 0,
               imageHeight: wheelPart.svg ? spring(wheelPart.svg.size.height) : 0,
               imageOffsetScale: wheelPart.svg ? spring(wheelPart.svg.offsetScale) : 0,
-              imageRotation: wheelPart.svg ? wheelPart.svg.rotation(previousStyles[i - 1].rotation + previousStyles[i - 1].angle + 0.5 + wheelPart.padding, wheelPart.angle) : 0,
-              imageFontSize: 0,
+              imageRotation: wheelPart.svg
+                ? wheelPart.svg.rotation(previousStyles[i - 1].rotation + previousStyles[i - 1].angle + 0.5 + wheelPart.padding, wheelPart.angle)
+                : 0,
               imageScaleX: wheelPart.svg ? spring(wheelPart.svg.scale.x) : 0.01,
-              imageScaleY: wheelPart.svg ? spring(wheelPart.svg.scale.y) : 0.01,
+              imageScaleY: wheelPart.svg ? spring(wheelPart.svg.scale.y) : 0.01
             }
           })}
         >
-          {styles =>
+          {(styles: any[]) =>
             <Layer
               listening={!disabled}
               opacity={disabled ? 0.7 : 1}
@@ -120,7 +116,6 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                       innerRadius={style.innerRadius}
                       outerRadius={style.outerRadius}
                       fill={this.props.wheel[i].fill}
-
                       onMouseOver={this.touched.bind(undefined, () => {})}
                       onClick={this.touched.bind(undefined, this.props.arcClick.bind(undefined, wheelPart.id, wheelPart.collapsed))}
                       onTap={this.touched.bind(undefined, this.props.arcClick.bind(undefined, wheelPart.id, wheelPart.collapsed))}

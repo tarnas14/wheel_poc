@@ -10,12 +10,15 @@ import OnlySuggestionsCallToAction from './OnlySuggestionsCallToAction'
 import {displayed} from '../../util'
 import SvgIcon from '../../components/SvgIcon'
 import arrowPath from '../../glyphs/paths/arrowLeft'
+import '../../types/models.ts'
+import {find} from 'lodash'
 
-import * as style from './style.css'
+import './style.sass'
 
 const plusSelected = (wheel: BusinessArc[]): boolean => Boolean(wheel.filter(w => w.state === State.plus && w.selected).length)
-const onlySuggestionsInTheWheel = (wheel: BusinessArc[]) => !Boolean(displayed(wheel).filter(w => w.state === State.active || w.state === State.pending).length)
-const selectedWithButton = (wheel: BusinessArc[]) => wheel.find(w => Boolean(w.state === State.active && w.selected && w.nextAction))
+const onlySuggestionsInTheWheel = (wheel: BusinessArc[]) =>
+    !Boolean(displayed(wheel).filter((w: BusinessArc) => w.state === State.active || w.state === State.pending).length)
+const selectedWithButton = (wheel: BusinessArc[]) => find(wheel, w => Boolean(w.state === State.active && w.selected && w.nextAction))
 
 interface State {
   scale: number
@@ -27,7 +30,7 @@ interface Props {
   animationSetting: AnimationPreset,
   select: (id: string) => void,
   clearSelection: () => void,
-  colourPalette: any,
+  colourPalette: any
 }
 
 export default class extends React.Component<Props, State> {
@@ -36,7 +39,7 @@ export default class extends React.Component<Props, State> {
   constructor() {
     super()
     this.state = {
-      scale: 1,
+      scale: 1
     }
   }
 
@@ -60,16 +63,16 @@ export default class extends React.Component<Props, State> {
     window.onresize = updateScale
   }
 
-  cursor = cursorStyle => {
+  cursor = (cursorStyle: string) => {
     this.stage.getStage().container().style.cursor = cursorStyle
   }
 
   renderBackButton = (colour: string) => {
-    return <div className={style.backButtonContainer}>
+    return <div className='backButtonContainer'>
       <SvgIcon
         path={arrowPath}
         fill={colour}
-        viewBox="0 0 50 50"
+        viewBox='0 0 50 50'
         onClick={this.props.clearSelection}
       />
     </div>
@@ -77,10 +80,10 @@ export default class extends React.Component<Props, State> {
 
   renderCenter () {
     const {wheel} = this.props
-    const selected = wheel.find(w => w.selected)
+    const selected = find(wheel, w => w.selected)
 
     if (!selected) {
-      return null
+      return undefined
     }
 
     return this.renderBackButton(this.props.colourPalette.active)
@@ -90,15 +93,15 @@ export default class extends React.Component<Props, State> {
     const {wheel, settings, colourPalette, animationSetting, select, clearSelection} = this.props
     const {cdRadius, origin: wheelOrigin} = settings
     const {scale} = this.state
-    const selectedSuggestion = wheel.find(w => Boolean(w. selected && w.state === State.suggestion))
+    const selectedSuggestion = find(wheel, w => Boolean(w. selected && w.state === State.suggestion))
     const selectedButton = selectedWithButton(wheel)
 
     return <div
-      className={style.stageContainer}
-      style={{width: `${wheelOrigin.x*2*scale}px`, height: `${wheelOrigin.y*2*scale}px`}}
+      className='stageContainer'
+      style={{width: `${wheelOrigin.x * 2 * scale}px`, height: `${wheelOrigin.y * 2 * scale}px`}}
     >
       {this.renderCenter()}
-      <Stage ref={r => {this.stage = r}} scaleX={scale} scaleY={scale} width={wheelOrigin.x*2*scale} height={wheelOrigin.y*2*scale}>
+      <Stage ref={(r: any) => {this.stage = r}} scaleX={scale} scaleY={scale} width={wheelOrigin.x * 2 * scale} height={wheelOrigin.y * 2 * scale}>
         <BusinessWheel
           wheelOrigin={wheelOrigin}
           disabled={onlySuggestionsInTheWheel(wheel)}
@@ -114,6 +117,7 @@ export default class extends React.Component<Props, State> {
           wheelOrigin={wheelOrigin}
           colourPalette={{background: colourPalette.cta, font: colourPalette.icons}}
           activeRadius={settings.activeRadius}
+          text={'Versicherung hinzufügen'}
         />}
         {plusSelected(wheel) && <PlusOptions
           colourPalette={colourPalette}
@@ -122,9 +126,21 @@ export default class extends React.Component<Props, State> {
           activeRadius={settings.activeRadius}
           cdRadius={cdRadius}
           setCursor={this.cursor}
-          addExistingInsurance={() => console.log('Bestehende Versicherung hinzufugen')}
-          lockNewInsurance={() => console.log('Neue abschliesen')}
-          checkRequirements={() => console.log('Versicherungsbedarf ermitteln')}
+          interactions={{
+            bottom: {
+              action: () => {},
+              text: 'Bestehende Versicherung erganzen'
+            },
+            right: {
+              action: () => {},
+              text: 'Versicherungsbedarf ermitteln'
+            },
+            upper: {
+              action: () => {},
+              text: 'Neue Versicherung finden'
+            }
+          }}
+          addCtaText='Hinzufugen'
         />}
         {selectedSuggestion && <SelectedSuggestionActions
           suggestion={selectedSuggestion}
@@ -135,7 +151,7 @@ export default class extends React.Component<Props, State> {
             divider: colourPalette.pending,
             action: {
               background: colourPalette.cta,
-              font: colourPalette.icons,
+              font: colourPalette.icons
             }
           }}
           wheelOrigin={wheelOrigin}
@@ -144,8 +160,6 @@ export default class extends React.Component<Props, State> {
         />}
       </Stage>
       {selectedButton && <GoForwardButton
-        action={selectedButton.nextAction}
-        wheel={wheel}
         wheelOrigin={wheelOrigin}
         cdRadius={cdRadius}
         activeRadius={settings.activeRadius}

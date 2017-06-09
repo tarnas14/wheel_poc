@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {Group, Circle, Text, Rect, Layer, Line} from 'react-konva'
 
-const Divider = ({stroke, points, strokeWidth = 5}) => <Line
+const Divider = ({stroke, points, strokeWidth = 5}: {stroke: string, points: number[], strokeWidth: number}) => <Line
   stroke={stroke}
   points={points}
   strokeWidth={strokeWidth}
@@ -16,7 +16,7 @@ interface Props {
   cdRadius: DonutRadius,
   activeRadius: number,
   addExisting: (id: string) => void,
-  lockNew: (id: string) => void,
+  lockNew: (id: string) => void
 }
 
 export default ({
@@ -27,20 +27,20 @@ export default ({
   cdRadius,
   activeRadius,
   addExisting,
-  lockNew,
+  lockNew
 }: Props) => {
   const leftRect = {
     x: wheelOrigin.x - activeRadius * 0.9,
-    y: wheelOrigin.y - activeRadius*0.05,
-    height:activeRadius * 0.29,
-    width:(activeRadius*Math.sqrt(3)*0.5-cdRadius.inner*2),
+    y: wheelOrigin.y - activeRadius * 0.05,
+    height: activeRadius * 0.29,
+    width: (activeRadius * Math.sqrt(3) * 0.5 - cdRadius.inner * 2)
   }
 
   const bottomRect = {
-    x: wheelOrigin.x - (activeRadius*0.3),
-    y: wheelOrigin.y + cdRadius.inner*3,
-    width: activeRadius*0.6,
-    height: activeRadius * 0.29,
+    x: wheelOrigin.x - (activeRadius * 0.3),
+    y: wheelOrigin.y + cdRadius.inner * 3,
+    width: activeRadius * 0.6,
+    height: activeRadius * 0.29
   }
 
   return <Layer>
@@ -87,7 +87,7 @@ export default ({
       strokeWidth={4}
       points={[
         wheelOrigin.x - cdRadius.inner - 10, wheelOrigin.y + cdRadius.inner + 10,
-        wheelOrigin.x - cdRadius.outer/1.7, wheelOrigin.y + cdRadius.outer/1.7
+        wheelOrigin.x - cdRadius.outer / 1.7, wheelOrigin.y + cdRadius.outer / 1.7
       ]}
     />
     {/*<Divider

@@ -46,6 +46,16 @@ module.exports = {
             'awesome-typescript-loader'
           ]
       },
+      {
+        test: /\.sass$/,
+        use: [{
+            loader: "style-loader" // creates style nodes from JS strings
+        }, {
+            loader: "css-loader" // translates CSS into CommonJS
+        }, {
+            loader: "sass-loader" // compiles Sass to CSS
+        }]
+      },
       // css
       {
         test: /\.css$/,
@@ -71,7 +81,7 @@ module.exports = {
       { test: /\.html$/, use: 'html-loader' },
       { test: /\.png$/, use: 'url-loader?limit=10000' },
       { test: /\.jpg$/, use: 'file-loader' },
-      { test: /\.svg/, use: 'file-loader' },
+      { test: /\.svg$/, use: 'file-loader' },
     ],
   },
   plugins: [

@@ -1,7 +1,17 @@
 import * as React from 'react'
 import {Text, Rect, Layer} from 'react-konva'
 
-export default ({setCursor, colourPalette, wheelOrigin, activeRadius}) => {
+import '../../types/models'
+
+interface Props {
+    setCursor: (cursor: string) => void,
+    colourPalette: any,
+    wheelOrigin: Coords,
+    activeRadius: number,
+    text: string
+}
+
+export default ({setCursor, colourPalette, wheelOrigin, activeRadius, text}: Props) => {
   const width = 1.1 * activeRadius
   const height = 55
 
@@ -9,7 +19,7 @@ export default ({setCursor, colourPalette, wheelOrigin, activeRadius}) => {
     x: wheelOrigin.x - 0.5 * width,
     y: wheelOrigin.y - 0.5 * height,
     width,
-    height,
+    height
   }
 
   return <Layer>
@@ -21,7 +31,7 @@ export default ({setCursor, colourPalette, wheelOrigin, activeRadius}) => {
       {...rect}
     />
     <Text
-      text='Versicherung hinzufügen'
+      text={text}
       fill={colourPalette.font}
       fontSize={23}
       padding={15}
