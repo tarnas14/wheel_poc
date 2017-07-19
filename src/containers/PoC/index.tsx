@@ -63,6 +63,13 @@ const wheelSettings = {
         x: -3,
         y: 5
       }
+    },
+    shadowBelow: {
+      height: 20,
+      width: 200,
+      blurRadius: 20,
+      opacity: 0.5,
+      distanceFromTheWheel: 0
     }
   }
 }

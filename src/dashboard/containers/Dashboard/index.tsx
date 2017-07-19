@@ -13,6 +13,7 @@ import {find, includes} from 'lodash'
 import circledPlus from '../../glyphs/paths/circledPlus'
 import magnifyingGlass from '../../glyphs/paths/magnifyingGlass'
 import quesionmark from '../../glyphs/paths/questionmark'
+import Shadow from './Shadow'
 
 import './style.sass'
 
@@ -98,6 +99,10 @@ export default class extends React.Component<Props, State> {
           text={'Versicherung hinzufügen'}
         />}
       </Stage>
+      <Shadow
+        wheel={wheel}
+        wheelSettings={settings}
+      />
       {userInsuranceSelected && <Details
           userInsurance={userInsuranceSelected}
           back={{

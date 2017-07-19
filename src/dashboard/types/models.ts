@@ -60,6 +60,13 @@ declare interface ShadowSettings {
     opacity: number,
     enabled: boolean,
     disableWhenSelected: boolean
+  },
+  shadowBelow: {
+    height: number,
+    width: number,
+    blurRadius: number,
+    opacity: number,
+    distanceFromTheWheel: number
   }
 }
 
