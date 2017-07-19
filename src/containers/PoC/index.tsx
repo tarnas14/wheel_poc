@@ -51,6 +51,17 @@ const wheelSettings = {
   iconSizes: {
     big: {width: 90, height: 90},
     small: {width: 42, height: 42}
+  },
+  shadowSettings: {
+    arc: {
+      blur: 15,
+      opacity: 0.5,
+      enabled: true,
+      offset: {
+        x: -3,
+        y: 5
+      }
+    }
   }
 }
 

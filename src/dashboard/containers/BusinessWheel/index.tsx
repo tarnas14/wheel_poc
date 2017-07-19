@@ -7,6 +7,7 @@ import StateEnum from '../../constants/state'
 import {displayed} from '../../util'
 
 interface GestaltArc extends MotionArc, BusinessArc {}
+const spacing = 0.5
 
 const sumAngles = (arcs: any[]) => displayed(arcs).reduce((angle: number, arc: any) => angle + arc.angle, 0)
 const spaceTaken = (arcs: any[]) => displayed(arcs).length
@@ -168,10 +169,10 @@ const toWheel = ({referenceElementIndex, startRotation}: WheelStartSettings) => 
         rotation: currentIndex < referenceElementIndex
           ? startRotation
             - sumAngles(wheel.slice(currentIndex, referenceElementIndex))
-            - displayed(wheel.slice(currentIndex, referenceElementIndex)).length / 2
+            - displayed(wheel.slice(currentIndex, referenceElementIndex)).length * spacing
           : startRotation
             + sumAngles(wheel.slice(referenceElementIndex, currentIndex))
-            + displayed(wheel.slice(referenceElementIndex, currentIndex)).length / 2
+            + displayed(wheel.slice(referenceElementIndex, currentIndex)).length * spacing
       }]
     }, [])
     : []
@@ -393,6 +394,7 @@ export default class extends React.Component<Props, State> {
       arcClick={this.handleClick}
       origin={wheelOrigin}
       colourPalette={colourPalette}
+      shadowSettings={wheelSettings.shadowSettings}
     />
   }
 }

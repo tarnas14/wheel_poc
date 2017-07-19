@@ -2,6 +2,8 @@ import * as React from 'react'
 import {Path, Text, Image as KonvaImage, Group, Layer, Stage, Arc} from 'react-konva'
 import {StaggeredMotion, spring} from 'react-motion'
 
+import '../../types/models'
+
 export namespace Wheel {
   export interface Props {
     disabled: boolean,
@@ -12,7 +14,8 @@ export namespace Wheel {
       x: number,
       y: number
     },
-    colourPalette: any
+    colourPalette: any,
+    shadowSettings: ShadowSettings
   }
 
   export interface State {
@@ -28,7 +31,8 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
   touched = (callback: () => void) => this.setState({touched: true}, callback)
 
   render() {
-    const {animationPreset: preset, origin, disabled} = this.props
+    const {animationPreset: preset, origin, disabled, shadowSettings} = this.props
+
     return (
        <StaggeredMotion
           defaultStyles={this.props.wheel.map((_, i) => {
@@ -119,6 +123,10 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                       onMouseOver={this.touched.bind(undefined, () => {})}
                       onClick={this.touched.bind(undefined, this.props.arcClick.bind(undefined, wheelPart.id, wheelPart.collapsed))}
                       onTap={this.touched.bind(undefined, this.props.arcClick.bind(undefined, wheelPart.id, wheelPart.collapsed))}
+                      shadowBlur={shadowSettings.arc.blur}
+                      shadowOpacity={shadowSettings.arc.opacity}
+                      shadowOffset={shadowSettings.arc.offset}
+                      shadowEnabled={shadowSettings.arc.enabled}
                   />
                   {wheelPart.raised && <Arc
                       opacity={style.opacity}

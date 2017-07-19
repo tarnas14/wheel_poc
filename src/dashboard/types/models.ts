@@ -49,6 +49,19 @@ declare interface Coords {
   y: number
 }
 
+declare interface ShadowSettings {
+  arc: {
+    color?: string,
+    blur: number,
+    offset: {
+      x: number,
+      y: number
+    },
+    opacity: number,
+    enabled: boolean
+  }
+}
+
 declare interface WheelSettings {
   start: {
     referenceElementIndex: number,
@@ -66,5 +79,6 @@ declare interface WheelSettings {
   pendingRadius: number,
   suggestionPadding: number,
   suggestionRadius: number,
-  cdRadius: DonutRadius
+  cdRadius: DonutRadius,
+  shadowSettings: ShadowSettings
 }
