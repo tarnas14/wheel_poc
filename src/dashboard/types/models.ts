@@ -62,6 +62,7 @@ declare interface ShadowSettings {
     disableWhenSelected: boolean
   },
   shadowBelow: {
+    enabled: boolean,
     height: number,
     width: number,
     blurRadius: number,

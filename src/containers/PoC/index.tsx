@@ -65,6 +65,7 @@ const wheelSettings = {
       }
     },
     shadowBelow: {
+      enabled: true,
       height: 20,
       width: 200,
       blurRadius: 20,

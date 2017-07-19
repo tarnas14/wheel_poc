@@ -150,6 +150,19 @@ export default ({
       <h3>shadow below wheel</h3>
       <hr/>
       <p>
+        <label>
+          <input type="checkbox" checked={shadowBelowSettings.enabled} onChange={() => {
+              setWheelSettings({...wheelSettings, shadowSettings: {
+                ...wheelSettings.shadowSettings,
+                shadowBelow: {
+                  ...shadowBelowSettings,
+                  enabled: !shadowBelowSettings.enabled
+                }
+              }})
+          }} />show shadow below wheel: ({shadowBelowSettings.enabled.toString()})
+        </label>
+      </p>
+      <p>
         distance from the wheel: ({shadowBelowSettings.distanceFromTheWheel})
         <br />
         <input type="range" className={style.wide} min={-500} max={500} step={1} value={shadowBelowSettings.distanceFromTheWheel}
