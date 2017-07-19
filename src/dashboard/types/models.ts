@@ -68,6 +68,7 @@ declare interface WheelSettings {
     referenceElementIndex: number,
     startRotation: number
   },
+  spacing: number,
   iconSizes: {
     big: Dimensions,
     small: Dimensions

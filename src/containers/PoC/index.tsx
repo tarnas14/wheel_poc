@@ -26,6 +26,7 @@ const wheelSettings = {
     referenceElementIndex: 1,
     startRotation: -80,
   },
+  spacing: 2,
   plusMinSize: 40,
   origin: {
     x: 360,

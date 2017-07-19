@@ -32,6 +32,22 @@ export default ({
 
   return <div>
     <div className={style.settings}>
+      <h3>add elements here</h3>
+      <hr/>
+      <p>
+        <button onClick={() => addToWheel(State.active)} disabled={!Boolean(wheel.find(w => w.dontDisplay && w.state === State.active))}>+ active</button>
+        <button onClick={() => removeFromWheel(State.active)} disabled={!Boolean(wheel.filter(w => !w.dontDisplay && w.state === State.active).length)}>- active</button>
+      </p>
+      <p>
+        <button onClick={() => addToWheel(State.pending)} disabled={!Boolean(wheel.find(w => w.dontDisplay && w.state === State.pending))}>+ pending</button>
+        <button onClick={() => removeFromWheel(State.pending)} disabled={!Boolean(wheel.filter(w => !w.dontDisplay && w.state === State.pending).length)}>- pending</button>
+      </p>
+      <p>
+        <button onClick={() => addToWheel(State.suggestion)} disabled={!Boolean(wheel.find(w => w.dontDisplay && w.state === State.suggestion))}>+ suggestion</button>
+        <button onClick={() => removeFromWheel(State.suggestion)} disabled={!Boolean(wheel.filter(w => !w.dontDisplay && w.state === State.suggestion).length)}>- suggestion</button>
+      </p>
+    </div>
+    <div className={style.settings}>
       <h3>animation settings here</h3>
       <hr/>
       <p>
@@ -120,21 +136,15 @@ export default ({
           }}
         />
       </p>
-    </div>
-    <div className={style.settings}>
-      <h3>add elements here</h3>
-      <hr/>
       <p>
-        <button onClick={() => addToWheel(State.active)} disabled={!Boolean(wheel.find(w => w.dontDisplay && w.state === State.active))}>+ active</button>
-        <button onClick={() => removeFromWheel(State.active)} disabled={!Boolean(wheel.filter(w => !w.dontDisplay && w.state === State.active).length)}>- active</button>
-      </p>
-      <p>
-        <button onClick={() => addToWheel(State.pending)} disabled={!Boolean(wheel.find(w => w.dontDisplay && w.state === State.pending))}>+ pending</button>
-        <button onClick={() => removeFromWheel(State.pending)} disabled={!Boolean(wheel.filter(w => !w.dontDisplay && w.state === State.pending).length)}>- pending</button>
-      </p>
-      <p>
-        <button onClick={() => addToWheel(State.suggestion)} disabled={!Boolean(wheel.find(w => w.dontDisplay && w.state === State.suggestion))}>+ suggestion</button>
-        <button onClick={() => removeFromWheel(State.suggestion)} disabled={!Boolean(wheel.filter(w => !w.dontDisplay && w.state === State.suggestion).length)}>- suggestion</button>
+        element spacing: ({wheelSettings.spacing})
+        <br />
+        <input type="range" min={0} max={10} value={wheelSettings.spacing}
+          onChange={e => {
+            const value = Number(e.currentTarget.value)
+            setWheelSettings({...wheelSettings, spacing: value})
+          }}
+        />
       </p>
     </div>
     <div className={style.settings}>

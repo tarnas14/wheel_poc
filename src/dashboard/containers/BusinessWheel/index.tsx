@@ -7,7 +7,6 @@ import StateEnum from '../../constants/state'
 import {displayed} from '../../util'
 
 interface GestaltArc extends MotionArc, BusinessArc {}
-const spacing = 0.5
 
 const sumAngles = (arcs: any[]) => displayed(arcs).reduce((angle: number, arc: any) => angle + arc.angle, 0)
 const spaceTaken = (arcs: any[]) => displayed(arcs).length
@@ -162,7 +161,7 @@ const makeWheel = (startRotation: number) => (wheel: GestaltArc[]) => wheel.leng
   : []
 
 interface WheelStartSettings {referenceElementIndex: number, startRotation: number};
-const toWheel = ({referenceElementIndex, startRotation}: WheelStartSettings) => (wheel: GestaltArc[]): GestaltArc[] => wheel
+const toWheel = ({referenceElementIndex, startRotation}: WheelStartSettings, spacing: number) => (wheel: GestaltArc[]): GestaltArc[] => wheel
     ? wheel.reduce((allArcs, currentArc, currentIndex) => {
       return [...allArcs, {
         ...currentArc,
@@ -251,7 +250,7 @@ const expandFirstElementTowardsTheLast = (wheel: GestaltArc[]): GestaltArc[] => 
   ]
 }
 
-const scaleElementsDownToReserveSpaceForFirst = (minAngle: number, wheelStart: WheelStartSettings) => (wheel: GestaltArc[]) : GestaltArc[] => {
+const scaleElementsDownToReserveSpaceForFirst = (minAngle: number, wheelStart: WheelStartSettings, spacing: number) => (wheel: GestaltArc[]) : GestaltArc[] => {
   const takenSpace = spaceTaken(wheel.slice(1))
   const anglesOnly = sumAngles(wheel.slice(1))
   const spaceLeftInWheel = 360 - takenSpace
@@ -262,7 +261,7 @@ const scaleElementsDownToReserveSpaceForFirst = (minAngle: number, wheelStart: W
   const missingAngle = minAngle - spaceLeftInWheel
   const angleScale = 1 - missingAngle / anglesOnly
 
-  return toWheel(wheelStart)([
+  return toWheel(wheelStart, spacing)([
     {...wheel[0], angle: minAngle},
     ...wheel.slice(1).map(w => ({...w, angle: angleScale * w.angle}))
   ])
@@ -378,11 +377,11 @@ export default class extends React.Component<Props, State> {
       goToCDStateOnSelect(cdRadius, wheelSettings.activeRadius),
       expandFirstElementTowardsTheLast,
       showAngles(),
-      scaleElementsDownToReserveSpaceForFirst(wheelSettings.plusMinSize, wheelSettings.start),
+      scaleElementsDownToReserveSpaceForFirst(wheelSettings.plusMinSize, wheelSettings.start, wheelSettings.spacing),
       skipFirst(limitAngleByCollapsing(collapse, 320, 4, StateEnum.active)),
       skipFirst(limitAngleByCollapsing(collapse, 320, 3, StateEnum.pending)),
       padSuggestions(5),
-      toWheel(wheelSettings.start)
+      toWheel(wheelSettings.start, wheelSettings.spacing)
     ]
 
     const gestaltWheel = chain(fromBusinessToMetal(wheel, wheelSettings, colourPalette))(transformations)
