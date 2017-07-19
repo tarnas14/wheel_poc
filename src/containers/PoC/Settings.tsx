@@ -230,7 +230,7 @@ export default ({
       <p>
         element spacing: ({wheelSettings.spacing})
         <br />
-        <input type="range" min={0} max={10} value={wheelSettings.spacing}
+        <input type="range" min={0} max={10} step={.5} value={wheelSettings.spacing}
           onChange={e => {
             const value = Number(e.currentTarget.value)
             setWheelSettings({...wheelSettings, spacing: value})
