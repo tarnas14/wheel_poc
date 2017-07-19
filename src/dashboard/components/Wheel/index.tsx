@@ -109,6 +109,10 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
             >
               {styles.map((style, i) => {
                 const wheelPart = this.props.wheel[i]
+                const shadowEnabled = wheelPart.id !== 'plus' && shadowSettings.arc.disableWhenSelected
+                    ? shadowSettings.arc.enabled && style.angle < 200
+                    : shadowSettings.arc.enabled
+
                 return <Group key={wheelPart.id}>
                   <Arc
                       opacity={style.opacity}
@@ -126,7 +130,7 @@ export class Wheel extends React.Component<Wheel.Props, Wheel.State> {
                       shadowBlur={shadowSettings.arc.blur}
                       shadowOpacity={shadowSettings.arc.opacity}
                       shadowOffset={shadowSettings.arc.offset}
-                      shadowEnabled={shadowSettings.arc.enabled}
+                      shadowEnabled={shadowEnabled}
                   />
                   {wheelPart.raised && <Arc
                       opacity={style.opacity}

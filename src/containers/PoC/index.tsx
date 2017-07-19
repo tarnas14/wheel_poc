@@ -57,6 +57,7 @@ const wheelSettings = {
       blur: 15,
       opacity: 0.5,
       enabled: true,
+      disableWhenSelected: true,
       offset: {
         x: -3,
         y: 5

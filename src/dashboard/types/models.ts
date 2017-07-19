@@ -58,7 +58,8 @@ declare interface ShadowSettings {
       y: number
     },
     opacity: number,
-    enabled: boolean
+    enabled: boolean,
+    disableWhenSelected: boolean
   }
 }
 
