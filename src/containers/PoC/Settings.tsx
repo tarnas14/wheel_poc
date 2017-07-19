@@ -48,6 +48,97 @@ export default ({
       </p>
     </div>
     <div className={style.settings}>
+      <h3>arc shadow settings</h3>
+      <hr/>
+      <p>
+        <label>
+          <input type="checkbox" checked={arcShadowSettings.enabled} onChange={() => {
+              setWheelSettings({...wheelSettings, shadowSettings: {
+                arc: {
+                  ...arcShadowSettings,
+                  enabled: !arcShadowSettings.enabled
+                }
+              }})
+          }} />enabled: ({arcShadowSettings.enabled.toString()})
+        </label>
+        <br/>
+        <label>
+          <input type="checkbox" checked={arcShadowSettings.disableWhenSelected} onChange={() => {
+              setWheelSettings({...wheelSettings, shadowSettings: {
+                arc: {
+                  ...arcShadowSettings,
+                  disableWhenSelected: !arcShadowSettings.disableWhenSelected
+                }
+              }})
+          }} />disable shadow when element is selected: ({arcShadowSettings.disableWhenSelected.toString()})
+        </label>
+      </p>
+      <p>
+        opacity: ({arcShadowSettings.opacity})
+        <br />
+        <input type="range" min={0} max={1} step={0.1} value={arcShadowSettings.opacity}
+          onChange={e => {
+            const value = Number(e.currentTarget.value)
+            setWheelSettings({...wheelSettings, shadowSettings: {
+              arc: {
+                ...arcShadowSettings,
+                opacity: value
+              }
+            }})
+          }}
+        />
+        <br />
+        blur: ({arcShadowSettings.blur})
+        <br />
+        <input type="range" min={0} max={100} step={1} value={arcShadowSettings.blur}
+          onChange={e => {
+            const value = Number(e.currentTarget.value)
+            setWheelSettings({...wheelSettings, shadowSettings: {
+              arc: {
+                ...arcShadowSettings,
+                blur: value
+              }
+            }})
+          }}
+        />
+      </p>
+      <p>
+        offset X: ({arcShadowSettings.offset.x})
+        <br />
+        <input type="range" min={-50} max={50} step={1} value={arcShadowSettings.offset.x}
+          onChange={e => {
+            const value = Number(e.currentTarget.value)
+            setWheelSettings({...wheelSettings, shadowSettings: {
+              arc: {
+                ...arcShadowSettings,
+                offset: {
+                  ...arcShadowSettings.offset,
+                  x: value
+                }
+              }
+            }})
+          }}
+        />
+        <br/>
+        offset Y: ({arcShadowSettings.offset.y})
+        <br />
+        <input type="range" min={-50} max={50} step={1} value={arcShadowSettings.offset.y}
+          onChange={e => {
+            const value = Number(e.currentTarget.value)
+            setWheelSettings({...wheelSettings, shadowSettings: {
+              arc: {
+                ...arcShadowSettings,
+                offset: {
+                  ...arcShadowSettings.offset,
+                  y: value
+                }
+              }
+            }})
+          }}
+        />
+      </p>
+    </div>
+    <div className={style.settings}>
       <h3>animation settings here</h3>
       <hr/>
       <p>
@@ -143,97 +234,6 @@ export default ({
           onChange={e => {
             const value = Number(e.currentTarget.value)
             setWheelSettings({...wheelSettings, spacing: value})
-          }}
-        />
-      </p>
-    </div>
-    <div className={style.settings}>
-      <h3>arc shadow settings</h3>
-      <hr/>
-      <p>
-        <label>
-          <input type="checkbox" checked={arcShadowSettings.enabled} onChange={() => {
-              setWheelSettings({...wheelSettings, shadowSettings: {
-                arc: {
-                  ...arcShadowSettings,
-                  enabled: !arcShadowSettings.enabled
-                }
-              }})
-          }} />enabled: ({arcShadowSettings.enabled.toString()})
-        </label>
-        <br/>
-        <label>
-          <input type="checkbox" checked={arcShadowSettings.disableWhenSelected} onChange={() => {
-              setWheelSettings({...wheelSettings, shadowSettings: {
-                arc: {
-                  ...arcShadowSettings,
-                  disableWhenSelected: !arcShadowSettings.disableWhenSelected
-                }
-              }})
-          }} />disable shadow when element is selected: ({arcShadowSettings.disableWhenSelected.toString()})
-        </label>
-      </p>
-      <p>
-        opacity: ({arcShadowSettings.opacity})
-        <br />
-        <input type="range" min={0} max={1} step={0.1} value={arcShadowSettings.opacity}
-          onChange={e => {
-            const value = Number(e.currentTarget.value)
-            setWheelSettings({...wheelSettings, shadowSettings: {
-              arc: {
-                ...arcShadowSettings,
-                opacity: value
-              }
-            }})
-          }}
-        />
-        <br />
-        blur: ({arcShadowSettings.blur})
-        <br />
-        <input type="range" min={0} max={100} step={1} value={arcShadowSettings.blur}
-          onChange={e => {
-            const value = Number(e.currentTarget.value)
-            setWheelSettings({...wheelSettings, shadowSettings: {
-              arc: {
-                ...arcShadowSettings,
-                blur: value
-              }
-            }})
-          }}
-        />
-      </p>
-      <p>
-        offset X: ({arcShadowSettings.offset.x})
-        <br />
-        <input type="range" min={-50} max={50} step={1} value={arcShadowSettings.offset.x}
-          onChange={e => {
-            const value = Number(e.currentTarget.value)
-            setWheelSettings({...wheelSettings, shadowSettings: {
-              arc: {
-                ...arcShadowSettings,
-                offset: {
-                  ...arcShadowSettings.offset,
-                  x: value
-                }
-              }
-            }})
-          }}
-        />
-        <br/>
-        offset Y: ({arcShadowSettings.offset.y})
-        <br />
-        <input type="range" min={-50} max={50} step={1} value={arcShadowSettings.offset.y}
-          onChange={e => {
-            const value = Number(e.currentTarget.value)
-            setWheelSettings({...wheelSettings, shadowSettings: {
-              arc: {
-                ...arcShadowSettings,
-                offset: {
-                  ...arcShadowSettings.offset,
-                  y: value
-                }
-              }
-            }})
           }}
         />
       </p>
