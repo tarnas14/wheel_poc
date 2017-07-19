@@ -16,15 +16,6 @@ body {
   -ms-font-smoothing: antialiased;
   font-smoothing: antialiased;
   font-weight: 300;
-  background: rgba(31,47,63,1);
-  background: -moz-linear-gradient(top, rgba(31,47,63,1) 0%, rgba(56,74,84,1) 100%);
-  background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(31,47,63,1)), color-stop(100%, rgba(56,74,84,1)));
-  background: -webkit-linear-gradient(top, rgba(31,47,63,1) 0%, rgba(56,74,84,1) 100%);
-  background: -o-linear-gradient(top, rgba(31,47,63,1) 0%, rgba(56,74,84,1) 100%);
-  background: -ms-linear-gradient(top, rgba(31,47,63,1) 0%, rgba(56,74,84,1) 100%);
-  background: linear-gradient(to bottom, rgba(31,47,63,1) 0%, rgba(56,74,84,1) 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1f2f3f', endColorstr='#384a54', GradientType=0 );
-  color: white;
 }
 
 body * {
@@ -58,10 +49,12 @@ a, a:visited {
   margin: 0 auto;
 }
 
-.settings {
+.settings p {
   display: inline-block;
-  height: 200px;
-  margin-right: 10px;
+  margin: 0 2em;
+  margin-bottom: 1em;
+  border: 1px solid rgba(255, 0, 255, 0.4);
+  padding: 0.1em;
 }
 
 button {

@@ -31,14 +31,16 @@ export default ({
   return <div>
     <div className={style.settings}>
       <h3>animation settings here</h3>
-      <div>
+      <hr/>
+      <p>
+        animation style: <br/>
         <select onChange={setPreset} value={animationPreset}>
           <option value="noWobble">noWobble</option>
           <option value="wobbly">wobbly</option>
           <option value="gentle">gentle</option>
           <option value="stiff">stiff</option>
         </select>
-      </div>
+      </p>
       <p>
         stiffness: ({stiffness}) <br/> <input type="range" min="0" max="300" value={stiffness} onChange={changeStiffness}/>
       </p>
@@ -48,6 +50,17 @@ export default ({
     </div>
     <div className={style.settings}>
       <h3>wheel settings here</h3>
+      <hr/>
+      <p>
+        <label>colour palette
+          <select value={selectedPalette} onChange={e => {
+            const selected = e.currentTarget.value
+            setPalette(selected)
+          }}>
+            {palettes.map(({name}) => <option key={name} value={name}>{name}</option>)}
+          </select>
+        </label>
+      </p>
       <p>
         angle: ({wheelSettings.angle})
         <br />
@@ -67,8 +80,7 @@ export default ({
             setCenterRadius(value)
           }}
         />
-      </p>
-      <p>
+        <br />
         <input type="number" defaultValue={`${wheelSettings.centerArea.outer * 2}`}
           onKeyDown={onEnter(e => {
             const value = Number(e.currentTarget.value)/2
@@ -76,8 +88,6 @@ export default ({
           })}
         />
       </p>
-    </div>
-    <div className={style.settings}>
       <p>
         active diameter: ({wheelSettings.activeRadius * 2})
         <br />
@@ -110,6 +120,8 @@ export default ({
       </p>
     </div>
     <div className={style.settings}>
+      <h3>add elements here</h3>
+      <hr/>
       <p>
         <button onClick={() => addToWheel(State.active)} disabled={!Boolean(wheel.find(w => w.dontDisplay && w.state === State.active))}>+ active</button>
         <button onClick={() => removeFromWheel(State.active)} disabled={!Boolean(wheel.filter(w => !w.dontDisplay && w.state === State.active).length)}>- active</button>
@@ -121,18 +133,6 @@ export default ({
       <p>
         <button onClick={() => addToWheel(State.suggestion)} disabled={!Boolean(wheel.find(w => w.dontDisplay && w.state === State.suggestion))}>+ suggestion</button>
         <button onClick={() => removeFromWheel(State.suggestion)} disabled={!Boolean(wheel.filter(w => !w.dontDisplay && w.state === State.suggestion).length)}>- suggestion</button>
-      </p>
-    </div>
-    <div className={style.settings}>
-      <p>
-        <label>colour palette
-          <select value={selectedPalette} onChange={e => {
-            const selected = e.currentTarget.value
-            setPalette(selected)
-          }}>
-            {palettes.map(({name}) => <option key={name} value={name}>{name}</option>)}
-          </select>
-        </label>
       </p>
     </div>
   </div>
