@@ -69,3 +69,7 @@ button {
 .stageContainer {
   margin: 0 auto;
 }
+
+input.wide {
+  width: 300px
+}

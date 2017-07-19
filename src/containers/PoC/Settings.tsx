@@ -28,7 +28,9 @@ export default ({
   setWheelSettings
 }) => {
   const {stiffness, damping} = animationSetting
-  const {shadowSettings: {arc: arcShadowSettings}}= wheelSettings
+  const {shadowSettings} = wheelSettings
+  const {arc: arcShadowSettings} = shadowSettings
+  const {shadowBelow: shadowBelowSettings} = shadowSettings
 
   return <div>
     <div className={style.settings}>
@@ -54,6 +56,7 @@ export default ({
         <label>
           <input type="checkbox" checked={arcShadowSettings.enabled} onChange={() => {
               setWheelSettings({...wheelSettings, shadowSettings: {
+                ...wheelSettings.shadowSettings,
                 arc: {
                   ...arcShadowSettings,
                   enabled: !arcShadowSettings.enabled
@@ -65,6 +68,7 @@ export default ({
         <label>
           <input type="checkbox" checked={arcShadowSettings.disableWhenSelected} onChange={() => {
               setWheelSettings({...wheelSettings, shadowSettings: {
+                ...wheelSettings.shadowSettings,
                 arc: {
                   ...arcShadowSettings,
                   disableWhenSelected: !arcShadowSettings.disableWhenSelected
@@ -80,6 +84,7 @@ export default ({
           onChange={e => {
             const value = Number(e.currentTarget.value)
             setWheelSettings({...wheelSettings, shadowSettings: {
+              ...wheelSettings.shadowSettings,
               arc: {
                 ...arcShadowSettings,
                 opacity: value
@@ -94,6 +99,7 @@ export default ({
           onChange={e => {
             const value = Number(e.currentTarget.value)
             setWheelSettings({...wheelSettings, shadowSettings: {
+              ...wheelSettings.shadowSettings,
               arc: {
                 ...arcShadowSettings,
                 blur: value
@@ -109,6 +115,7 @@ export default ({
           onChange={e => {
             const value = Number(e.currentTarget.value)
             setWheelSettings({...wheelSettings, shadowSettings: {
+              ...wheelSettings.shadowSettings,
               arc: {
                 ...arcShadowSettings,
                 offset: {
@@ -126,12 +133,95 @@ export default ({
           onChange={e => {
             const value = Number(e.currentTarget.value)
             setWheelSettings({...wheelSettings, shadowSettings: {
+              ...wheelSettings.shadowSettings,
               arc: {
                 ...arcShadowSettings,
                 offset: {
                   ...arcShadowSettings.offset,
                   y: value
                 }
+              }
+            }})
+          }}
+        />
+      </p>
+    </div>
+    <div className={style.settings}>
+      <h3>shadow below wheel</h3>
+      <hr/>
+      <p>
+        distance from the wheel: ({shadowBelowSettings.distanceFromTheWheel})
+        <br />
+        <input type="range" className={style.wide} min={-500} max={500} step={1} value={shadowBelowSettings.distanceFromTheWheel}
+          onChange={e => {
+            const value = Number(e.currentTarget.value)
+            setWheelSettings({...wheelSettings, shadowSettings: {
+              ...wheelSettings.shadowSettings,
+              shadowBelow: {
+                ...shadowBelowSettings,
+                distanceFromTheWheel: value
+              }
+            }})
+          }}
+        />
+      </p>
+      <p>
+        width: ({shadowBelowSettings.width})
+        <br />
+        <input className={style.wide} type="range" min={0} max={700} step={1} value={shadowBelowSettings.width}
+          onChange={e => {
+            const value = Number(e.currentTarget.value)
+            setWheelSettings({...wheelSettings, shadowSettings: {
+              ...wheelSettings.shadowSettings,
+              shadowBelow: {
+                ...shadowBelowSettings,
+                width: value
+              }
+            }})
+          }}
+        />
+        <br />
+        height: ({shadowBelowSettings.height})
+        <br />
+        <input type="range" min={0} max={300} step={1} value={shadowBelowSettings.height}
+          onChange={e => {
+            const value = Number(e.currentTarget.value)
+            setWheelSettings({...wheelSettings, shadowSettings: {
+              ...wheelSettings.shadowSettings,
+              shadowBelow: {
+                ...shadowBelowSettings,
+                height: value
+              }
+            }})
+          }}
+        />
+      </p>
+      <p>
+        opacity: ({shadowBelowSettings.opacity})
+        <br />
+        <input type="range" min={0} max={1} step={0.1} value={shadowBelowSettings.opacity}
+          onChange={e => {
+            const value = Number(e.currentTarget.value)
+            setWheelSettings({...wheelSettings, shadowSettings: {
+              ...wheelSettings.shadowSettings,
+              shadowBelow: {
+                ...shadowBelowSettings,
+                opacity: value
+              }
+            }})
+          }}
+        />
+        <br />
+        blur: ({shadowBelowSettings.blurRadius})
+        <br />
+        <input type="range" min={0} max={100} step={1} value={shadowBelowSettings.blurRadius}
+          onChange={e => {
+            const value = Number(e.currentTarget.value)
+            setWheelSettings({...wheelSettings, shadowSettings: {
+              ...wheelSettings.shadowSettings,
+              shadowBelow: {
+                ...shadowBelowSettings,
+                blurRadius: value
               }
             }})
           }}
