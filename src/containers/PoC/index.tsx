@@ -501,6 +501,7 @@ export default class extends React.Component<Props, State> {
           setSuggestionRadius={this.setSuggestionRadius}
           addToWheel={this.addToWheel}
           removeFromWheel={this.removeFromWheel}
+          setWheelSettings={settings => this.setState({wheelSettings: settings})}
         />
       </div>
       }/></Switch>
