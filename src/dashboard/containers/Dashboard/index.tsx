@@ -75,6 +75,7 @@ export default class extends React.Component<Props, State> {
     const {scale} = this.state
     const selectedSuggestion = find(wheel, w => Boolean(w. selected && w.state === State.suggestion))
     const userInsuranceSelected = activeOrPendingSelected(wheel)
+    const somethingIsSelected = wheel.filter(w => w.selected).length !== 0
 
     return <div
       className='stageContainer'
@@ -101,7 +102,10 @@ export default class extends React.Component<Props, State> {
       </Stage>
       <Shadow
         wheel={wheel}
-        wheelSettings={settings}
+        animationSetting={animationSetting}
+        settings={somethingIsSelected
+          ? settings.shadowSettings.shadowBelow.selected
+          : settings.shadowSettings.shadowBelow.def}
       />
       {userInsuranceSelected && <Details
           userInsurance={userInsuranceSelected}

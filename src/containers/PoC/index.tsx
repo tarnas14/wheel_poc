@@ -65,12 +65,22 @@ const wheelSettings = {
       }
     },
     shadowBelow: {
-      enabled: true,
-      height: 20,
-      width: 200,
-      blurRadius: 20,
-      opacity: 0.5,
-      distanceFromTheWheel: 0
+      def: {
+        enabled: true,
+        height: 20,
+        width: 200,
+        blurRadius: 20,
+        opacity: 0.5,
+        distanceFromTheWheel: 0
+      },
+      selected: {
+        enabled: true,
+        height: 30,
+        width: 270,
+        blurRadius: 20,
+        opacity: 0.5,
+        distanceFromTheWheel: 30
+      }
     }
   }
 }

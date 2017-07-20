@@ -62,12 +62,22 @@ declare interface ShadowSettings {
     disableWhenSelected: boolean
   },
   shadowBelow: {
-    enabled: boolean,
-    height: number,
-    width: number,
-    blurRadius: number,
-    opacity: number,
-    distanceFromTheWheel: number
+    def: {
+      enabled: boolean,
+      height: number,
+      width: number,
+      blurRadius: number,
+      opacity: number,
+      distanceFromTheWheel: number
+    },
+    selected: {
+      enabled: boolean,
+      height: number,
+      width: number,
+      blurRadius: number,
+      opacity: number,
+      distanceFromTheWheel: number
+    }
   }
 }
 

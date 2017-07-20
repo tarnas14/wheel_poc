@@ -2,6 +2,7 @@ import * as React from 'react'
 
 import * as style from './style.css'
 import State from '../../constants/state'
+import ShadowBelowSettings from './ShadowBelowSettings'
 
 const onEnter = callback => e => e.keyCode === 13
   ? callback(e)
@@ -49,6 +50,38 @@ export default ({
         <button onClick={() => removeFromWheel(State.suggestion)} disabled={!Boolean(wheel.filter(w => !w.dontDisplay && w.state === State.suggestion).length)}>- suggestion</button>
       </p>
     </div>
+    <ShadowBelowSettings
+      title='default shadow below the wheel'
+      shadowBelowSettings={shadowBelowSettings.def}
+      setShadowSettings={settings => {
+        setWheelSettings({...wheelSettings, shadowSettings: {
+          ...wheelSettings.shadowSettings,
+          shadowBelow: {
+            ...wheelSettings.shadowSettings.shadowBelow,
+            def: {
+              ...wheelSettings.shadowSettings.shadowBelow.def,
+              ...settings
+            }
+          }
+        }})
+      }}
+    />
+    <ShadowBelowSettings
+      title='shadow below the wheel with selected state'
+      shadowBelowSettings={shadowBelowSettings.selected}
+      setShadowSettings={settings => {
+        setWheelSettings({...wheelSettings, shadowSettings: {
+          ...wheelSettings.shadowSettings,
+          shadowBelow: {
+            ...wheelSettings.shadowSettings.shadowBelow,
+            selected: {
+              ...wheelSettings.shadowSettings.shadowBelow.selected,
+              ...settings
+            }
+          }
+        }})
+      }}
+    />
     <div className={style.settings}>
       <h3>arc shadow settings</h3>
       <hr/>
@@ -140,101 +173,6 @@ export default ({
                   ...arcShadowSettings.offset,
                   y: value
                 }
-              }
-            }})
-          }}
-        />
-      </p>
-    </div>
-    <div className={style.settings}>
-      <h3>shadow below wheel</h3>
-      <hr/>
-      <p>
-        <label>
-          <input type="checkbox" checked={shadowBelowSettings.enabled} onChange={() => {
-              setWheelSettings({...wheelSettings, shadowSettings: {
-                ...wheelSettings.shadowSettings,
-                shadowBelow: {
-                  ...shadowBelowSettings,
-                  enabled: !shadowBelowSettings.enabled
-                }
-              }})
-          }} />show shadow below wheel: ({shadowBelowSettings.enabled.toString()})
-        </label>
-      </p>
-      <p>
-        distance from the wheel: ({shadowBelowSettings.distanceFromTheWheel})
-        <br />
-        <input type="range" className={style.wide} min={-500} max={500} step={1} value={shadowBelowSettings.distanceFromTheWheel}
-          onChange={e => {
-            const value = Number(e.currentTarget.value)
-            setWheelSettings({...wheelSettings, shadowSettings: {
-              ...wheelSettings.shadowSettings,
-              shadowBelow: {
-                ...shadowBelowSettings,
-                distanceFromTheWheel: value
-              }
-            }})
-          }}
-        />
-      </p>
-      <p>
-        width: ({shadowBelowSettings.width})
-        <br />
-        <input className={style.wide} type="range" min={0} max={700} step={1} value={shadowBelowSettings.width}
-          onChange={e => {
-            const value = Number(e.currentTarget.value)
-            setWheelSettings({...wheelSettings, shadowSettings: {
-              ...wheelSettings.shadowSettings,
-              shadowBelow: {
-                ...shadowBelowSettings,
-                width: value
-              }
-            }})
-          }}
-        />
-        <br />
-        height: ({shadowBelowSettings.height})
-        <br />
-        <input type="range" min={0} max={300} step={1} value={shadowBelowSettings.height}
-          onChange={e => {
-            const value = Number(e.currentTarget.value)
-            setWheelSettings({...wheelSettings, shadowSettings: {
-              ...wheelSettings.shadowSettings,
-              shadowBelow: {
-                ...shadowBelowSettings,
-                height: value
-              }
-            }})
-          }}
-        />
-      </p>
-      <p>
-        opacity: ({shadowBelowSettings.opacity})
-        <br />
-        <input type="range" min={0} max={1} step={0.1} value={shadowBelowSettings.opacity}
-          onChange={e => {
-            const value = Number(e.currentTarget.value)
-            setWheelSettings({...wheelSettings, shadowSettings: {
-              ...wheelSettings.shadowSettings,
-              shadowBelow: {
-                ...shadowBelowSettings,
-                opacity: value
-              }
-            }})
-          }}
-        />
-        <br />
-        blur: ({shadowBelowSettings.blurRadius})
-        <br />
-        <input type="range" min={0} max={100} step={1} value={shadowBelowSettings.blurRadius}
-          onChange={e => {
-            const value = Number(e.currentTarget.value)
-            setWheelSettings({...wheelSettings, shadowSettings: {
-              ...wheelSettings.shadowSettings,
-              shadowBelow: {
-                ...shadowBelowSettings,
-                blurRadius: value
               }
             }})
           }}
