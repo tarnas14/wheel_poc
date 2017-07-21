@@ -3,6 +3,7 @@ import * as React from 'react'
 import * as style from './style.css'
 import State from '../../constants/state'
 import ShadowBelowSettings from './ShadowBelowSettings'
+import ShadowBelowSettingsModifiers from './ShadowBelowSettingsModifiers'
 
 const onEnter = callback => e => e.keyCode === 13
   ? callback(e)
@@ -50,6 +51,19 @@ export default ({
         <button onClick={() => removeFromWheel(State.suggestion)} disabled={!Boolean(wheel.filter(w => !w.dontDisplay && w.state === State.suggestion).length)}>- suggestion</button>
       </p>
     </div>
+    <ShadowBelowSettingsModifiers
+      modifiers={shadowBelowSettings.modifiers}
+      setModifiers={modifiers => setWheelSettings({
+        ...wheelSettings,
+        shadowSettings: {
+          ...wheelSettings.shadowSettings,
+          shadowBelow: {
+            ...wheelSettings.shadowSettings.shadowBelow,
+            modifiers
+          }
+        }
+      })}
+    />
     <ShadowBelowSettings
       title='default shadow below the wheel'
       shadowBelowSettings={shadowBelowSettings.def}

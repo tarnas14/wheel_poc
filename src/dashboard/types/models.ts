@@ -49,6 +49,11 @@ declare interface Coords {
   y: number
 }
 
+declare interface Modifier {
+  value: number,
+  use: boolean
+}
+
 declare interface ShadowSettings {
   arc: {
     color?: string,
@@ -62,6 +67,13 @@ declare interface ShadowSettings {
     disableWhenSelected: boolean
   },
   shadowBelow: {
+    modifiers: {
+      height: Modifier,
+      width: Modifier,
+      blurRadius: Modifier,
+      opacity: Modifier,
+      distanceFromTheWheel: Modifier
+    },
     def: {
       enabled: boolean,
       height: number,

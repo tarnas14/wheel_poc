@@ -101,8 +101,9 @@ export default class extends React.Component<Props, State> {
         />}
       </Stage>
       <Shadow
-        wheel={wheel}
+        wheel={displayed(wheel)}
         animationSetting={animationSetting}
+        modifiers={settings.shadowSettings.shadowBelow.modifiers}
         settings={somethingIsSelected
           ? settings.shadowSettings.shadowBelow.selected
           : settings.shadowSettings.shadowBelow.def}

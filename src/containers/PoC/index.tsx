@@ -65,6 +65,28 @@ const wheelSettings = {
       }
     },
     shadowBelow: {
+      modifiers: {
+        height: {
+          value: 0.3,
+          use: true
+        },
+        width: {
+          value: 0.3,
+          use: true
+        },
+        blurRadius: {
+          value: 0.3,
+          use: false
+        },
+        opacity: {
+          value: 0.3,
+          use: false
+        },
+        distanceFromTheWheel: {
+          value: 0.3,
+          use: false
+        }
+      },
       def: {
         enabled: true,
         height: 20,
